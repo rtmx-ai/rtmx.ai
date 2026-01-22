@@ -1,0 +1,26 @@
+# RTMX Configuration for rtmx.ai website
+# See https://rtmx.ai for documentation
+
+rtmx:
+  # Website uses GitHub Issues for tracking, not RTM database
+  # This config enables agent integration only
+  database: null
+  requirements_dir: null
+  schema: core
+
+  agents:
+    claude:
+      enabled: true
+      config_path: "CLAUDE.md"
+    cursor:
+      enabled: false
+      config_path: ".cursorrules"
+    copilot:
+      enabled: false
+      config_path: ".github/copilot-instructions.md"
+
+  adapters:
+    github:
+      enabled: false
+      repo: "rtmx-ai/rtmx.ai"
+      token_env: "GITHUB_TOKEN"
