@@ -123,16 +123,18 @@
 // TEXT STYLES
 // =============================================================================
 
-#let rtmx-text() = {
+// Apply base text styling to content
+#let rtmx-text(body) = {
   set text(
     font: font-sans,
     size: 11pt,
     fill: text-secondary,
     lang: "en",
   )
+  body
 }
 
-#let heading-style() = {
+#let heading-style(body) = {
   show heading.where(level: 1): it => {
     set text(size: 24pt, weight: 700, fill: text-primary)
     v(1em)
@@ -153,6 +155,7 @@
     it
     v(0.3em)
   }
+  body
 }
 
 // =============================================================================
@@ -177,7 +180,7 @@
 }
 
 // Inline code
-#let rtmx-raw() = {
+#let rtmx-raw(body) = {
   show raw.where(block: false): it => {
     box(
       fill: bg-tertiary,
@@ -194,6 +197,7 @@
     set text(font: font-mono, size: 9pt, fill: text-secondary)
     it
   }
+  body
 }
 
 // =============================================================================
@@ -232,7 +236,7 @@
 }
 
 // Table styling
-#let rtmx-table() = {
+#let rtmx-table(body) = {
   show table: it => {
     set table(
       stroke: (x, y) => (
@@ -255,6 +259,7 @@
       it
     }
   }
+  body
 }
 
 // Pattern/Anti-pattern comparison - cleaner styling
@@ -675,13 +680,16 @@
     author: author,
   )
 
-  // Main content
+  // Main content with all styling applied
   rtmx-page()[
-    #rtmx-text()
-    #heading-style()
-    #rtmx-raw()
-    #rtmx-table()
-
-    #body
+    #rtmx-text(
+      rtmx-raw(
+        rtmx-table(
+          heading-style(
+            body
+          )
+        )
+      )
+    )
   ]
 }
