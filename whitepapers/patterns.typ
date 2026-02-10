@@ -41,19 +41,7 @@ RTMX is built on a fundamental principle:
 
 This is *closed-loop verification*: tests determine status, and status flows back to inform what needs work.
 
-#code-block(lang: "text")[
-  ```
-  ┌─────────────────────────────────────────────────────────────┐
-  │                  CLOSED-LOOP VERIFICATION                   │
-  │                                                             │
-  │   Requirements ──→ Tests ──→ Execution ──→ Status Update   │
-  │        ↑                                       │            │
-  │        └───────────────────────────────────────┘            │
-  │                                                             │
-  │   Status reflects reality. Tests are the arbiter of truth. │
-  └─────────────────────────────────────────────────────────────┘
-  ```
-]
+#closed-loop-diagram()
 
 == Why Closed-Loop Matters
 
@@ -224,24 +212,9 @@ Block releases until phase requirements are verified:
 
 == Pattern: Agent as Implementer, RTMX as Verifier
 
-#align(center)[
-  #block(
-    fill: bg-secondary,
-    stroke: 1pt + border-light,
-    radius: 8pt,
-    inset: 16pt,
-    width: 90%,
-  )[
-    #set text(fill: text-secondary)
-    *Agent Workflow:*
+#agent-workflow-diagram()
 
-    1. Read requirement spec from `docs/requirements/`
-    2. Write tests with `@pytest.mark.req()`
-    3. Implement code to pass tests
-    4. Run `rtmx verify --update`
-    5. Commit (status already updated by verification)
-  ]
-]
+#v(1em)
 
 The key insight: agents *implement*, RTMX *verifies*. Agents never determine status—tests do.
 
