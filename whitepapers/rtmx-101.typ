@@ -34,13 +34,7 @@ These failures compound. When you can't trust your requirements status, you can'
 
 RTMX takes a radically simple approach:
 
-#code-block(lang: "text")[
-  ```
-  Requirements ──→ Tests ──→ Execution ──→ Status Update
-       ↑                                        │
-       └────────────────────────────────────────┘
-  ```
-]
+#closed-loop-diagram()
 
 *Tests are the arbiter of truth.* If tests pass, the requirement is complete. If tests fail, it isn't. No exceptions, no overrides, no "trust me, it works."
 
@@ -86,6 +80,10 @@ The `@pytest.mark.req()` decorator creates bidirectional traceability:
 == Status Lifecycle
 
 Requirements flow through four statuses:
+
+#status-transition-diagram()
+
+#v(1em)
 
 #table(
   columns: (auto, 1fr, auto),
@@ -209,11 +207,7 @@ RTMX is designed for AI-assisted development. When AI agents work in RTMX-enable
 
 == Agent Workflow
 
-1. Read requirement spec from `docs/requirements/`
-2. Write tests with `@pytest.mark.req()`
-3. Implement code to pass tests
-4. Run `rtmx verify --update`
-5. Commit (status already updated)
+#agent-workflow-diagram()
 
 == Critical Rule
 
