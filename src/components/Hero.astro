@@ -34,6 +34,99 @@ import TerminalCarousel from './TerminalCarousel.astro';
 <!-- Animated Terminal Carousel -->
 <TerminalCarousel />
 
+<!-- Strategic Vision Section -->
+<section class="vision-section">
+  <div class="vision-header">
+    <span class="vision-label">Why RTMX Matters</span>
+    <h2>Software Engineering is Fragmenting</h2>
+  </div>
+
+  <p class="vision-intro">
+    The centralized era of "one company, one repo, one CI server" is ending. We're entering a fundamentally different world.
+  </p>
+
+  <div class="shift-grid">
+    <div class="shift-card">
+      <div class="shift-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <h3>Gig Developers</h3>
+      <p>Engineers spanning multiple organizations simultaneously. Your requirements can't live in one company's Jira.</p>
+    </div>
+
+    <div class="shift-card">
+      <div class="shift-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h3>AI Across Trust Boundaries</h3>
+      <p>Agents generating code for projects they don't own. How do you verify work when you can't trust the worker?</p>
+    </div>
+
+    <div class="shift-card">
+      <div class="shift-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h3>Mathematical Proof</h3>
+      <p>Regulated industries requiring cryptographic evidence of access control. "Trust me" isn't compliance.</p>
+    </div>
+
+    <div class="shift-card">
+      <div class="shift-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"/>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+      </div>
+      <h3>Offline-First</h3>
+      <p>Network is optional, not guaranteed. Air-gapped facilities, field deployments, unreliable connections.</p>
+    </div>
+  </div>
+
+  <div class="paradigm-contrast">
+    <div class="old-paradigm">
+      <span class="paradigm-label">The Old Model</span>
+      <h4>GitHub / GitLab / Jira</h4>
+      <ul>
+        <li>Centralized servers</li>
+        <li>Corporate trust boundaries</li>
+        <li>Network-dependent workflows</li>
+        <li>Single organization scope</li>
+      </ul>
+    </div>
+    <div class="paradigm-arrow">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </div>
+    <div class="new-paradigm">
+      <span class="paradigm-label">The New Model</span>
+      <h4>RTMX</h4>
+      <ul>
+        <li>Git-native, fully distributed</li>
+        <li>Zero-trust verification</li>
+        <li>Offline-first architecture</li>
+        <li>Cross-organization federation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- Statistics Section -->
 <section class="stats-section">
   <div class="stat-card">
@@ -836,6 +929,241 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
     .dont-use-grid {
       grid-template-columns: 1fr;
+    }
+
+    .shift-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .paradigm-contrast {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .paradigm-arrow {
+      transform: rotate(90deg);
+    }
+  }
+
+  /* Vision Section - Strategic positioning */
+  .vision-section {
+    padding: 4rem 2rem;
+    background: linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 50%, #0a0a0a 100%);
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .vision-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .vision-label {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+  }
+
+  .vision-section h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #f9fafb;
+    margin: 0;
+  }
+
+  .vision-intro {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #9ca3af;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+  }
+
+  .shift-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+  }
+
+  .shift-card {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .shift-card:hover {
+    border-color: #404040;
+    transform: translateY(-2px);
+  }
+
+  .shift-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .shift-icon svg {
+    width: 24px;
+    height: 24px;
+    color: #10b981;
+  }
+
+  .shift-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f9fafb;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .shift-card p {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .paradigm-contrast {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .old-paradigm, .new-paradigm {
+    flex: 1;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .old-paradigm {
+    background: rgba(107, 114, 128, 0.1);
+    border: 1px solid #374151;
+  }
+
+  .new-paradigm {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid #10b981;
+  }
+
+  .paradigm-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .old-paradigm .paradigm-label {
+    color: #6b7280;
+  }
+
+  .new-paradigm .paradigm-label {
+    color: #10b981;
+  }
+
+  .paradigm-contrast h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+  }
+
+  .old-paradigm h4 {
+    color: #9ca3af;
+  }
+
+  .new-paradigm h4 {
+    color: #f9fafb;
+  }
+
+  .paradigm-contrast ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .paradigm-contrast li {
+    font-size: 0.9rem;
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .old-paradigm li {
+    color: #6b7280;
+  }
+
+  .old-paradigm li::before {
+    content: "×";
+    color: #6b7280;
+    font-weight: bold;
+  }
+
+  .new-paradigm li {
+    color: #d1d5db;
+  }
+
+  .new-paradigm li::before {
+    content: "✓";
+    color: #10b981;
+    font-weight: bold;
+  }
+
+  .paradigm-arrow {
+    flex-shrink: 0;
+  }
+
+  .paradigm-arrow svg {
+    width: 32px;
+    height: 32px;
+    color: #10b981;
+  }
+
+  @media (max-width: 900px) {
+    .shift-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .vision-section h2 {
+      font-size: 1.75rem;
+    }
+
+    .vision-intro {
+      font-size: 1rem;
+    }
+
+    .shift-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .paradigm-contrast {
+      flex-direction: column;
+    }
+
+    .paradigm-arrow {
+      transform: rotate(90deg);
     }
   }
 </style>
