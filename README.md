@@ -1,49 +1,77 @@
-# Starlight Starter Kit: Basics
+# rtmx.ai
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+The marketing website and documentation for [RTMX](https://github.com/rtmx-ai/rtmx-go) — the intent layer for agentic engineering.
+
+**Live site**: [https://rtmx.ai](https://rtmx.ai)
+
+## Quick Start
+
+```bash
+npm install       # Install dependencies
+npm run dev       # Start dev server at localhost:4321
+npm run build     # Build for production
+npm run preview   # Preview production build
+```
+
+## Project Structure
 
 ```
-npm create astro@latest -- --template starlight
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro + Starlight project, you'll see the following folders and files:
-
-```
-.
-├── public/
+rtmx.ai/
 ├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+│   ├── components/    # Astro components (Hero, Terminal, PricingCard)
+│   ├── content/       # Content collections (docs, blog)
+│   ├── pages/         # Page routes (pricing, roadmap)
+│   └── styles/        # Global styles (custom.css)
+├── docs/
+│   ├── rtm_database.csv       # Requirements traceability matrix
+│   └── requirements/WEBSITE/  # Requirement specifications
+├── public/            # Static assets (icons, whitepapers, screenshots)
+├── rtmx/              # Git submodule → rtmx-ai/rtmx (CLI docs)
+├── astro.config.mjs   # Astro + Starlight configuration
+├── rtmx.yaml          # RTMX requirements tracking config
+└── package.json
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+## Requirements Tracking
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+This repo manages its own requirements with RTMX. To view status:
 
-Static assets, like favicons, can be placed in the `public/` directory.
+```bash
+source .venv/bin/activate
+rtmx status         # Overall progress
+rtmx backlog        # Prioritized work items
+```
 
-## 🧞 Commands
+25 requirements across 4 phases:
 
-All commands are run from the root of the project, from a terminal:
+| Phase | Name | Description |
+|-------|------|-------------|
+| 1 | Website Foundation | Framework, docs, deployment, roadmap, theme |
+| 2 | Content & Marketing | Pricing clarity, about page, social proof, blog, community |
+| 3 | Frontend Engineering | SEO, security headers, CSS consolidation, nav component |
+| 4 | Accessibility & UX | Keyboard nav, theme toggle, carousel a11y, form UX |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Stack
 
-## 👀 Want to learn more?
+- **Framework**: [Astro](https://astro.build) with [Starlight](https://starlight.astro.build)
+- **Styling**: Custom CSS with CSS variables (dark mode forced)
+- **Deployment**: GitHub Pages via GitHub Actions
+- **Search**: Pagefind (built at deploy time)
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+## Git Submodule
+
+The `rtmx/` directory is a submodule pointing to [rtmx-ai/rtmx](https://github.com/rtmx-ai/rtmx). It provides CLI documentation content.
+
+```bash
+git submodule update --remote rtmx   # Pull latest docs
+git add rtmx
+git commit -m "chore: Update rtmx submodule"
+```
+
+## Deployment
+
+Pushing to `main` triggers the GitHub Actions workflow which builds the Astro site, indexes with Pagefind, and deploys to GitHub Pages.
+
+## Contact
+
+RTMX Engineering — [dev@rtmx.ai](mailto:dev@rtmx.ai)

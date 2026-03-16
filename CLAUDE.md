@@ -9,7 +9,8 @@ This is part of the RTMX multi-repo system:
 | Repo | Purpose | Dependency |
 |------|---------|------------|
 | **rtmx.ai** (this) | Website & docs | Submodule: rtmx |
-| rtmx | CLI client | None |
+| rtmx | CLI client (Python) | None |
+| rtmx-go | CLI client (Go) | None |
 | rtmx-sync | Real-time coordination | Depends on rtmx |
 
 When working across repos:
@@ -25,18 +26,30 @@ npm run build     # Build for production
 npm run preview   # Preview production build
 ```
 
+### Requirements Tracking
+
+```bash
+source .venv/bin/activate
+rtmx status       # Show RTM status
+rtmx backlog      # Show prioritized backlog
+```
+
 ## Project Structure
 
 ```
 rtmx.ai/
 ├── src/
-│   ├── components/    # Astro components
-│   ├── content/       # Content collections (docs)
-│   ├── pages/         # Page routes
-│   └── styles/        # Global styles
-├── public/            # Static assets
-├── rtmx/              # Git submodule → rtmx-ai/rtmx (for docs)
-├── astro.config.mjs   # Astro configuration
+│   ├── components/    # Astro components (Hero, Terminal, PricingCard, etc.)
+│   ├── content/       # Content collections (docs, blog)
+│   ├── pages/         # Page routes (pricing, roadmap, index)
+│   └── styles/        # Global styles (custom.css)
+├── docs/
+│   ├── rtm_database.csv       # Requirements traceability matrix
+│   └── requirements/WEBSITE/  # Requirement specification files
+├── public/            # Static assets (icons, whitepapers, screenshots)
+├── rtmx/              # Git submodule → rtmx-ai/rtmx (for CLI docs)
+├── astro.config.mjs   # Astro + Starlight configuration
+├── rtmx.yaml          # RTMX requirements tracking config
 └── package.json
 ```
 
@@ -54,22 +67,37 @@ git commit -m "chore: Update rtmx submodule"
 ## Development Guidelines
 
 - **Framework**: Astro with Starlight for documentation
-- **Styling**: Tailwind CSS
-- **Dark Mode**: Default theme (forced dark)
+- **Styling**: Custom CSS with CSS variables (no Tailwind)
+- **Dark Mode**: Forced dark via CSS variable overrides and inline script
 - **Deployment**: GitHub Pages via GitHub Actions
+- **Search**: Pagefind, indexed at build time
+
+### Starlight Integration
+
+When adding grid or flex containers inside Starlight content areas, always add the `not-content` class to prevent Starlight's adjacent sibling margin rule from distorting grid item alignment. See REQ-SITE-025.
+
+### CSS Conventions
+
+- Colors use the emerald accent palette (#10b981, #6ee7b7) on dark backgrounds (#0a0a0a, #171717)
+- Starlight CSS variables (--sl-color-*) are overridden in src/styles/custom.css
+- Component styles use `<style is:global>` for grid containers and `<style>` (scoped) for component internals
 
 ## Content Updates
 
-Documentation lives in the rtmx submodule. To update docs:
+Documentation content lives in:
+- `src/content/docs/` — website-specific docs and blog posts
+- `rtmx/` submodule — CLI documentation (guides, adapters, reference)
+
+To update CLI docs:
 1. Make changes in the rtmx-ai/rtmx repository
 2. Update the submodule pointer in this repo
 3. Deploy will automatically pull latest docs
 
 ## CI/CD
 
-- **deploy.yml**: Builds Astro and deploys to GitHub Pages on push to main
+- **deploy.yml**: Builds Astro, runs Pagefind indexing, deploys to GitHub Pages on push to main
 - Source is set to "GitHub Actions" in Pages settings
 
 ## Contact
 
-ioTACTICAL Engineering - engineering@iotactical.co
+RTMX Engineering — dev@rtmx.ai
