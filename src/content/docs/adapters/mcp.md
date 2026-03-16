@@ -3,7 +3,7 @@ title: MCP Server
 description: AI agent integration via Model Context Protocol
 ---
 
-RTMX includes an MCP (Model Context Protocol) server that enables AI agents like Claude to interact with your requirements database.
+RTMX includes an MCP (Model Context Protocol) server that enables AI agents to interact with your requirements database.
 
 ## What is MCP?
 
@@ -25,9 +25,9 @@ rtmx mcp-server
 
 This starts the server on stdio (standard input/output), the default MCP transport.
 
-### Configure Claude Desktop
+### Configure Your MCP Client
 
-Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`):
+Add the RTMX server to your MCP client configuration. For example, in a typical MCP config file:
 
 ```json
 {
@@ -181,32 +181,32 @@ rtmx:
 
 ### Agent-Assisted Development
 
-Claude can help implement requirements:
+Your AI agent can help implement requirements:
 
 ```
 User: "What should I work on next?"
-Claude: [calls rtmx_backlog] "The highest priority item is REQ-AUTH-002:
-        Add password reset flow. It has no blockers."
+Agent: [calls rtmx_backlog] "The highest priority item is REQ-AUTH-002:
+       Add password reset flow. It has no blockers."
 
 User: "I finished implementing it"
-Claude: [calls rtmx_update_status with status=COMPLETE]
-        "Updated REQ-AUTH-002 to COMPLETE. 3 requirements are now unblocked."
+Agent: [calls rtmx_update_status with status=COMPLETE]
+       "Updated REQ-AUTH-002 to COMPLETE. 3 requirements are now unblocked."
 ```
 
 ### Progress Reporting
 
 ```
 User: "How's the project going?"
-Claude: [calls rtmx_status] "Phase 1 is 95% complete with 2 remaining items.
-        Overall progress is 67% across all phases."
+Agent: [calls rtmx_status] "Phase 1 is 95% complete with 2 remaining items.
+       Overall progress is 67% across all phases."
 ```
 
 ### Dependency Analysis
 
 ```
 User: "What's blocking REQ-DATA-005?"
-Claude: [calls rtmx_deps] "REQ-DATA-005 is blocked by REQ-DB-001 (MISSING)
-        and REQ-AUTH-001 (COMPLETE). You need to complete REQ-DB-001 first."
+Agent: [calls rtmx_deps] "REQ-DATA-005 is blocked by REQ-DB-001 (MISSING)
+       and REQ-AUTH-001 (COMPLETE). You need to complete REQ-DB-001 first."
 ```
 
 ## Security Considerations

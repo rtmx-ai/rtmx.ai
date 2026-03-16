@@ -271,6 +271,16 @@ header.header starlight-theme-select {
   display: none !important;
 }
 
+/* Remove outline from pagination navigation links */
+.pagination-links a {
+  border: none !important;
+  outline: none !important;
+}
+
+.pagination-links a:hover {
+  background: #171717;
+}
+
 /* Navigation links - inserted after title */
 .header-nav {
   display: inline-flex;

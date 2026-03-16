@@ -144,7 +144,7 @@ rtmx mcp-server --daemon           # Run as background daemon
 rtmx mcp-server --pidfile mcp.pid  # Specify PID file for daemon
 ```
 
-The MCP server uses JSON-RPC over stdin/stdout. Configure your MCP client (e.g., Claude Desktop) to launch it:
+The MCP server uses JSON-RPC over stdin/stdout. Configure your MCP client to launch it:
 
 ```json
 {

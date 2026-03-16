@@ -38,7 +38,7 @@
       <rect x="60" y="120" width="140" height="130" rx="12" fill="#171717" stroke="#8b5cf6" stroke-width="2"/>
       <circle cx="130" cy="160" r="26" fill="#1e1e1e" stroke="#8b5cf6" stroke-width="2"/>
       <text x="130" y="167" fill="#c4b5fd" font-size="20" text-anchor="middle" font-family="system-ui" font-weight="600">AI</text>
-      <text x="130" y="205" fill="#e5e7eb" font-size="12" text-anchor="middle" font-family="system-ui" font-weight="600">Claude / MCP</text>
+      <text x="130" y="205" fill="#e5e7eb" font-size="12" text-anchor="middle" font-family="system-ui" font-weight="600">AI Agent / MCP</text>
       <text x="130" y="225" fill="#6b7280" font-size="9" text-anchor="middle" font-family="monospace">Creates specs</text>
       <text x="130" y="238" fill="#6b7280" font-size="9" text-anchor="middle" font-family="monospace">Queries status</text>
     </g>
