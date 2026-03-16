@@ -46,10 +46,44 @@ export default defineConfig({
 				},
 				{
 					tag: 'script',
+					attrs: { type: 'application/ld+json' },
+					content: JSON.stringify({
+						'@context': 'https://schema.org',
+						'@type': 'SoftwareApplication',
+						name: 'RTMX',
+						description: 'The intent layer for agentic engineering — requirements, tests, and traceability for AI-driven development',
+						url: 'https://rtmx.ai',
+						applicationCategory: 'DeveloperApplication',
+						operatingSystem: 'Linux, macOS, Windows',
+						license: 'https://opensource.org/licenses/Apache-2.0',
+						offers: {
+							'@type': 'Offer',
+							price: '0',
+							priceCurrency: 'USD',
+						},
+						author: {
+							'@type': 'Organization',
+							name: 'ioTACTICAL LLC',
+							url: 'https://iotactical.co',
+						},
+					}),
+				},
+				{
+					tag: 'script',
 					content: `
 						document.addEventListener('DOMContentLoaded', () => {
 							// Ensure dark mode stays forced
 							document.documentElement.dataset.theme = 'dark';
+
+							// REQ-SITE-008: Add skip-to-content link for keyboard navigation
+							if (!document.querySelector('.skip-link')) {
+								const skipLink = document.createElement('a');
+								skipLink.className = 'skip-link';
+								skipLink.href = '#_top';
+								skipLink.textContent = 'Skip to content';
+								document.body.insertBefore(skipLink, document.body.firstChild);
+							}
+
 							const header = document.querySelector('header.header');
 							if (!header) return;
 

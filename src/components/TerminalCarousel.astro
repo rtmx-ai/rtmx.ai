@@ -109,7 +109,7 @@ const terminals = [
 <section class="carousel-section">
   <h2>See It In Action</h2>
 
-  <div class="carousel-container">
+  <div class="carousel-container" tabindex="0" role="region" aria-label="Terminal demo carousel - use arrow keys to navigate">
     <button class="carousel-nav prev" aria-label="Previous">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M15 19l-7-7 7-7"/>
@@ -344,6 +344,20 @@ const terminals = [
       clearInterval(autoplayInterval);
       startAutoplay();
     }
+
+    // Keyboard navigation (ArrowLeft / ArrowRight)
+    const container = document.querySelector('.carousel-container');
+    container?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+        resetAutoplay();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+        resetAutoplay();
+      }
+    });
 
     // Touch/swipe support
     let touchStartX = 0;
