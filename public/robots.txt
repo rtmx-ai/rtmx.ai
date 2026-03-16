@@ -1,0 +1,6 @@
+# robots.txt for rtmx.ai
+User-agent: *
+Allow: /
+Disallow: /_astro/
+
+Sitemap: https://rtmx.ai/sitemap-index.xml

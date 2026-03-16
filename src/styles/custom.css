@@ -266,6 +266,95 @@
 }
 
 
+/* ============================================================
+   REQ-SITE-008: Keyboard navigation & visible focus indicators
+   ============================================================ */
+
+/* Skip-to-content link - visually hidden until focused */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: #10b981;
+  color: #0a0a0a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Visible focus indicators for all interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Focus for feature cards */
+.feature-card:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-color: #10b981;
+}
+
+/* Focus for hero buttons */
+.hero-button:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Focus for early access button */
+.early-access-button:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Focus for header nav links */
+.header-nav-link:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  color: #f9fafb;
+  background: #262626;
+}
+
+/* Focus for carousel nav buttons */
+.carousel-nav:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  color: #10b981;
+  border-color: #10b981;
+}
+
+/* Focus for carousel dots */
+.dot:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 3px;
+}
+
+/* Focus for carousel container when using keyboard arrow navigation */
+.carousel-container:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+/* Pagination links - override the outline:none but only show on :focus-visible */
+.pagination-links a:focus-visible {
+  outline: 2px solid #10b981 !important;
+  outline-offset: 2px;
+}
+
 /* Hide theme selector - keep everything else */
 header.header starlight-theme-select {
   display: none !important;
