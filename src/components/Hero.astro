@@ -6,13 +6,14 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
 <!-- Hero Title at Very Top -->
 <div class="hero-header">
-  <h1 class="hero-title">Keep AI On Task</h1>
+  <h1 class="hero-title">The Intent Layer for Agentic Engineering</h1>
   <p class="hero-subtitle">
-    AI writes code fast—but does it meet your requirements?
-    RTMX connects every change to a spec and its tests, so your AI always knows what you're shipping and why.
+    The answer to AI building the wrong thing isn't better AI. It's better engineering discipline applied to AI.
+    RTMX is the contract between human intent and AI agent execution — requirements, tests, and traceability integrated directly into the agentic engineering lifecycle.
   </p>
+  <p class="hero-ucp">The only tool that gives AI agents a queryable, verifiable, dependency-aware requirements model that lives in git.</p>
   <div class="hero-buttons">
-    <a href="https://github.com/rtmx-ai/rtmx" class="github-button" target="_blank" rel="noopener">
+    <a href="https://github.com/rtmx-ai/rtmx-go" class="github-button" target="_blank" rel="noopener">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
       </svg>
@@ -34,28 +35,30 @@ import TerminalCarousel from './TerminalCarousel.astro';
 <!-- Animated Terminal Carousel -->
 <TerminalCarousel />
 
-<!-- Strategic Vision Section -->
+<!-- Collapse Your Stack Section -->
 <section class="vision-section">
   <div class="vision-header">
-    <span class="vision-label">Why RTMX Matters</span>
-    <h2>Software Engineering is Fragmenting</h2>
+    <span class="vision-label">The Shift</span>
+    <h2>Collapse Your Stack for Agentic Engineering</h2>
   </div>
 
   <p class="vision-intro">
-    The centralized era of "one company, one repo, one CI server" is ending. We're entering a fundamentally different world.
+    Today you chat in Slack about what to build. Write a ticket in Jira describing what you chatted about.
+    Write code in a repo that's supposed to implement the ticket. Message in Slack again when it's done.
+    Most coordination overhead is just keeping these layers in sync with each other.
   </p>
 
-  <div class="shift-grid">
+  <div class="shift-grid not-content">
     <div class="shift-card">
       <div class="shift-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M2 12h20"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
         </svg>
       </div>
-      <h3>Gig Developers</h3>
-      <p>Engineers spanning multiple organizations simultaneously. Your requirements can't live in one company's Jira.</p>
+      <h3>A Product Team in Your Laptop</h3>
+      <p>Every engineer now has an entire product team inside their machine. The industry's capacity is massively scaling. The old coordination layer can't keep up.</p>
     </div>
 
     <div class="shift-card">
@@ -66,92 +69,36 @@ import TerminalCarousel from './TerminalCarousel.astro';
           <path d="M2 12l10 5 10-5"/>
         </svg>
       </div>
-      <h3>AI Across Trust Boundaries</h3>
-      <p>Agents generating code for projects they don't own. How do you verify work when you can't trust the worker?</p>
+      <h3>Collaborate Through the Artifact</h3>
+      <p>Requirements, tests, status, and collaboration all live in the same structure, right next to the code. You don't chat about what to build — you look at the shared context and build.</p>
     </div>
 
     <div class="shift-card">
       <div class="shift-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <h3>Mathematical Proof</h3>
-      <p>Regulated industries requiring cryptographic evidence of access control. "Trust me" isn't compliance.</p>
+      <h3>Zero-Trust by Design</h3>
+      <p>Work across corporate lines without muddying network security policies. E2E encrypted, offline-first, air-gap ready. Your context stays yours.</p>
     </div>
 
     <div class="shift-card">
       <div class="shift-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="1" y1="1" x2="23" y2="23"/>
-          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
-          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
-          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
-          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
-          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
-          <line x1="12" y1="20" x2="12.01" y2="20"/>
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
       </div>
-      <h3>Offline-First</h3>
-      <p>Network is optional, not guaranteed. Air-gapped facilities, field deployments, unreliable connections.</p>
-    </div>
-  </div>
-
-  <div class="paradigm-contrast">
-    <div class="old-paradigm">
-      <span class="paradigm-label">The Old Model</span>
-      <h4>GitHub / GitLab / Jira</h4>
-      <ul>
-        <li>Centralized servers</li>
-        <li>Corporate trust boundaries</li>
-        <li>Network-dependent workflows</li>
-        <li>Single organization scope</li>
-      </ul>
-    </div>
-    <div class="paradigm-arrow">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M5 12h14M12 5l7 7-7 7"/>
-      </svg>
-    </div>
-    <div class="new-paradigm">
-      <span class="paradigm-label">The New Model</span>
-      <h4>RTMX</h4>
-      <ul>
-        <li>Git-native, fully distributed</li>
-        <li>Zero-trust verification</li>
-        <li>Offline-first architecture</li>
-        <li>Cross-organization federation</li>
-      </ul>
+      <h3>Flat and Wide</h3>
+      <p>Not hierarchical teams behind ticket queues, but distributed engineers and their agents collaborating through a shared, decentralized protocol. The terminal is the team room.</p>
     </div>
   </div>
 </section>
 
-<!-- Statistics Section -->
-<section class="stats-section">
-  <div class="stat-card">
-    <span class="stat-number">$199B</span>
-    <span class="stat-label">Agentic AI market by 2034</span>
-    <a href="https://www.precedenceresearch.com/agentic-ai-market" target="_blank" rel="noopener">Precedence Research</a>
-  </div>
-  <div class="stat-card">
-    <span class="stat-number">66%</span>
-    <span class="stat-label">of developers frustrated with "almost right" AI code</span>
-    <a href="https://survey.stackoverflow.co/2025/ai" target="_blank" rel="noopener">Stack Overflow 2025</a>
-  </div>
-  <div class="stat-card">
-    <span class="stat-number">39%</span>
-    <span class="stat-label">of project failures due to requirements issues</span>
-    <a href="https://zipdo.co/statistics/software-project-failure/" target="_blank" rel="noopener">Zipdo Statistics</a>
-  </div>
-  <div class="stat-card">
-    <span class="stat-number">48%</span>
-    <span class="stat-label">of AI-generated code contains security vulnerabilities</span>
-    <a href="https://www.qodo.ai/reports/state-of-ai-code-quality/" target="_blank" rel="noopener">Qodo 2025</a>
-  </div>
-</section>
 
-<section class="feature-grid">
+<section class="feature-grid not-content">
   <a href="/guides/cli-reference" class="feature-card">
     <h3>One Command to See Everything</h3>
     <p>
@@ -163,16 +110,16 @@ import TerminalCarousel from './TerminalCarousel.astro';
   <a href="/guides/markers" class="feature-card">
     <h3>Proof, Not Promises</h3>
     <p>
-      Every feature links to a test that proves it works.
-      No more "I think it's covered."
+      Every requirement links to a test that proves it works — across Python, Go, Java, TypeScript,
+      and all major languages. Status comes from test results, not opinions.
     </p>
   </a>
 
   <a href="/adapters/mcp" class="feature-card">
     <h3>AI That Knows Your Project</h3>
     <p>
-      Claude, GPT, and other agents can query your requirements in real-time.
-      They know what to build next.
+      AI agents can query your requirements in real-time via MCP.
+      They always know what to build next.
     </p>
   </a>
 
@@ -211,7 +158,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   <a href="/reference/architecture" class="feature-card">
     <h3>Programmable Requirements</h3>
     <p>
-      Full Python API. Query, filter, and automate from any script or notebook.
+      Full API in Python and Go. Query, filter, and automate from any script or notebook.
       Build custom workflows.
     </p>
   </a>
@@ -227,170 +174,135 @@ import TerminalCarousel from './TerminalCarousel.astro';
 </section>
 
 <section class="comparison-section">
-  <h2>AI writes code fast. But does it match your requirements?</h2>
-  <p class="comparison-subtitle">Most tools track tasks. RTMX tracks whether the code actually does what you asked.</p>
+  <h2>Different Category, Not a Better Version</h2>
+  <p class="comparison-subtitle">Spec authoring tools help AI write better code. Test frameworks execute scenarios. RTMX connects intent to code to proof across the full lifecycle.</p>
   <div class="table-wrapper">
     <table class="comparison-table">
       <thead>
         <tr>
-          <th>Feature</th>
-          <th>RTMX</th>
-          <th>GitHub</th>
-          <th>GitLab</th>
-          <th>Jira</th>
-          <th>Linear</th>
+          <th></th>
+          <th>Spec Authoring<span class="comparison-examples">OpenSpec, Kiro</span></th>
+          <th>Test Execution<span class="comparison-examples">Cucumber, Gauge</span></th>
+          <th>Task Trackers<span class="comparison-examples">Jira, Linear</span></th>
+          <th class="rtmx-col">RTMX</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Test traceability</td>
-          <td class="check">Built-in</td>
+          <td>When it helps</td>
+          <td>Before code</td>
+          <td>During testing</td>
+          <td>Sprint planning</td>
+          <td class="check">Full lifecycle</td>
+        </tr>
+        <tr>
+          <td>What it manages</td>
+          <td>Change proposals</td>
+          <td>Test scenarios</td>
+          <td>Tasks & tickets</td>
+          <td class="check">Requirements register + traceability</td>
+        </tr>
+        <tr>
+          <td>Status source</td>
+          <td>Human review</td>
+          <td>Pass/fail per scenario</td>
+          <td>Manual updates</td>
+          <td class="check">Derived from linked tests</td>
+        </tr>
+        <tr>
+          <td>Dependency graph</td>
+          <td class="cross">No</td>
           <td class="cross">No</td>
           <td class="partial">Basic</td>
-          <td class="cross">Plugin</td>
-          <td class="cross">No</td>
+          <td class="check">Full graph + cycle detection</td>
         </tr>
         <tr>
-          <td>pytest markers</td>
-          <td class="check">Native</td>
+          <td>AI agent access</td>
+          <td class="partial">Slash commands</td>
           <td class="cross">No</td>
-          <td class="cross">No</td>
-          <td class="cross">No</td>
-          <td class="cross">No</td>
-        </tr>
-        <tr>
-          <td>AI agent support</td>
-          <td class="check">MCP</td>
-          <td class="partial">Copilot</td>
-          <td class="partial">Duo</td>
           <td class="cross">API only</td>
-          <td class="cross">API only</td>
+          <td class="check">Native MCP server</td>
         </tr>
         <tr>
-          <td>Requirements spec</td>
-          <td class="check">CSV + Markdown</td>
-          <td class="cross">Issues only</td>
-          <td class="partial">Epics</td>
-          <td class="check">Yes</td>
+          <td>Cross-phase backlog</td>
           <td class="cross">No</td>
+          <td class="cross">No</td>
+          <td class="partial">Board view</td>
+          <td class="check">Dependency-aware</td>
         </tr>
         <tr>
-          <td>Git-native storage</td>
-          <td class="check">Yes</td>
-          <td class="cross">Database</td>
-          <td class="cross">Database</td>
-          <td class="cross">SaaS</td>
-          <td class="cross">SaaS</td>
+          <td>Data lives in</td>
+          <td>Markdown files</td>
+          <td>Feature files</td>
+          <td>Centralized SaaS</td>
+          <td class="check">CSV in git</td>
         </tr>
         <tr>
-          <td>Self-hosted</td>
-          <td class="check">Free</td>
-          <td class="cross">Enterprise</td>
-          <td class="check">Free</td>
-          <td class="cross">$$$</td>
-          <td class="cross">No</td>
-        </tr>
-        <tr>
-          <td>Open source</td>
-          <td class="check">MIT</td>
-          <td class="cross">No</td>
-          <td class="partial">Core only</td>
-          <td class="cross">No</td>
-          <td class="cross">No</td>
-        </tr>
-        <tr>
-          <td>CLI-first workflow</td>
-          <td class="check">Yes</td>
-          <td class="partial">gh CLI</td>
-          <td class="partial">glab CLI</td>
-          <td class="cross">No</td>
-          <td class="cross">No</td>
+          <td>Collaboration</td>
+          <td>Local files</td>
+          <td>SaaS add-on</td>
+          <td>SaaS required</td>
+          <td class="check">CRDT sync (decentralized)</td>
         </tr>
       </tbody>
     </table>
   </div>
+  <p class="comparison-note">RTMX works <em>with</em> these tools, not against them. Use OpenSpec for spec authoring. Use Cucumber for BDD execution. RTMX is the traceability layer that sits above both.</p>
 </section>
 
-<!-- "Why You Shouldn't Use RTMX" - Reverse Psychology Section -->
-<section class="dont-use-section" id="dont-use">
-  <h2><span class="strikethrough">DON'T</span> Use RTMX</h2>
-  <p class="dont-use-intro">Seriously. It's not for everyone. Here's why you should probably stay away:</p>
+<!-- I Built RTMX Using RTMX Section -->
+<section class="dogfood-section" id="dogfood">
+  <div class="vision-header">
+    <span class="vision-label">Dogfooding</span>
+    <h2>I Built RTMX Using RTMX</h2>
+  </div>
 
-  <div class="dont-use-grid">
-    <div class="dont-use-card">
-      <h3>You already have a spreadsheet.</h3>
-      <p>
-        And you definitely don't spend 2 hours every sprint reconciling it with what actually shipped.
-        That's just part of the process, right?
-      </p>
+  <p class="dogfood-intro">
+    RTMX isn't a theoretical tool. I use it every day to build RTMX itself — and to build
+    an open-source radar system, hardware design tools, and other real products with agentic AI.
+    The requirements traceability matrix for RTMX is managed by RTMX.
+  </p>
+
+  <div class="dogfood-grid not-content">
+    <div class="dogfood-card">
+      <span class="dogfood-stat">87</span>
+      <span class="dogfood-label">requirements tracked</span>
+      <p>Every feature, from CLI commands to CRDT sync, is a formal requirement with an ID, spec, and linked tests.</p>
     </div>
 
-    <div class="dont-use-card">
-      <h3>AI-generated code always works.</h3>
-      <p>
-        Your agent never confidently implements the wrong feature or quietly breaks something three files away.
-        No need to trace what it changed back to what you actually asked for.
-      </p>
+    <div class="dogfood-card">
+      <span class="dogfood-stat">62%</span>
+      <span class="dogfood-label">complete and verified</span>
+      <p>Status is derived from test results, not opinions. When tests pass, requirements are complete. When they don't, I know exactly what's broken.</p>
     </div>
 
-    <div class="dont-use-card">
-      <h3>You love Jira.</h3>
-      <p>
-        RTMX is distributed and version-controlled with your code. Way worse than managing requirements
-        in a GUI that's definitely not loading right now.
-      </p>
+    <div class="dogfood-card">
+      <span class="dogfood-stat">13</span>
+      <span class="dogfood-label">development phases</span>
+      <p>From foundation through CRDT sync and compliance — the full roadmap is a dependency graph, not a wish list.</p>
     </div>
 
-    <div class="dont-use-card">
-      <h3>You don't want to pay $9.</h3>
-      <p>
-        You'd rather spend 9 hours every week fixing the tech debt slop that AI creates for your team.
-        Time is money, but it's <em>your</em> time.
-      </p>
-    </div>
-
-    <div class="dont-use-card">
-      <h3>Tests prove nothing.</h3>
-      <p>
-        You trust your test suite, even if nobody can remember which features it actually covers.
-        "I think auth is tested somewhere" is basically the same as traceability.
-      </p>
-    </div>
-
-    <div class="dont-use-card">
-      <h3>Dependencies are obvious.</h3>
-      <p>
-        Your team instinctively knows that REQ-47 blocks REQ-12 which blocks REQ-89.
-        Why would you need a graph for that?
-      </p>
-    </div>
-
-    <div class="dont-use-card">
-      <h3>Your AI knows the codebase.</h3>
-      <p>
-        Context windows are unlimited now. Your agent never forgets the requirement
-        it was working on or what tests need to pass. Refresh the chat? No problem.
-      </p>
-    </div>
-
-    <div class="dont-use-card">
-      <h3>Audits are fine.</h3>
-      <p>
-        "Show me every requirement and its test" is a reasonable ask and you can answer it in 5 minutes.
-        You've definitely done the drill and it went great.
-      </p>
+    <div class="dogfood-card">
+      <span class="dogfood-stat">0</span>
+      <span class="dogfood-label">external dependencies for context</span>
+      <p>No Jira. No Linear. No Slack channel for coordination. The requirements live in CSV, in git, next to the code. My agents read the backlog and build.</p>
     </div>
   </div>
 
+  <p class="dogfood-quote">
+    Slow is smooth and smooth is fast. I spend hours — sometimes days — building and refining requirements
+    and feature specifications before I start test-driven development. That time isn't wasted. It's the
+    investment that makes everything downstream faster, more coherent, and more sustainable.
+  </p>
+
   <div class="still-reading">
-    <p><strong>Still reading?</strong> Sounds like you might actually need RTMX.</p>
+    <a href="/roadmap" class="hero-button secondary">See the Roadmap</a>
     <a href="/quickstart" class="hero-button primary">Get Started</a>
   </div>
 </section>
 
 <footer class="site-footer">
   <p>
-    Built by <a href="https://iotactical.co">ioTACTICAL Engineering</a> |
     <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
   </p>
 </footer>
@@ -404,6 +316,55 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .main-pane > h1:first-child,
   .sl-markdown-content > h1:first-child {
     display: none !important;
+  }
+
+  /* Equal-height grid cards - global to avoid scoping specificity issues */
+  .shift-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+  }
+
+  .shift-card {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  @media (max-width: 900px) {
+    .shift-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .shift-grid { grid-template-columns: 1fr; }
+  }
+
+  .dogfood-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+  }
+
+  .dogfood-card {
+    background: #0d0d0d;
+    border: 1px solid #1f1f1f;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  @media (max-width: 1024px) {
+    .dogfood-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .dogfood-grid { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -428,6 +389,17 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .hero-subtitle {
     font-size: 1.25rem;
     color: #9ca3af;
+    margin-bottom: 1rem;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .hero-ucp {
+    font-size: 1rem;
+    color: #10b981;
+    font-weight: 600;
     margin-bottom: 2rem;
     max-width: 850px;
     margin-left: auto;
@@ -590,55 +562,33 @@ import TerminalCarousel from './TerminalCarousel.astro';
     letter-spacing: 0.05em;
   }
 
-  /* Statistics Section */
-  .stats-section {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    padding: 3rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    background: #0a0a0a;
-    border-top: 1px solid #262626;
-    border-bottom: 1px solid #262626;
-    align-items: baseline;
-  }
-
-  .stat-card {
-    text-align: center;
-    padding: 1.5rem 1rem;
-  }
-
-  .stat-number {
-    font-size: 3rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin: 0;
-  }
-
-  .stat-label {
+  /* Comparison table extras */
+  .comparison-examples {
     display: block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: #6b7280;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 0.25rem;
+  }
+
+  .rtmx-col {
+    background: rgba(16, 185, 129, 0.05);
+  }
+
+  .comparison-note {
+    text-align: center;
     color: #9ca3af;
     font-size: 0.9rem;
-    margin-top: 0.5rem;
-    line-height: 1.4;
+    max-width: 700px;
+    margin: 1.5rem auto 0;
+    line-height: 1.6;
   }
 
-  .stat-card a {
-    display: inline-block;
-    color: #6b7280;
-    font-size: 0.75rem;
-    text-decoration: none;
-    margin-top: 0.5rem;
-    transition: color 0.2s ease;
-  }
-
-  .stat-card a:hover {
+  .comparison-note em {
     color: #10b981;
+    font-style: italic;
   }
 
   /* Comparison Section */
@@ -750,74 +700,63 @@ import TerminalCarousel from './TerminalCarousel.astro';
     text-decoration: underline;
   }
 
-  /* "DON'T Use RTMX" Section */
-  .dont-use-section {
+  /* "I Built RTMX Using RTMX" Section */
+  .dogfood-section {
     background: #070707;
     padding: 4rem 2rem;
     border-top: 1px solid #262626;
   }
 
-  .dont-use-section h2 {
-    color: #f9fafb;
+  .dogfood-intro {
     text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .dont-use-section h2 .strikethrough {
-    text-decoration: line-through;
-    text-decoration-color: #ef4444;
-    text-decoration-thickness: 3px;
-  }
-
-  .dont-use-intro {
     color: #9ca3af;
-    text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 3rem;
-  }
-
-  .dont-use-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
-    align-items: start;
-  }
-
-  .dont-use-card {
-    background: #0d0d0d;
-    border: 1px solid #1f1f1f;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-  }
-
-  .dont-use-card h3 {
-    color: #f3f4f6;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem 0;
-  }
-
-  .dont-use-card p {
-    color: #b8bfc9;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    max-width: 800px;
+    margin: 0 auto 3rem;
     line-height: 1.7;
+  }
+
+  .dogfood-stat {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .dogfood-label {
+    display: block;
+    color: #f9fafb;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .dogfood-card p {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    line-height: 1.5;
     margin: 0;
   }
 
-  .dont-use-card code {
-    background: #1a1a1a;
-    color: #9ca3af;
-    padding: 0.15em 0.4em;
-    border-radius: 0.25rem;
-    font-size: 0.85em;
-  }
-
-  .dont-use-card em {
-    color: #9ca3af;
+  .dogfood-quote {
+    text-align: center;
+    color: #d1d5db;
+    font-size: 1.1rem;
     font-style: italic;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+    padding: 1.5rem 2rem;
+    border-left: 3px solid #10b981;
+    background: rgba(16, 185, 129, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    text-align: left;
   }
 
   .still-reading {
@@ -825,12 +764,10 @@ import TerminalCarousel from './TerminalCarousel.astro';
     margin-top: 3rem;
     padding-top: 2rem;
     border-top: 1px solid #1f1f1f;
-  }
-
-  .still-reading p {
-    color: #d1d5db;
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .still-reading .hero-button.primary {
@@ -847,10 +784,6 @@ import TerminalCarousel from './TerminalCarousel.astro';
   /* Responsive */
   @media (max-width: 1024px) {
     .feature-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stats-section {
       grid-template-columns: repeat(2, 1fr);
     }
   }
@@ -871,15 +804,6 @@ import TerminalCarousel from './TerminalCarousel.astro';
     .hero-buttons {
       flex-direction: column;
       align-items: center;
-    }
-
-    .stats-section {
-      grid-template-columns: 1fr;
-      padding: 2rem 1rem;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
     }
 
     .feature-grid {
@@ -915,33 +839,13 @@ import TerminalCarousel from './TerminalCarousel.astro';
       width: auto;
     }
 
-    .dont-use-section {
+    .dogfood-section {
       padding: 3rem 1rem;
     }
 
-    .dont-use-section h2 {
-      font-size: 1.75rem;
-    }
-
-    .dont-use-intro {
+    .dogfood-quote {
       font-size: 1rem;
-    }
-
-    .dont-use-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .shift-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .paradigm-contrast {
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .paradigm-arrow {
-      transform: rotate(90deg);
+      padding: 1rem 1.25rem;
     }
   }
 
@@ -987,22 +891,6 @@ import TerminalCarousel from './TerminalCarousel.astro';
     line-height: 1.6;
   }
 
-  .shift-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto 3rem;
-  }
-
-  .shift-card {
-    background: #171717;
-    border: 1px solid #262626;
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-
   .shift-card:hover {
     border-color: #404040;
     transform: translateY(-2px);
@@ -1039,112 +927,6 @@ import TerminalCarousel from './TerminalCarousel.astro';
     line-height: 1.5;
   }
 
-  .paradigm-contrast {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .old-paradigm, .new-paradigm {
-    flex: 1;
-    padding: 1.5rem;
-    border-radius: 12px;
-  }
-
-  .old-paradigm {
-    background: rgba(107, 114, 128, 0.1);
-    border: 1px solid #374151;
-  }
-
-  .new-paradigm {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid #10b981;
-  }
-
-  .paradigm-label {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-  }
-
-  .old-paradigm .paradigm-label {
-    color: #6b7280;
-  }
-
-  .new-paradigm .paradigm-label {
-    color: #10b981;
-  }
-
-  .paradigm-contrast h4 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-  }
-
-  .old-paradigm h4 {
-    color: #9ca3af;
-  }
-
-  .new-paradigm h4 {
-    color: #f9fafb;
-  }
-
-  .paradigm-contrast ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .paradigm-contrast li {
-    font-size: 0.9rem;
-    padding: 0.25rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .old-paradigm li {
-    color: #6b7280;
-  }
-
-  .old-paradigm li::before {
-    content: "×";
-    color: #6b7280;
-    font-weight: bold;
-  }
-
-  .new-paradigm li {
-    color: #d1d5db;
-  }
-
-  .new-paradigm li::before {
-    content: "✓";
-    color: #10b981;
-    font-weight: bold;
-  }
-
-  .paradigm-arrow {
-    flex-shrink: 0;
-  }
-
-  .paradigm-arrow svg {
-    width: 32px;
-    height: 32px;
-    color: #10b981;
-  }
-
-  @media (max-width: 900px) {
-    .shift-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
   @media (max-width: 600px) {
     .vision-section h2 {
       font-size: 1.75rem;
@@ -1152,18 +934,6 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
     .vision-intro {
       font-size: 1rem;
-    }
-
-    .shift-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .paradigm-contrast {
-      flex-direction: column;
-    }
-
-    .paradigm-arrow {
-      transform: rotate(90deg);
     }
   }
 </style>

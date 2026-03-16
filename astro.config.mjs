@@ -11,12 +11,12 @@ export default defineConfig({
 		starlight({
 			plugins: [starlightClientMermaid()],
 			title: 'RTMX',
-			description: 'Requirements Traceability Matrix for Python - AI-native test traceability',
+			description: 'The intent layer for agentic engineering. Requirements, tests, and traceability — integrated directly into the agentic engineering lifecycle.',
 			expressiveCode: {
 				frames: false,
 			},
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/rtmx-ai/rtmx' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/rtmx-ai/rtmx-go' },
 			],
 			logo: {
 				light: './src/assets/rtmx-logo-light.svg',
@@ -40,8 +40,8 @@ export default defineConfig({
 					// Also append slogan to browser tab title (not visible header)
 					tag: 'script',
 					content: `document.documentElement.dataset.theme = 'dark';
-						if (!document.title.includes('Build It Right')) {
-							document.title = document.title.replace(/RTMX/, 'RTMX | Build It Right');
+						if (!document.title.includes('Intent for AI')) {
+							document.title = document.title.replace(/RTMX/, 'RTMX | Intent for AI');
 						}`,
 				},
 				{

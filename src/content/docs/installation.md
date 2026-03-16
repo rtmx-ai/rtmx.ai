@@ -3,24 +3,25 @@ title: Installation
 description: Install RTMX and set up your project
 ---
 
-## Requirements
+## Install RTMX
 
-- Python 3.10 or higher
-- pip or pipx
-
-## Install from PyPI
+### macOS / Linux (Homebrew)
 
 ```bash
-pip install rtmx
+brew install rtmx-ai/tap/rtmx
 ```
 
-Or with pipx for isolated installation:
+### Debian / Ubuntu
 
 ```bash
-pipx install rtmx
+apt install rtmx
 ```
 
-## Verify Installation
+### Direct Binary
+
+Download the latest binary for your platform from [GitHub Releases](https://github.com/rtmx-ai/rtmx-go/releases).
+
+### Verify Installation
 
 ```bash
 rtmx --version
@@ -31,16 +32,21 @@ rtmx --version
 For contributing to RTMX:
 
 ```bash
-git clone https://github.com/rtmx-ai/rtmx.git
-cd rtmx
-make dev      # Install with dev dependencies
-make test     # Run tests
-make lint     # Run linter
+git clone https://github.com/rtmx-ai/rtmx-go.git
+cd rtmx-go
+make build     # Build from source
+make test      # Run tests
 ```
 
-## Optional Dependencies
+## Python Distribution
 
-RTMX has optional features that require additional packages:
+RTMX is also available as a Python package with additional integrations:
+
+```bash
+pip install rtmx
+```
+
+### Optional Python Dependencies
 
 ```bash
 # GitHub integration

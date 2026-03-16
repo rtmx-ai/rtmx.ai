@@ -18,3 +18,9 @@ Thumbs.db
 
 # Astro
 .astro/
+
+# Python
+.venv/
+
+# RTMX
+.rtmx/
