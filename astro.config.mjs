@@ -11,6 +11,10 @@ export default defineConfig({
 		starlight({
 			plugins: [starlightClientMermaid()],
 			title: 'RTMX',
+			components: {
+				// REQ-SITE-024: Use proper Astro component for header navigation
+				Header: './src/components/Header.astro',
+			},
 			description: 'The intent layer for agentic engineering. Requirements, tests, and traceability — integrated directly into the agentic engineering lifecycle.',
 			expressiveCode: {
 				frames: false,
@@ -83,29 +87,6 @@ export default defineConfig({
 								skipLink.textContent = 'Skip to content';
 								document.body.insertBefore(skipLink, document.body.firstChild);
 							}
-
-							const header = document.querySelector('header.header');
-							if (!header) return;
-
-							// Check if we already added nav (avoid duplicates)
-							if (header.querySelector('.header-nav')) return;
-
-							// Find the title wrapper to insert nav links inside it
-							const titleWrapper = header.querySelector('.title-wrapper');
-							if (!titleWrapper) return;
-
-							// Create simple nav links
-							const nav = document.createElement('nav');
-							nav.className = 'header-nav';
-							nav.innerHTML = \`
-								<a href="/quickstart" class="header-nav-link">Docs</a>
-								<a href="/roadmap" class="header-nav-link">Roadmap</a>
-								<a href="/pricing" class="header-nav-link">Pricing</a>
-								<a href="/about" class="header-nav-link">About</a>
-							\`;
-
-							// Append nav inside the title wrapper
-							titleWrapper.appendChild(nav);
 						});
 					`,
 				},
