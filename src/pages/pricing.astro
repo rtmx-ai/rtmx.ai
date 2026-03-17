@@ -99,8 +99,6 @@ const tiers = [
       <p>Be the first to know when RTMX Sync launches.</p>
       <form
         id="waitlist-form"
-        action="https://api.hsforms.com/submissions/v3/integration/submit/245567280/2e0b417f-2e5c-4cc8-8441-b1982aac6638"
-        method="POST"
         class="waitlist-form"
         novalidate
       >
@@ -627,10 +625,25 @@ const tiers = [
     formMessage.className = 'form-message';
 
     try {
-      const response = await fetch(form.action, {
+      // Get reCAPTCHA token
+      const token = await new Promise<string>((resolve, reject) => {
+        if (typeof grecaptcha === 'undefined') {
+          reject(new Error('reCAPTCHA not loaded'));
+          return;
+        }
+        grecaptcha.ready(() => {
+          grecaptcha.execute('6Lf3wo0sAAAAAP0s-L9egQRxzjZOqpjh9N9nulVM', { action: 'waitlist' })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
+
+      const response = await fetch('https://rtmx-forms.workers.dev/api/form-submit', {
         method: 'POST',
         body: JSON.stringify({
-          fields: [{ name: 'email', value: emailInput.value }],
+          formId: '2e0b417f-2e5c-4cc8-8441-b1982aac6638',
+          email: emailInput.value.trim(),
+          recaptchaToken: token,
         }),
         headers: { 'Content-Type': 'application/json' },
       });

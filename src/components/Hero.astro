@@ -343,11 +343,28 @@ import TerminalCarousel from './TerminalCarousel.astro';
       btn.disabled = true;
       btn.textContent = 'Submitting...';
       try {
+        // Get reCAPTCHA token
+        const token = await new Promise((resolve, reject) => {
+          if (typeof grecaptcha === 'undefined') {
+            reject(new Error('reCAPTCHA not loaded'));
+            return;
+          }
+          grecaptcha.ready(() => {
+            grecaptcha.execute('6Lf3wo0sAAAAAP0s-L9egQRxzjZOqpjh9N9nulVM', { action: 'newsletter' })
+              .then(resolve)
+              .catch(reject);
+          });
+        });
+
         const res = await fetch(
-          'https://api.hsforms.com/submissions/v3/integration/submit/245567280/c615fe10-5da1-4b75-aacd-cea7b476d3d3',
+          'https://rtmx-forms.workers.dev/api/form-submit',
           {
             method: 'POST',
-            body: JSON.stringify({ fields: [{ name: 'email', value: email.value }] }),
+            body: JSON.stringify({
+              formId: 'c615fe10-5da1-4b75-aacd-cea7b476d3d3',
+              email: email.value,
+              recaptchaToken: token,
+            }),
             headers: { 'Content-Type': 'application/json' },
           }
         );

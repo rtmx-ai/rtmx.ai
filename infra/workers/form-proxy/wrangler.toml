@@ -1,0 +1,16 @@
+name = "rtmx-forms"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "ff3eb41dd224ff324f1e2cd0b92e6b95"
+
+# Custom domain - requires rtmx.ai zone in Cloudflare
+# Uncomment when DNS is configured:
+# routes = [{ pattern = "forms.rtmx.ai/*", zone_name = "rtmx.ai" }]
+
+[vars]
+HUBSPOT_PORTAL_ID = "245567280"
+RECAPTCHA_SCORE_THRESHOLD = "0.5"
+ALLOWED_ORIGIN = "https://rtmx.ai"
+
+# Secrets (set via `wrangler secret put`):
+# RECAPTCHA_SECRET_KEY

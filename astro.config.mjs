@@ -33,6 +33,13 @@ export default defineConfig({
 			defaultLocale: 'en',
 			head: [
 				{
+					tag: 'script',
+					attrs: {
+						src: 'https://www.google.com/recaptcha/api.js?render=6Lf3wo0sAAAAAP0s-L9egQRxzjZOqpjh9N9nulVM',
+						async: true,
+					},
+				},
+				{
 					tag: 'meta',
 					attrs: {
 						name: 'theme-color',
