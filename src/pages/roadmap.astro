@@ -156,7 +156,7 @@ function getStatusLabel(status: string): string {
   }
 
   .roadmap-page {
-    background: #0a0a0a;
+    background: var(--rtmx-bg);
     min-height: 100vh;
     width: 100%;
   }
@@ -170,7 +170,7 @@ function getStatusLabel(status: string): string {
     font-size: 3rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -178,7 +178,7 @@ function getStatusLabel(status: string): string {
 
   .roadmap-subtitle {
     font-size: 1.25rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     max-width: 600px;
     margin: 0 auto 2rem;
     line-height: 1.6;
@@ -188,8 +188,8 @@ function getStatusLabel(status: string): string {
     max-width: 500px;
     margin: 0 auto;
     padding: 1.5rem;
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 1rem;
   }
 
@@ -204,17 +204,17 @@ function getStatusLabel(status: string): string {
   .progress-number {
     font-size: 3rem;
     font-weight: 700;
-    color: #10b981;
+    color: var(--rtmx-emerald);
   }
 
   .progress-label {
     font-size: 1.25rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
   }
 
   .progress-bar-container {
     height: 12px;
-    background: #262626;
+    background: var(--rtmx-border);
     border-radius: 6px;
     overflow: hidden;
     margin-bottom: 0.75rem;
@@ -222,14 +222,14 @@ function getStatusLabel(status: string): string {
 
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #10b981 0%, #6ee7b7 100%);
+    background: linear-gradient(90deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
     border-radius: 6px;
     transition: width 0.3s ease;
   }
 
   .progress-counts {
     text-align: center;
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
     font-size: 0.9rem;
   }
 
@@ -246,20 +246,20 @@ function getStatusLabel(status: string): string {
   }
 
   .phase-card {
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 0.75rem;
     padding: 1.25rem;
     transition: border-color 0.2s ease, transform 0.2s ease;
   }
 
   .phase-card:hover {
-    border-color: #404040;
+    border-color: var(--rtmx-border-hover);
     transform: translateY(-2px);
   }
 
   .phase-card.status-complete {
-    border-left: 3px solid #10b981;
+    border-left: 3px solid var(--rtmx-emerald);
   }
 
   .phase-card.status-progress {
@@ -267,7 +267,7 @@ function getStatusLabel(status: string): string {
   }
 
   .phase-card.status-planned {
-    border-left: 3px solid #6b7280;
+    border-left: 3px solid var(--rtmx-text-dim);
   }
 
   .phase-header {
@@ -279,7 +279,7 @@ function getStatusLabel(status: string): string {
 
   .phase-number {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -295,7 +295,7 @@ function getStatusLabel(status: string): string {
 
   .status-badge.status-complete {
     background: rgba(16, 185, 129, 0.2);
-    color: #10b981;
+    color: var(--rtmx-emerald);
   }
 
   .status-badge.status-progress {
@@ -305,13 +305,13 @@ function getStatusLabel(status: string): string {
 
   .status-badge.status-planned {
     background: rgba(107, 114, 128, 0.2);
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
   }
 
   .phase-name {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     margin: 0 0 1rem 0;
   }
 
@@ -324,21 +324,21 @@ function getStatusLabel(status: string): string {
   .phase-bar-container {
     flex: 1;
     height: 6px;
-    background: #262626;
+    background: var(--rtmx-border);
     border-radius: 3px;
     overflow: hidden;
   }
 
   .phase-bar-fill {
     height: 100%;
-    background: #10b981;
+    background: var(--rtmx-emerald);
     border-radius: 3px;
     transition: width 0.3s ease;
   }
 
   .phase-stats {
     font-size: 0.8rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     white-space: nowrap;
   }
 
@@ -355,8 +355,8 @@ function getStatusLabel(status: string): string {
     justify-content: center;
     gap: 1.5rem;
     padding: 1rem 2rem;
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 0.5rem;
   }
 
@@ -364,7 +364,7 @@ function getStatusLabel(status: string): string {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 0.9rem;
     white-space: nowrap;
   }
@@ -376,7 +376,7 @@ function getStatusLabel(status: string): string {
   }
 
   .legend-dot.status-complete {
-    background: #10b981;
+    background: var(--rtmx-emerald);
   }
 
   .legend-dot.status-progress {
@@ -384,25 +384,25 @@ function getStatusLabel(status: string): string {
   }
 
   .legend-dot.status-planned {
-    background: #6b7280;
+    background: var(--rtmx-text-dim);
   }
 
   .cta-section {
     text-align: center;
     padding: 3rem 2rem;
     background: #0f0f0f;
-    border-top: 1px solid #262626;
+    border-top: 1px solid var(--rtmx-border);
     margin-top: 2rem;
   }
 
   .cta-section h2 {
     font-size: 1.75rem;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     margin: 0 0 0.5rem 0;
   }
 
   .cta-section > p {
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     margin: 0 0 1.5rem 0;
     max-width: 500px;
     margin-left: auto;
@@ -426,18 +426,18 @@ function getStatusLabel(status: string): string {
   }
 
   .cta-button.primary {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
   }
 
   .cta-button.primary:hover {
-    background: #6ee7b7;
+    background: var(--rtmx-emerald-light);
   }
 
   .cta-button.secondary {
     background: transparent;
-    color: #10b981;
-    border: 1px solid #10b981;
+    color: var(--rtmx-emerald);
+    border: 1px solid var(--rtmx-emerald);
   }
 
   .cta-button.secondary:hover {
@@ -447,17 +447,17 @@ function getStatusLabel(status: string): string {
   .roadmap-footer {
     padding: 2rem;
     text-align: center;
-    border-top: 1px solid #262626;
+    border-top: 1px solid var(--rtmx-border);
   }
 
   .roadmap-footer p {
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
     font-size: 0.9rem;
     margin: 0;
   }
 
   .roadmap-footer a {
-    color: #10b981;
+    color: var(--rtmx-emerald);
     text-decoration: none;
   }
 

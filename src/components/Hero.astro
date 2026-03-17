@@ -328,8 +328,8 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .shift-card {
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 12px;
     padding: 1.5rem;
     transition: border-color 0.2s ease, transform 0.2s ease;
@@ -353,7 +353,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .dogfood-card {
     background: #0d0d0d;
-    border: 1px solid #1f1f1f;
+    border: 1px solid var(--rtmx-bg-elevated);
     border-radius: 0.75rem;
     padding: 1.5rem;
     text-align: center;
@@ -373,14 +373,14 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .hero-header {
     text-align: center;
     padding: 4rem 2rem 2rem;
-    background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%);
+    background: linear-gradient(180deg, var(--rtmx-bg) 0%, #0f0f0f 100%);
   }
 
   .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -388,7 +388,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .hero-subtitle {
     font-size: 1.25rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     margin-bottom: 1rem;
     max-width: 850px;
     margin-left: auto;
@@ -398,7 +398,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .hero-ucp {
     font-size: 1rem;
-    color: #10b981;
+    color: var(--rtmx-emerald);
     font-weight: 600;
     margin-bottom: 2rem;
     max-width: 850px;
@@ -425,28 +425,28 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .hero-button.primary {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
   }
 
   .hero-button.primary:hover {
-    background: #6ee7b7;
+    background: var(--rtmx-emerald-light);
   }
 
   .hero-button.secondary {
     background: transparent;
-    color: #10b981;
-    border: 2px solid #10b981;
+    color: var(--rtmx-emerald);
+    border: 2px solid var(--rtmx-emerald);
   }
 
   .hero-button.secondary:hover {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
   }
 
   .github-button {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
     font-weight: 700;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -458,7 +458,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .github-button:hover {
-    background: #6ee7b7;
+    background: var(--rtmx-emerald-light);
     transform: translateY(-2px);
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
   }
@@ -494,8 +494,8 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .feature-card {
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 0.75rem;
     padding: 1.5rem;
     transition: border-color 0.2s ease, transform 0.2s ease;
@@ -506,25 +506,25 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .feature-card:hover {
-    border-color: #10b981;
+    border-color: var(--rtmx-emerald);
     transform: translateY(-2px);
   }
 
   .feature-card h3 {
-    color: #f9fafb;
+    color: var(--rtmx-text);
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
   }
 
   .feature-card p {
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
   }
 
   .feature-card code {
-    background: #262626;
+    background: var(--rtmx-border);
     color: #e5e7eb;
     padding: 0.15em 0.4em;
     border-radius: 0.25rem;
@@ -553,7 +553,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     top: -10px;
     right: 1rem;
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: #0a0a0a;
+    color: var(--rtmx-bg);
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.25rem 0.75rem;
@@ -567,7 +567,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     display: block;
     font-size: 0.7rem;
     font-weight: 400;
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
     text-transform: none;
     letter-spacing: 0;
     margin-top: 0.25rem;
@@ -579,7 +579,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .comparison-note {
     text-align: center;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 0.9rem;
     max-width: 700px;
     margin: 1.5rem auto 0;
@@ -587,25 +587,25 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .comparison-note em {
-    color: #10b981;
+    color: var(--rtmx-emerald);
     font-style: italic;
   }
 
   /* Comparison Section */
   .comparison-section {
     padding: 4rem 2rem;
-    background: #0a0a0a;
+    background: var(--rtmx-bg);
   }
 
   .comparison-section h2 {
-    color: #f9fafb;
+    color: var(--rtmx-text);
     text-align: center;
     margin-bottom: 0.75rem;
     font-size: 1.75rem;
   }
 
   .comparison-subtitle {
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.1rem;
@@ -620,7 +620,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .comparison-table {
     width: 100%;
     border-collapse: collapse;
-    background: #171717;
+    background: var(--rtmx-bg-card);
     border-radius: 0.5rem;
     overflow: hidden;
     table-layout: fixed;
@@ -630,7 +630,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .comparison-table td {
     padding: 1rem;
     text-align: center;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid var(--rtmx-border);
     font-size: 0.9rem;
     vertical-align: middle;
   }
@@ -648,7 +648,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .comparison-table th {
     background: #0f0f0f;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -665,7 +665,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .comparison-table .cross {
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
   }
 
   .comparison-table .partial {
@@ -682,17 +682,17 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .site-footer {
     padding: 2rem;
     text-align: center;
-    border-top: 1px solid #262626;
-    background: #0a0a0a;
+    border-top: 1px solid var(--rtmx-border);
+    background: var(--rtmx-bg);
   }
 
   .site-footer p {
-    color: #6b7280;
+    color: var(--rtmx-text-dim);
     font-size: 0.9rem;
   }
 
   .site-footer a {
-    color: #10b981;
+    color: var(--rtmx-emerald);
     text-decoration: none;
   }
 
@@ -704,12 +704,12 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .dogfood-section {
     background: #070707;
     padding: 4rem 2rem;
-    border-top: 1px solid #262626;
+    border-top: 1px solid var(--rtmx-border);
   }
 
   .dogfood-intro {
     text-align: center;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 1.15rem;
     max-width: 800px;
     margin: 0 auto 3rem;
@@ -720,7 +720,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     display: block;
     font-size: 3rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -729,7 +729,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .dogfood-label {
     display: block;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -738,7 +738,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .dogfood-card p {
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 0.85rem;
     line-height: 1.5;
     margin: 0;
@@ -753,7 +753,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     margin: 0 auto 2rem;
     line-height: 1.7;
     padding: 1.5rem 2rem;
-    border-left: 3px solid #10b981;
+    border-left: 3px solid var(--rtmx-emerald);
     background: rgba(16, 185, 129, 0.05);
     border-radius: 0 0.5rem 0.5rem 0;
     text-align: left;
@@ -763,7 +763,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     text-align: center;
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #1f1f1f;
+    border-top: 1px solid var(--rtmx-bg-elevated);
     display: flex;
     gap: 1rem;
     justify-content: center;
@@ -771,14 +771,14 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .still-reading .hero-button.primary {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
     padding: 0.875rem 2rem;
     font-size: 1rem;
   }
 
   .still-reading .hero-button.primary:hover {
-    background: #6ee7b7;
+    background: var(--rtmx-emerald-light);
   }
 
   /* Responsive */
@@ -866,7 +866,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
     display: inline-block;
     padding: 0.25rem 0.75rem;
     background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
+    color: var(--rtmx-emerald);
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -878,21 +878,21 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .vision-section h2 {
     font-size: 2.25rem;
     font-weight: 700;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     margin: 0;
   }
 
   .vision-intro {
     text-align: center;
     font-size: 1.25rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     max-width: 800px;
     margin: 0 auto 3rem;
     line-height: 1.6;
   }
 
   .shift-card:hover {
-    border-color: #404040;
+    border-color: var(--rtmx-border-hover);
     transform: translateY(-2px);
   }
 
@@ -910,19 +910,19 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .shift-icon svg {
     width: 24px;
     height: 24px;
-    color: #10b981;
+    color: var(--rtmx-emerald);
   }
 
   .shift-card h3 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #f9fafb;
+    color: var(--rtmx-text);
     margin: 0 0 0.5rem 0;
   }
 
   .shift-card p {
     font-size: 0.9rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     margin: 0;
     line-height: 1.5;
   }
