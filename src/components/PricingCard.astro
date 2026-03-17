@@ -38,8 +38,8 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
 
 <style is:global>
   .pricing-card {
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
     border-radius: 1rem;
     padding: 2rem;
     padding-top: 2.5rem;
@@ -51,15 +51,15 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
   }
 
   .pricing-card:hover {
-    border-color: #404040;
+    border-color: var(--rtmx-border-hover);
   }
 
   .pricing-card.popular {
-    border-color: #10b981;
+    border-color: var(--rtmx-emerald);
   }
 
   .pricing-card.popular:hover {
-    border-color: #10b981;
+    border-color: var(--rtmx-emerald);
   }
 
   .popular-badge {
@@ -67,8 +67,8 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
     font-size: 0.75rem;
     font-weight: 700;
     padding: 0.25rem 1rem;
@@ -79,7 +79,7 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
   }
 
   .card-name {
-    color: #f9fafb;
+    color: var(--rtmx-text);
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
@@ -95,16 +95,16 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
   .price {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #f9fafb;
+    color: var(--rtmx-text);
   }
 
   .period {
     font-size: 1rem;
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
   }
 
   .card-description {
-    color: #9ca3af;
+    color: var(--rtmx-text-muted);
     font-size: 0.95rem;
     margin: 0 0 1.5rem 0;
     line-height: 1.5;
@@ -131,7 +131,7 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
     width: 18px;
     height: 18px;
     flex-shrink: 0;
-    color: #10b981;
+    color: var(--rtmx-emerald);
     margin-top: 2px;
   }
 
@@ -146,22 +146,22 @@ const { name, price, period, description, features, cta, ctaHref, popular } = As
   }
 
   .cta-button.primary {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
   }
 
   .cta-button.primary:hover {
-    background: #6ee7b7;
+    background: var(--rtmx-emerald-light);
   }
 
   .cta-button.secondary {
     background: transparent;
-    color: #10b981;
-    border: 2px solid #10b981;
+    color: var(--rtmx-emerald);
+    border: 2px solid var(--rtmx-emerald);
   }
 
   .cta-button.secondary:hover {
-    background: #10b981;
-    color: #0a0a0a;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
   }
 </style>

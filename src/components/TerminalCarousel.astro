@@ -110,7 +110,14 @@ const terminals = [
   <h2>See It In Action</h2>
 
   <div class="carousel-container" tabindex="0" role="region" aria-label="Terminal demo carousel - use arrow keys to navigate">
-    <button class="carousel-nav prev" aria-label="Previous">
+    <div
+      class="carousel-live-region"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <button class="carousel-nav prev" aria-label="Previous slide">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M15 19l-7-7 7-7"/>
       </svg>
@@ -118,7 +125,13 @@ const terminals = [
 
     <div class="carousel-track">
       {terminals.map((term, index) => (
-        <div class="carousel-slide" data-index={index}>
+        <div
+          class="carousel-slide"
+          data-index={index}
+          role="tabpanel"
+          aria-label={term.title}
+          aria-roledescription="slide"
+        >
           <AnimatedTerminal
             id={term.id}
             title={term.title}
@@ -130,19 +143,21 @@ const terminals = [
       ))}
     </div>
 
-    <button class="carousel-nav next" aria-label="Next">
+    <button class="carousel-nav next" aria-label="Next slide">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M9 5l7 7-7 7"/>
       </svg>
     </button>
   </div>
 
-  <div class="carousel-dots">
+  <div class="carousel-dots" role="tablist" aria-label="Terminal demo slides">
     {terminals.map((term, index) => (
       <button
         class={`dot ${index === 0 ? 'active' : ''}`}
         data-index={index}
-        aria-label={`Go to ${term.title}`}
+        role="tab"
+        aria-selected={index === 0 ? 'true' : 'false'}
+        aria-label={`Go to ${term.title}, slide ${index + 1} of ${terminals.length}`}
       />
     ))}
   </div>
@@ -151,14 +166,24 @@ const terminals = [
 <style is:global>
   .carousel-section {
     padding: 5rem 2rem;
-    background: #0a0a0a;
+    background: var(--rtmx-bg);
   }
 
   .carousel-section h2 {
-    color: #f9fafb;
+    color: var(--rtmx-text);
     text-align: center;
     margin-bottom: 3rem;
     font-size: 2.25rem;
+  }
+
+  .carousel-live-region {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .carousel-container {
@@ -167,6 +192,7 @@ const terminals = [
     gap: 1.5rem;
     max-width: 1000px;
     margin: 0 auto;
+    position: relative;
   }
 
   .carousel-nav {
@@ -174,9 +200,9 @@ const terminals = [
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #171717;
-    border: 1px solid #262626;
-    color: #9ca3af;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
+    color: var(--rtmx-text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -185,9 +211,9 @@ const terminals = [
   }
 
   .carousel-nav:hover {
-    background: #262626;
-    color: #10b981;
-    border-color: #10b981;
+    background: var(--rtmx-border);
+    color: var(--rtmx-emerald);
+    border-color: var(--rtmx-emerald);
   }
 
   .carousel-nav svg {
@@ -217,7 +243,7 @@ const terminals = [
 
   .slide-caption {
     text-align: center;
-    color: #10b981;
+    color: var(--rtmx-emerald);
     margin-top: 1.5rem;
     font-size: 1.25rem;
     font-weight: 600;
@@ -238,7 +264,7 @@ const terminals = [
     min-width: 10px;
     min-height: 10px;
     border-radius: 50%;
-    background: #404040;
+    background: var(--rtmx-border-hover);
     border: none;
     padding: 0;
     margin: 0;
@@ -253,11 +279,11 @@ const terminals = [
   }
 
   .dot:hover {
-    background: #6b7280;
+    background: var(--rtmx-text-dim);
   }
 
   .dot.active {
-    background: #10b981;
+    background: var(--rtmx-emerald);
   }
 
   @media (max-width: 768px) {
@@ -281,6 +307,7 @@ const terminals = [
     const dots = document.querySelectorAll('.carousel-dots .dot');
     const prevBtn = document.querySelector('.carousel-nav.prev');
     const nextBtn = document.querySelector('.carousel-nav.next');
+    const liveRegion = document.querySelector('.carousel-live-region');
 
     let currentIndex = 0;
     let autoplayInterval;
@@ -297,15 +324,22 @@ const terminals = [
         slide.classList.toggle('active', i === currentIndex);
       });
 
-      // Update dots
+      // Update dots: visual state and aria-selected
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === currentIndex);
+        dot.setAttribute('aria-selected', i === currentIndex ? 'true' : 'false');
       });
 
       // Trigger animation restart for the active terminal
       const activeTerminal = slides[currentIndex].querySelector('.animated-terminal');
       if (activeTerminal) {
         activeTerminal.dispatchEvent(new Event('restart'));
+      }
+
+      // Announce slide change to screen readers via ARIA live region
+      if (liveRegion) {
+        const slideLabel = slides[currentIndex].getAttribute('aria-label') || '';
+        liveRegion.textContent = `Slide ${currentIndex + 1} of ${slides.length}: ${slideLabel}`;
       }
     }
 

@@ -59,6 +59,7 @@ const { id, title, command, lines } = Astro.props;
 </div>
 
 <style is:global>
+  /* Component-specific styles only; shared terminal styles are in custom.css */
   .animated-terminal {
     background: #1a1a1a;
     border-radius: 12px;
@@ -69,76 +70,52 @@ const { id, title, command, lines } = Astro.props;
     margin: 0 auto;
   }
 
-  .terminal-header {
-    background: linear-gradient(180deg, #3d3d3d 0%, #2d2d2d 100%);
+  /* AnimatedTerminal overrides for larger sizing */
+  .animated-terminal .terminal-header {
     padding: 12px 16px;
-    display: flex;
-    align-items: center;
     gap: 12px;
   }
 
-  .terminal-buttons {
-    display: flex;
+  .animated-terminal .terminal-buttons {
     gap: 8px;
   }
 
-  .terminal-btn {
+  .animated-terminal .terminal-btn {
     width: 14px;
     height: 14px;
-    border-radius: 50%;
   }
 
-  .terminal-btn.close { background: #ff5f56; }
-  .terminal-btn.minimize { background: #ffbd2e; }
-  .terminal-btn.maximize { background: #27ca40; }
-
-  .terminal-title {
-    flex: 1;
-    text-align: center;
-    color: #9ca3af;
+  .animated-terminal .terminal-title {
     font-size: 0.85rem;
-    font-family: system-ui, -apple-system, sans-serif;
   }
 
-  .terminal-spacer {
+  .animated-terminal .terminal-spacer {
     width: 62px;
   }
 
-  .terminal-body {
+  .animated-terminal .terminal-body {
     padding: 16px 20px 20px;
-    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;
     font-size: 14px;
     line-height: 1.25;
     height: 450px;
     overflow-y: hidden;
-    overflow-x: auto;
     /* Hide scrollbar but keep functionality */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
   }
 
-  .terminal-body::-webkit-scrollbar {
+  .animated-terminal .terminal-body::-webkit-scrollbar {
     display: none; /* Chrome/Safari */
   }
 
-  .terminal-prompt {
-    display: flex;
+  .animated-terminal .terminal-prompt {
     align-items: center;
     gap: 10px;
-    margin-bottom: 8px;
   }
 
-  .prompt-symbol {
-    color: #10b981;
-    font-weight: bold;
-  }
-
-  .prompt-command {
-    color: #60a5fa;
-  }
-
+  /* Animation-specific styles */
   .cursor {
-    color: #10b981;
+    color: var(--rtmx-emerald);
     animation: blink 1s step-end infinite;
   }
 
@@ -180,33 +157,33 @@ const { id, title, command, lines } = Astro.props;
       border-radius: 8px;
     }
 
-    .terminal-header {
+    .animated-terminal .terminal-header {
       padding: 10px 12px;
     }
 
-    .terminal-btn {
+    .animated-terminal .terminal-btn {
       width: 12px;
       height: 12px;
     }
 
-    .terminal-title {
+    .animated-terminal .terminal-title {
       font-size: 0.75rem;
     }
 
-    .terminal-body {
+    .animated-terminal .terminal-body {
       padding: 12px 16px 16px;
       font-size: 12px;
       height: 380px;
     }
 
-    .terminal-prompt {
+    .animated-terminal .terminal-prompt {
       gap: 8px;
       margin-bottom: 6px;
     }
   }
 
   @media (max-width: 480px) {
-    .terminal-body {
+    .animated-terminal .terminal-body {
       font-size: 11px;
       height: 340px;
       padding: 10px 12px 14px;

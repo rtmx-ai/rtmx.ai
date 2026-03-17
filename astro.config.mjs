@@ -101,6 +101,7 @@ export default defineConfig({
 								<a href="/quickstart" class="header-nav-link">Docs</a>
 								<a href="/roadmap" class="header-nav-link">Roadmap</a>
 								<a href="/pricing" class="header-nav-link">Pricing</a>
+								<a href="/about" class="header-nav-link">About</a>
 							\`;
 
 							// Append nav inside the title wrapper

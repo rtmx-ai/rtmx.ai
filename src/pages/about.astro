@@ -1,0 +1,298 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'About', template: 'splash', hero: { tagline: '' } }}>
+  <div class="about-page">
+    <section class="about-header">
+      <h1>About RTMX</h1>
+      <p class="about-subtitle">
+        The people and principles behind the intent layer for agentic engineering.
+      </p>
+    </section>
+
+    <section class="about-section">
+      <h2>Company</h2>
+      <p>
+        RTMX is built by <strong>ioTACTICAL LLC</strong>, an engineering company focused on
+        developer tools for AI-driven development and regulated industries. We build software
+        that helps teams maintain engineering discipline as they adopt agentic workflows.
+      </p>
+    </section>
+
+    <section class="about-section">
+      <h2>Founder</h2>
+      <div class="founder-card">
+        <div class="founder-info">
+          <h3>Ryan McLean</h3>
+          <p>
+            Ryan's background spans federal engineering and defense software, including work on
+            <strong>TAK.gov</strong> (Android Tactical Assault Kit) — the U.S. military's
+            situational awareness platform. That experience building mission-critical software
+            under strict traceability requirements shaped the design philosophy behind RTMX.
+          </p>
+          <p>
+            Now he's building tools for agentic engineering — giving development teams the
+            infrastructure to keep AI agents accountable to human intent.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section mission-section">
+      <h2>Mission</h2>
+      <blockquote class="mission-quote">
+        "We believe the shift to AI-driven development needs better engineering discipline, not
+        less. RTMX exists to make AI agents accountable to human intent."
+      </blockquote>
+    </section>
+
+    <section class="about-section">
+      <h2>Open Source</h2>
+      <p>
+        RTMX is licensed under <strong>Apache 2.0</strong> and built in public. Our
+        requirements traceability matrix is managed by RTMX itself — we use the tool to build
+        the tool. You can follow our progress on the
+        <a href="/roadmap">Roadmap</a> or browse the source on
+        <a href="https://github.com/rtmx-ai/rtmx-go">GitHub</a>.
+      </p>
+    </section>
+
+    <section class="contact-section">
+      <h2>Contact</h2>
+      <div class="contact-grid not-content">
+        <div class="contact-item">
+          <h3>Technical</h3>
+          <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
+          <p>Engineering questions, bug reports, and integrations.</p>
+        </div>
+        <div class="contact-item">
+          <h3>Enterprise</h3>
+          <a href="mailto:sales@rtmx.ai">sales@rtmx.ai</a>
+          <p>On-prem deployment, compliance, and volume licensing.</p>
+        </div>
+        <div class="contact-item">
+          <h3>Support</h3>
+          <a href="mailto:help@rtmx.ai">help@rtmx.ai</a>
+          <p>General help, account issues, and documentation feedback.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="about-footer">
+      <p>
+        <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
+      </p>
+    </footer>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  /* Hide Starlight's default hero/title for about page */
+  .hero,
+  main > header,
+  .content-panel > header,
+  [aria-label="Main"] > header {
+    display: none !important;
+  }
+
+  .main-pane,
+  .content-panel {
+    padding: 0 !important;
+    padding-block: 0 !important;
+  }
+
+  .sl-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .about-page {
+    background: #0a0a0a;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  .about-header {
+    text-align: center;
+    padding: 3rem 2rem 2rem;
+  }
+
+  .about-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .about-subtitle {
+    font-size: 1.25rem;
+    color: #9ca3af;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .about-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 2rem 0;
+  }
+
+  .about-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f9fafb;
+    margin: 0 0 1rem 0;
+  }
+
+  .about-section p {
+    color: #9ca3af;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0 0 1rem 0;
+  }
+
+  .about-section strong {
+    color: #e5e7eb;
+  }
+
+  .about-section a {
+    color: #10b981;
+    text-decoration: none;
+  }
+
+  .about-section a:hover {
+    text-decoration: underline;
+  }
+
+  .founder-card {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .founder-info h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f9fafb;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .founder-info p {
+    color: #9ca3af;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .founder-info p:last-child {
+    margin-bottom: 0;
+  }
+
+  .mission-quote {
+    background: #171717;
+    border-left: 3px solid #10b981;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.5rem;
+    margin: 0;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #d1d5db;
+    line-height: 1.7;
+  }
+
+  .contact-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 2rem 3rem;
+  }
+
+  .contact-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f9fafb;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .contact-item {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .contact-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f9fafb;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .contact-item a {
+    color: #10b981;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .contact-item a:hover {
+    text-decoration: underline;
+  }
+
+  .contact-item p {
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0.5rem 0 0 0;
+  }
+
+  .about-footer {
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid #262626;
+  }
+
+  .about-footer p {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .about-footer a {
+    color: #10b981;
+    text-decoration: none;
+  }
+
+  .about-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .about-header h1 {
+      font-size: 2.25rem;
+    }
+
+    .about-subtitle {
+      font-size: 1rem;
+    }
+
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
