@@ -322,11 +322,48 @@ import TerminalCarousel from './TerminalCarousel.astro';
 <section class="email-capture-section">
   <h2 class="email-capture-heading">Stay in the Loop</h2>
   <p class="email-capture-description">Get updates on RTMX development, new features, and agentic engineering insights.</p>
-  <form action="https://formspree.io/f/xwpkkbwk" method="POST" class="email-capture-form">
+  <form class="email-capture-form" id="newsletter-form" novalidate>
     <input type="email" name="email" placeholder="you@example.com" required />
     <button type="submit">Subscribe</button>
   </form>
+  <p class="email-capture-status" id="newsletter-status"></p>
   <p class="email-capture-privacy">No spam. Unsubscribe anytime.</p>
+  <script>
+    document.getElementById('newsletter-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const email = form.querySelector('input[name="email"]');
+      const status = document.getElementById('newsletter-status');
+      const btn = form.querySelector('button');
+      if (!email.value || !email.value.includes('@')) {
+        email.style.borderColor = '#f43f5e';
+        return;
+      }
+      email.style.borderColor = '';
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      try {
+        const res = await fetch(
+          'https://api.hsforms.com/submissions/v3/integration/submit/245567280/c615fe10-5da1-4b75-aacd-cea7b476d3d3',
+          {
+            method: 'POST',
+            body: JSON.stringify({ fields: [{ name: 'email', value: email.value }] }),
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+        if (res.ok) {
+          form.style.display = 'none';
+          status.textContent = "You're subscribed! We'll keep you posted.";
+          status.style.color = 'var(--rtmx-emerald)';
+        } else { throw new Error(); }
+      } catch {
+        status.textContent = 'Something went wrong. Try again or email dev@rtmx.ai.';
+        status.style.color = '#f43f5e';
+        btn.disabled = false;
+        btn.textContent = 'Subscribe';
+      }
+    });
+  </script>
 </section>
 
 <footer class="site-footer">
