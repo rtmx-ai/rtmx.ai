@@ -24,3 +24,4 @@ Thumbs.db
 
 # RTMX
 .rtmx/
+infra/workers/*/node_modules/
