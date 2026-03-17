@@ -27,8 +27,8 @@
   --rtmx-text-dim: #6b7280;
 }
 
-/* Dark mode by default - true dark for contrast */
-:root {
+/* Dark mode - true dark for contrast */
+:root[data-theme='dark'] {
   --sl-color-bg: #0a0a0a;
   --sl-color-bg-nav: #171717;
   --sl-color-bg-sidebar: #171717;
@@ -36,39 +36,27 @@
   --sl-color-hairline: #404040;
 }
 
-/* Force dark mode always - override light mode to use dark colors */
-:root[data-theme='light'] {
-  --sl-color-bg: #0a0a0a;
-  --sl-color-bg-nav: #171717;
-  --sl-color-bg-sidebar: #171717;
-  --sl-color-hairline-light: #262626;
-  --sl-color-hairline: #404040;
-  /* Force dark text colors in "light" mode */
-  --sl-color-text: #e5e7eb;
-  --sl-color-text-accent: #6ee7b7;
-  --sl-color-white: #f9fafb;
-  --sl-color-gray-1: #f3f4f6;
-  --sl-color-gray-2: #e5e7eb;
-  --sl-color-gray-3: #d1d5db;
-  --sl-color-gray-4: #9ca3af;
-  --sl-color-gray-5: #6b7280;
-  --sl-color-gray-6: #374151;
-  --sl-color-black: #111111;
+/* Light mode RTMX design tokens */
+[data-theme='light'] {
+  --rtmx-emerald: #059669;
+  --rtmx-emerald-light: #10b981;
+  --rtmx-bg: #ffffff;
+  --rtmx-bg-card: #f9fafb;
+  --rtmx-bg-elevated: #f3f4f6;
+  --rtmx-border: #e5e7eb;
+  --rtmx-border-hover: #d1d5db;
+  --rtmx-text: #111827;
+  --rtmx-text-muted: #6b7280;
+  --rtmx-text-dim: #9ca3af;
 }
 
 /* Inline code - high contrast pill style */
 .sl-markdown-content :not(pre) > code {
   background: var(--rtmx-border);
-  color: #e5e7eb;
+  color: var(--rtmx-text);
   padding: 0.2em 0.4em;
   border-radius: 0.25rem;
   font-size: 0.875em;
-}
-
-/* Force dark inline code even in "light" mode */
-:root[data-theme='light'] .sl-markdown-content :not(pre) > code {
-  background: var(--rtmx-border);
-  color: #e5e7eb;
 }
 
 /* Monospace typography for code-heavy content */
@@ -367,10 +355,7 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 
-/* Hide theme selector - keep everything else */
-[data-theme] header.header starlight-theme-select {
-  display: none;
-}
+/* Theme selector is visible - Starlight handles toggle & persistence */
 
 /* Remove outline from pagination navigation links */
 .sl-markdown-content .pagination-links a {

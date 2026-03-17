@@ -47,10 +47,10 @@ export default defineConfig({
 					},
 				},
 				{
-					// Force dark mode immediately before page renders
+					// REQ-SITE-019: Default to dark, but respect user's saved preference
 					// Also append slogan to browser tab title (not visible header)
 					tag: 'script',
-					content: `document.documentElement.dataset.theme = 'dark';
+					content: `(function(){var t=localStorage.getItem('starlight-theme');if(!t)document.documentElement.dataset.theme='dark';})();
 						if (!document.title.includes('Intent for AI')) {
 							document.title = document.title.replace(/RTMX/, 'RTMX | Intent for AI');
 						}`,
@@ -83,9 +83,7 @@ export default defineConfig({
 					tag: 'script',
 					content: `
 						document.addEventListener('DOMContentLoaded', () => {
-							// Ensure dark mode stays forced
-							document.documentElement.dataset.theme = 'dark';
-
+							// REQ-SITE-019: Skip-link and accessibility setup
 							// REQ-SITE-008: Add skip-to-content link for keyboard navigation
 							if (!document.querySelector('.skip-link')) {
 								const skipLink = document.createElement('a');
@@ -105,6 +103,14 @@ export default defineConfig({
 						{ label: 'Introduction', slug: 'index' },
 						{ label: 'Installation', slug: 'installation' },
 						{ label: 'Quickstart', slug: 'quickstart' },
+					],
+				},
+				{
+					label: 'For Your Team',
+					items: [
+						{ label: 'For Developers', slug: 'guides/for-developers' },
+						{ label: 'For Enterprise', slug: 'guides/for-enterprise' },
+						{ label: 'For Defense & Gov', slug: 'guides/for-defense' },
 					],
 				},
 				{
@@ -131,6 +137,14 @@ export default defineConfig({
 					items: [
 						{ label: 'Lifecycle', slug: 'reference/lifecycle' },
 						{ label: 'Architecture', slug: 'reference/architecture' },
+					],
+				},
+				{
+					label: 'Community',
+					items: [
+						{ label: 'Discussions', link: 'https://github.com/rtmx-ai/rtmx-go/discussions', attrs: { target: '_blank', rel: 'noopener' } },
+						{ label: 'Issues', link: 'https://github.com/rtmx-ai/rtmx-go/issues', attrs: { target: '_blank', rel: 'noopener' } },
+						{ label: 'Email Support', link: 'mailto:dev@rtmx.ai' },
 					],
 				},
 			],

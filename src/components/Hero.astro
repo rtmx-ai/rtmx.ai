@@ -384,9 +384,13 @@ import TerminalCarousel from './TerminalCarousel.astro';
 </section>
 
 <footer class="site-footer">
-  <p>
+  <nav class="footer-community" aria-label="Community links">
+    <a href="https://github.com/rtmx-ai/rtmx-go/discussions" target="_blank" rel="noopener">GitHub Discussions</a>
+    <span class="footer-sep" aria-hidden="true">/</span>
+    <a href="https://github.com/rtmx-ai/rtmx-go/issues" target="_blank" rel="noopener">GitHub Issues</a>
+    <span class="footer-sep" aria-hidden="true">/</span>
     <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
-  </p>
+  </nav>
 </footer>
 
 <style is:global>
@@ -780,6 +784,29 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   .site-footer a:hover {
     text-decoration: underline;
+  }
+
+  .site-footer .footer-community {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .site-footer .footer-community a {
+    color: var(--rtmx-emerald);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .site-footer .footer-community a:hover {
+    text-decoration: underline;
+  }
+
+  .site-footer .footer-sep {
+    color: var(--rtmx-text-dim);
+    font-size: 0.9rem;
   }
 
   /* "I Built RTMX Using RTMX" Section */
