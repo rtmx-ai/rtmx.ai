@@ -20,7 +20,7 @@ export default defineConfig({
 				frames: false,
 			},
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/rtmx' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/rtmx-ai/rtmx' },
 			],
 			logo: {
 				light: './src/assets/rtmx-logo-light.svg',
@@ -140,10 +140,14 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'Blog',
+					autogenerate: { directory: 'blog' },
+				},
+				{
 					label: 'Community',
 					items: [
-						{ label: 'Discussions', link: 'https://github.com/rtmx/discussions', attrs: { target: '_blank', rel: 'noopener' } },
-						{ label: 'Issues', link: 'https://github.com/rtmx/issues', attrs: { target: '_blank', rel: 'noopener' } },
+						{ label: 'Discussions', link: 'https://github.com/rtmx-ai/rtmx/discussions', attrs: { target: '_blank', rel: 'noopener' } },
+						{ label: 'Issues', link: 'https://github.com/rtmx-ai/rtmx/issues', attrs: { target: '_blank', rel: 'noopener' } },
 						{ label: 'Email Support', link: 'mailto:dev@rtmx.ai' },
 					],
 				},

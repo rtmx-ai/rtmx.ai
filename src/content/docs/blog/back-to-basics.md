@@ -52,14 +52,14 @@ RTMX is building CRDT-based sync for real-time, conflict-free collaboration acro
 
 ## Try It
 
-RTMX is open source under the MIT license. Install it and start building against clear requirements today.
+RTMX is open source under the Apache 2.0 license. Install it and start building against clear requirements today.
 
 ```
 brew install rtmx-ai/tap/rtmx    # macOS / Linux
 apt install rtmx                  # Debian / Ubuntu
 ```
 
-Or download a binary directly from the [GitHub releases](https://github.com/rtmx/releases).
+Or download a binary directly from the [GitHub releases](https://github.com/rtmx-ai/rtmx/releases).
 
 Docs and quickstart: [rtmx.ai](https://rtmx.ai)
 Source: [github.com/rtmx-ai](https://github.com/rtmx-ai)
