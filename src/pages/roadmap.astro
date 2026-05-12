@@ -574,12 +574,10 @@ function getStatusLabel(status: string): string {
 
 <script>
   /**
-   * RTMX Sync Client for Roadmap Live Updates (REQ-SITE-007)
+   * Roadmap Live Updates (REQ-SITE-007)
    *
-   * Connects to rtmx-sync /ws/public/{project_id} endpoint for real-time
-   * CRDT updates. Falls back to static data if sync is unavailable.
-   *
-   * Contract: system/contracts/sync-protocol-v1.json
+   * Connects to real-time sync endpoint for live CRDT updates.
+   * Falls back to static data if sync is unavailable.
    */
   document.addEventListener('DOMContentLoaded', () => {
     const SYNC_URL = import.meta.env.PUBLIC_RTMX_SYNC_URL || '';

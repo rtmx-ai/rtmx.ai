@@ -38,8 +38,8 @@ npm run deploy
 
 ### Custom Domain Setup
 
-1. Ensure the `rtmx.ai` zone is active in Cloudflare (account `REDACTED`).
-2. Add a CNAME record: `forms.rtmx.ai` pointing to `rtmx-forms.<your-subdomain>.workers.dev`.
+1. Ensure the `rtmx.ai` zone is active in Cloudflare (set account ID via env var or `wrangler.toml.local`).
+2. Add a CNAME record: `forms.rtmx.ai` pointing to `rtmx-forms.<your-workers-subdomain>.workers.dev`.
 3. Uncomment the `routes` line in `wrangler.toml`.
 4. Redeploy with `npm run deploy`.
 
@@ -60,6 +60,5 @@ npm run deploy
 }
 ```
 
-Allowed form IDs:
-- `REDACTED` (waitlist)
-- `REDACTED` (newsletter)
+Allowed form IDs are configured as Wrangler secrets (`HUBSPOT_FORM_GUID_WAITLIST`, `HUBSPOT_FORM_GUID_NEWSLETTER`).
+See `wrangler.toml` for setup instructions.

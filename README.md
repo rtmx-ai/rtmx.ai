@@ -1,6 +1,6 @@
 # rtmx.ai
 
-The marketing website and documentation for [RTMX](https://github.com/rtmx) — the intent layer for agentic engineering.
+The marketing website and documentation for [RTMX](https://github.com/rtmx-ai/rtmx) — the intent layer for agentic engineering.
 
 **Live site**: [https://rtmx.ai](https://rtmx.ai)
 

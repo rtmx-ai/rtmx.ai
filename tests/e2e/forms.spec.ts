@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const WORKER_URL = 'https://rtmx-forms.forms.rtmx.ai';
+const WORKER_URL = 'https://forms.rtmx.ai';
 
 // ---------------------------------------------------------------------------
 // Worker API Tests (direct HTTP, no browser needed)

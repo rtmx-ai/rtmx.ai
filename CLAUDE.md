@@ -9,9 +9,7 @@ This is part of the RTMX multi-repo system:
 | Repo | Purpose | Dependency |
 |------|---------|------------|
 | **rtmx.ai** (this) | Website & docs | Submodule: rtmx |
-| rtmx | CLI client (Python) | None |
-| rtmx-go | CLI client (Go) | None |
-| rtmx-sync | Real-time coordination | Depends on rtmx |
+| rtmx | CLI tool | None |
 
 When working across repos:
 - Changes to rtmx docs → update submodule here
