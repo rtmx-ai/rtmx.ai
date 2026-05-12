@@ -1,12 +1,15 @@
 import { test, expect } from '@playwright/test';
 
-const WORKER_URL = 'https://forms.rtmx.ai';
+const WORKER_URL = process.env.WORKER_URL || 'https://forms.rtmx.ai';
 
 // ---------------------------------------------------------------------------
 // Worker API Tests (direct HTTP, no browser needed)
+// Skipped in CI -- these hit the live worker and require DNS to be configured.
+// Run locally with: WORKER_URL=https://rtmx-forms.<subdomain>.workers.dev npx playwright test
 // ---------------------------------------------------------------------------
 
 test.describe('Worker API', () => {
+  test.skip(!!process.env.CI, 'Worker API tests require live worker endpoint');
   test('GET /api/health returns ok', async ({ request }) => {
     const res = await request.get(`${WORKER_URL}/api/health`);
     expect(res.ok()).toBe(true);
@@ -27,7 +30,7 @@ test.describe('Worker API', () => {
   test('POST /api/form-submit rejects invalid email', async ({ request }) => {
     const res = await request.post(`${WORKER_URL}/api/form-submit`, {
       headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
-      data: { formId: 'REDACTED', email: 'not-an-email', recaptchaToken: 'fake' },
+      data: { formId: 'test-form-guid', email: 'not-an-email', recaptchaToken: 'fake' },
     });
     expect(res.status()).toBe(400);
     const body = await res.json();
@@ -48,7 +51,7 @@ test.describe('Worker API', () => {
     const res = await request.post(`${WORKER_URL}/api/form-submit`, {
       headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
       data: {
-        formId: 'REDACTED',
+        formId: 'test-form-guid',
         email: 'test@example.com',
         recaptchaToken: 'fake-token',
       },
