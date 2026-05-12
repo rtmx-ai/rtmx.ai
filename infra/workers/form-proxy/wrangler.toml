@@ -5,9 +5,8 @@ compatibility_date = "2024-12-01"
 # account_id: Set via CLOUDFLARE_ACCOUNT_ID env var or in wrangler.toml.local
 # account_id = ""
 
-# Custom domain - requires rtmx.ai zone in Cloudflare
-# Uncomment when DNS is configured:
-# routes = [{ pattern = "forms.rtmx.ai/*", zone_name = "rtmx.ai" }]
+# Custom domain - rtmx.ai zone is on Cloudflare
+routes = [{ pattern = "forms.rtmx.ai/*", zone_name = "rtmx.ai" }]
 
 [vars]
 RECAPTCHA_SCORE_THRESHOLD = "0.5"
