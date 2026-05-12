@@ -36,8 +36,19 @@
   --sl-color-hairline: #404040;
 }
 
-/* Light mode RTMX design tokens */
+/* Light mode - remap both RTMX and Starlight color systems */
 [data-theme='light'] {
+  /* Starlight grays: invert for dark-on-light readability */
+  --sl-color-white: #111827;
+  --sl-color-gray-1: #1f2937;
+  --sl-color-gray-2: #374151;
+  --sl-color-gray-3: #4b5563;
+  --sl-color-gray-4: #6b7280;
+  --sl-color-gray-5: #9ca3af;
+  --sl-color-gray-6: #d1d5db;
+  --sl-color-black: #f9fafb;
+
+  /* RTMX design tokens */
   --rtmx-emerald: #059669;
   --rtmx-emerald-light: #10b981;
   --rtmx-bg: #ffffff;
@@ -46,8 +57,8 @@
   --rtmx-border: #e5e7eb;
   --rtmx-border-hover: #d1d5db;
   --rtmx-text: #111827;
-  --rtmx-text-muted: #6b7280;
-  --rtmx-text-dim: #9ca3af;
+  --rtmx-text-muted: #4b5563;
+  --rtmx-text-dim: #6b7280;
 }
 
 /* Inline code - high contrast pill style */
@@ -489,7 +500,7 @@ textarea:focus-visible,
   font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;
   font-size: 13px;
   line-height: 1.5;
-  color: #e5e7eb;
+  color: var(--rtmx-text);
   overflow-x: auto;
 }
 
