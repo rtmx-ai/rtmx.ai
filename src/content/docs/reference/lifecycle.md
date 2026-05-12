@@ -8,6 +8,7 @@ RTMX tracks requirements through their complete lifecycle from creation to compl
 ## Status States
 
 ```mermaid
+%%{init: {'theme': 'dark'}}%%
 stateDiagram-v2
     NOT_STARTED --> MISSING : Work begins
     MISSING --> WIP : Implementation starts
@@ -46,12 +47,6 @@ stateDiagram-v2
 ```bash
 # Via CLI
 rtmx update REQ-AUTH-001 --status COMPLETE
-
-# Via Python API
-db.update("REQ-AUTH-001", status=Status.COMPLETE)
-
-# Via MCP
-rtmx_update_status(req_id="REQ-AUTH-001", status="COMPLETE")
 ```
 
 ## Dependency Management
@@ -69,6 +64,7 @@ REQ-AUTH-002,...,dependencies=REQ-AUTH-001|REQ-DB-001
 When a dependency is incomplete, downstream requirements show as blocked:
 
 ```mermaid
+%%{init: {'theme': 'dark'}}%%
 flowchart LR
     A["REQ-AUTH-001<br/>(MISSING)"]
     B["REQ-AUTH-002<br/>(BLOCKED)"]
@@ -77,9 +73,9 @@ flowchart LR
     A -- blocks --> B
     B -- blocks --> C
 
-    style A fill:#ef4444,color:#fff
-    style B fill:#6b7280,color:#fff
-    style C fill:#6b7280,color:#fff
+    style A fill:#ef4444,color:#fff,stroke:#dc2626
+    style B fill:#6b7280,color:#fff,stroke:#4b5563
+    style C fill:#6b7280,color:#fff,stroke:#4b5563
 ```
 
 ### Unblocking

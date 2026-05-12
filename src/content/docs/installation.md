@@ -19,7 +19,7 @@ apt install rtmx
 
 ### Direct Binary
 
-Download the latest binary for your platform from [GitHub Releases](https://github.com/rtmx/releases).
+Download the latest binary for your platform from [GitHub Releases](https://github.com/rtmx-ai/rtmx/releases).
 
 ### Verify Installation
 
@@ -32,8 +32,8 @@ rtmx --version
 For contributing to RTMX:
 
 ```bash
-git clone https://github.com/rtmx.git
-cd rtmx-go
+git clone https://github.com/rtmx-ai/rtmx.git
+cd rtmx
 make build     # Build from source
 make test      # Run tests
 ```

@@ -56,13 +56,13 @@ RTMX is open source under the Apache 2.0 license. Install it and start building 
 
 ```
 brew install rtmx-ai/tap/rtmx    # macOS / Linux
-apt install rtmx                  # Debian / Ubuntu
+go install github.com/rtmx-ai/rtmx/cmd/rtmx@latest  # From source
 ```
 
 Or download a binary directly from the [GitHub releases](https://github.com/rtmx-ai/rtmx/releases).
 
 Docs and quickstart: [rtmx.ai](https://rtmx.ai)
-Source: [github.com/rtmx-ai](https://github.com/rtmx-ai)
+Source: [github.com/rtmx-ai/rtmx](https://github.com/rtmx-ai/rtmx)
 
 I'd genuinely like feedback. If you're working with agentic AI and struggling with the same problems — agents diverging, knowledge architecture drifting, quality eroding — I want to hear how you're solving it. And if RTMX can help, I want to know what's missing.
 

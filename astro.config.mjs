@@ -18,6 +18,13 @@ export default defineConfig({
 			description: 'The intent layer for agentic engineering. Requirements, tests, and traceability — integrated directly into the agentic engineering lifecycle.',
 			expressiveCode: {
 				frames: false,
+				themes: ['github-dark'],
+				styleOverrides: {
+					codeBackground: '#161b22',
+					codeBorder: '1px solid #30363d',
+					borderRadius: '6px',
+					codePaddingInline: '1rem',
+				},
 			},
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/rtmx-ai/rtmx' },
@@ -32,6 +39,10 @@ export default defineConfig({
 			],
 			defaultLocale: 'en',
 			head: [
+				{
+					tag: 'script',
+					content: 'document.documentElement.setAttribute("data-theme","dark");',
+				},
 				{
 					tag: 'script',
 					attrs: {
@@ -146,9 +157,8 @@ export default defineConfig({
 				{
 					label: 'Community',
 					items: [
-						{ label: 'Discussions', link: 'https://github.com/rtmx-ai/rtmx/discussions', attrs: { target: '_blank', rel: 'noopener' } },
 						{ label: 'Issues', link: 'https://github.com/rtmx-ai/rtmx/issues', attrs: { target: '_blank', rel: 'noopener' } },
-						{ label: 'Email Support', link: 'mailto:dev@rtmx.ai' },
+						{ label: 'Releases', link: 'https://github.com/rtmx-ai/rtmx/releases', attrs: { target: '_blank', rel: 'noopener' } },
 					],
 				},
 			],

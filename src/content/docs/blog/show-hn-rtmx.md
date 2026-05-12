@@ -66,7 +66,7 @@ Health validates your entire RTM: orphaned tests that don't link to requirements
 $ rtmx mcp-server
 ```
 
-The MCP server exposes seven tools over JSON-RPC that AI agents (Claude Code, Cursor, or any MCP-compatible client) can call directly: `status`, `backlog`, `next`, `verify`, `health`, `markers`, `deps`. Agents can also update requirements with proper authorization and atomic claim/release for multi-agent coordination.
+The MCP server exposes ten tools over JSON-RPC that AI agents (Claude Code, Cursor, or any MCP-compatible client) can call directly: `status`, `backlog`, `next`, `verify`, `health`, `markers`, `deps` for querying, plus `claim`, `release`, and `release_assign` for multi-agent coordination with atomic locking.
 
 ## Why CSV in Git
 
@@ -80,7 +80,7 @@ This is the question everyone asks. The answer is simpler than you'd expect.
 
 **Git gives you everything else for free.** `git blame` tells you when and why every requirement changed. `git log` gives you the full audit trail. Branching lets you prototype requirement changes without affecting main. You already have backup, access control, and collaboration -- because you already use git.
 
-**It scales far enough.** CSV works comfortably for hundreds of requirements. RTMX manages its own development with 219 requirements, and performance is not a concern. If you have thousands of requirements, you probably need a database. But most projects don't have thousands of requirements -- they have dozens to hundreds, and CSV handles that range cleanly.
+**It scales far enough.** CSV works comfortably for hundreds of requirements. RTMX manages its own development with 230 requirements, and performance is not a concern. If you have thousands of requirements, you probably need a database. But most projects don't have thousands of requirements -- they have dozens to hundreds, and CSV handles that range cleanly.
 
 ## The AI Workflow
 
@@ -98,7 +98,7 @@ This loop runs in my `CLAUDE.md`. When I start a session, the agent knows to che
 
 ## The Part I'm Most Proud Of
 
-RTMX manages its own requirements. The RTM for RTMX is tracked by RTMX -- 219 requirements across 24 phases, auto-verified in CI, with dependency graphs and critical path analysis running on every push.
+RTMX manages its own requirements. The RTM for RTMX is tracked by RTMX -- 230 requirements across 25 phases, auto-verified in CI, with dependency graphs and critical path analysis running on every push.
 
 This isn't a marketing gimmick. It's how I actually develop the tool. When I start a session, I run `rtmx next --one` against RTMX's own database to decide what to build. When I ship a feature, `rtmx verify` confirms the requirement is satisfied. The tool is its own best test case.
 

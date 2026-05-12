@@ -36,29 +36,13 @@
   --sl-color-hairline: #404040;
 }
 
-/* Light mode - remap both RTMX and Starlight color systems */
-[data-theme='light'] {
-  /* Starlight grays: invert for dark-on-light readability */
-  --sl-color-white: #111827;
-  --sl-color-gray-1: #1f2937;
-  --sl-color-gray-2: #374151;
-  --sl-color-gray-3: #4b5563;
-  --sl-color-gray-4: #6b7280;
-  --sl-color-gray-5: #9ca3af;
-  --sl-color-gray-6: #d1d5db;
-  --sl-color-black: #f9fafb;
-
-  /* RTMX design tokens */
-  --rtmx-emerald: #059669;
-  --rtmx-emerald-light: #10b981;
-  --rtmx-bg: #ffffff;
-  --rtmx-bg-card: #f9fafb;
-  --rtmx-bg-elevated: #f3f4f6;
-  --rtmx-border: #e5e7eb;
-  --rtmx-border-hover: #d1d5db;
-  --rtmx-text: #111827;
-  --rtmx-text-muted: #4b5563;
-  --rtmx-text-dim: #6b7280;
+/* Force dark mode globally -- site designed dark-first, light mode not supported */
+:root[data-theme='light'] {
+  --sl-color-bg: #0a0a0a;
+  --sl-color-bg-nav: #171717;
+  --sl-color-bg-sidebar: #171717;
+  --sl-color-hairline-light: #262626;
+  --sl-color-hairline: #404040;
 }
 
 /* Inline code - high contrast pill style */
@@ -218,9 +202,7 @@
   overflow: hidden;
 }
 
-:root .sl-markdown-content .expressive-code pre {
-  background: var(--rtmx-bg-card);
-}
+/* Let Expressive Code theme control code block background */
 
 :root .sl-markdown-content .expressive-code code {
   font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;

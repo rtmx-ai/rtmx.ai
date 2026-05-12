@@ -6,24 +6,29 @@ description: RTMX system architecture and design
 ## System Overview
 
 ```mermaid
+%%{init: {'theme': 'dark'}}%%
 flowchart TB
     subgraph clients["Developer / Agent"]
         CLI["CLI<br/>rtmx"]
-        pytest["pytest<br/>plugin"]
+        Verify["Test<br/>verification"]
         MCP["MCP<br/>server"]
         WebUI["Web UI<br/>dashboard"]
     end
 
     CLI --> Core
-    pytest --> Core
+    Verify --> Core
     MCP --> Core
     WebUI --> Core
 
-    Core["RTM Core<br/>(Python)"]
+    Core["RTM Core<br/>(Go)"]
 
-    Core --> GitHub["GitHub<br/>Adapter"]
+    Core --> Issues["Issues<br/>Adapter"]
     Core --> CSV[("CSV<br/>Database")]
-    Core --> Jira["Jira<br/>Adapter"]
+    Core --> Schema["Schema<br/>Plugins"]
+
+    style clients fill:#1e293b,stroke:#475569,color:#e2e8f0
+    style Core fill:#065f46,stroke:#10b981,color:#ecfdf5
+    style CSV fill:#065f46,stroke:#10b981,color:#ecfdf5
 ```
 
 ## Core Components
