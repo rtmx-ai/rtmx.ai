@@ -117,6 +117,12 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'aegis (air-gapped agent)',
+					items: [
+						{ label: 'aegis — air-gap agent', slug: 'aegis' },
+					],
+				},
+				{
 					label: 'For Your Team',
 					items: [
 						{ label: 'For Developers', slug: 'guides/for-developers' },
