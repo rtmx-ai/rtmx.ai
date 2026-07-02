@@ -119,7 +119,13 @@ export default defineConfig({
 				{
 					label: 'aegis (air-gapped agent)',
 					items: [
-						{ label: 'aegis — air-gap agent', slug: 'aegis' },
+						{ label: 'Overview', slug: 'aegis' },
+						{ label: 'Getting Started', slug: 'aegis/getting-started' },
+						{ label: 'Using aegis', slug: 'aegis/using' },
+						{ label: 'Operator & Air-Gap', slug: 'aegis/operator' },
+						{ label: 'Security & Compliance', slug: 'aegis/security' },
+						{ label: 'Reference', slug: 'aegis/reference' },
+						{ label: 'Evaluate', slug: 'aegis/evaluate' },
 					],
 				},
 				{
