@@ -1,75 +1,20 @@
 import { test, expect } from '@playwright/test';
 
-const WORKER_URL = 'https://rtmx-forms.ryan-ff3.workers.dev';
+// Worker request validation lives in infra/workers/form-proxy (node:test).
+// The deployed Cloudflare instance is optional smoke, not a deploy gate.
 
-// ---------------------------------------------------------------------------
-// Worker API Tests (direct HTTP, no browser needed)
-// ---------------------------------------------------------------------------
+test.describe('Live worker smoke', () => {
+  test.skip(
+    !process.env.RTMX_WORKER_E2E,
+    'set RTMX_WORKER_E2E=1 to hit the deployed Cloudflare worker',
+  );
 
-test.describe('Worker API', () => {
-  test('GET /api/health returns ok', async ({ request }) => {
-    const res = await request.get(`${WORKER_URL}/api/health`);
+  const liveUrl = process.env.RTMX_WORKER_URL ?? 'https://rtmx-forms.ryan-ff3.workers.dev';
+
+  test('deployed health endpoint is reachable', async ({ request }) => {
+    const res = await request.get(`${liveUrl}/api/health`);
     expect(res.ok()).toBe(true);
-    const body = await res.json();
-    expect(body.status).toBe('ok');
-  });
-
-  test('POST /api/form-submit rejects missing fields', async ({ request }) => {
-    const res = await request.post(`${WORKER_URL}/api/form-submit`, {
-      headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
-      data: { email: 'test@example.com' },
-    });
-    expect(res.status()).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBeTruthy();
-  });
-
-  test('POST /api/form-submit rejects invalid email', async ({ request }) => {
-    const res = await request.post(`${WORKER_URL}/api/form-submit`, {
-      headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
-      data: { formId: '2e0b417f-2e5c-4cc8-8441-b1982aac6638', email: 'not-an-email', recaptchaToken: 'fake' },
-    });
-    expect(res.status()).toBe(400);
-    const body = await res.json();
-    expect(body.error).toContain('email');
-  });
-
-  test('POST /api/form-submit rejects unknown formId', async ({ request }) => {
-    const res = await request.post(`${WORKER_URL}/api/form-submit`, {
-      headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
-      data: { formId: 'not-a-real-form-id', email: 'test@example.com', recaptchaToken: 'fake' },
-    });
-    expect(res.status()).toBe(400);
-    const body = await res.json();
-    expect(body.error).toContain('form');
-  });
-
-  test('POST /api/form-submit rejects fake reCAPTCHA token', async ({ request }) => {
-    const res = await request.post(`${WORKER_URL}/api/form-submit`, {
-      headers: { 'Content-Type': 'application/json', Origin: 'https://rtmx.ai' },
-      data: {
-        formId: '2e0b417f-2e5c-4cc8-8441-b1982aac6638',
-        email: 'test@example.com',
-        recaptchaToken: 'fake-token',
-      },
-    });
-    expect(res.status()).toBe(403);
-    const body = await res.json();
-    expect(body.error).toContain('erification');
-  });
-
-  test('CORS preflight returns correct headers', async ({ request }) => {
-    const res = await request.fetch(`${WORKER_URL}/api/form-submit`, {
-      method: 'OPTIONS',
-      headers: {
-        Origin: 'https://rtmx.ai',
-        'Access-Control-Request-Method': 'POST',
-        'Access-Control-Request-Headers': 'content-type',
-      },
-    });
-    expect(res.ok()).toBe(true);
-    expect(res.headers()['access-control-allow-origin']).toBe('https://rtmx.ai');
-    expect(res.headers()['access-control-allow-methods']).toContain('POST');
+    expect(await res.json()).toEqual({ status: 'ok' });
   });
 });
 

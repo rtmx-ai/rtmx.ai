@@ -20,7 +20,7 @@ interface RecaptchaResponse {
 	"error-codes"?: string[];
 }
 
-const ALLOWED_FORM_IDS = new Set([
+export const ALLOWED_FORM_IDS = new Set([
 	"2e0b417f-2e5c-4cc8-8441-b1982aac6638", // waitlist
 	"c615fe10-5da1-4b75-aacd-cea7b476d3d3", // newsletter
 ]);
@@ -138,4 +138,4 @@ export default {
 
 		return jsonResponse({ error: "Not found" }, 404, env);
 	},
-} satisfies ExportedHandler<Env>;
+};

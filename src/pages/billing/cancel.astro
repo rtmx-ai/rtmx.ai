@@ -1,0 +1,33 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Checkout canceled', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page">
+    <section class="license-header">
+      <h1>Checkout canceled</h1>
+      <p class="license-subtitle">
+        Nothing was charged. No hosted tenant was created. Your organization
+        stays unlicensed until a Checkout Session completes.
+      </p>
+    </section>
+    <section class="license-form-section not-content">
+      <p>
+        <a href="/checkout">Try hosted Team Checkout again</a>
+        or <a href="/license">download a self-managed license</a>.
+      </p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 3rem 2rem 1rem; }
+  .license-header h1 {
+    font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { font-size: 1.1rem; color: var(--rtmx-text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+  .license-form-section { max-width: 560px; margin: 0 auto; padding: 2rem; text-align: center; color: var(--rtmx-text-muted); }
+</style>

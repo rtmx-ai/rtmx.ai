@@ -1,0 +1,89 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Checkout complete', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page">
+    <section class="license-header">
+      <h1>Payment received</h1>
+      <p class="license-subtitle">
+        This page does not mark you paid. Stripe tells rtmx-sync over a signed
+        webhook. When that lands, your managed room URL appears below. No card
+        numbers are shown or stored here.
+      </p>
+    </section>
+    <section class="license-form-section not-content">
+      <div id="session-id" class="field-help"></div>
+      <pre id="credentials" class="credentials" hidden></pre>
+      <div class="form-message" id="success-message" role="status" aria-live="polite">
+        Waiting for payment confirmation...
+      </div>
+      <p class="field-help">Self-managed operators should use <a href="/license">/license</a> instead.
+        Paying customers can <a href="/billing/manage">manage seats and cancel</a> in Stripe
+        (cancel takes effect at period end).</p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 3rem 2rem 1rem; }
+  .license-header h1 {
+    font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { font-size: 1.1rem; color: var(--rtmx-text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+  .license-form-section { max-width: 640px; margin: 0 auto; padding: 2rem; }
+  .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; }
+  .credentials {
+    background: var(--rtmx-bg-card); color: var(--rtmx-text); padding: 1rem; border-radius: 0.5rem;
+    overflow-x: auto; border: 1px solid var(--rtmx-border);
+  }
+</style>
+
+<script>
+  const STORAGE = 'rtmx.checkout';
+  const message = document.getElementById('success-message') as HTMLDivElement;
+  const creds = document.getElementById('credentials') as HTMLPreElement;
+  const sessionLabel = document.getElementById('session-id') as HTMLDivElement;
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id') || '';
+  sessionLabel.textContent = sessionId ? `Checkout session ${sessionId}` : '';
+
+  const saved = sessionStorage.getItem(STORAGE);
+  if (!saved) {
+    message.textContent = 'Returning from Stripe. Sign in on the server status page if credentials do not appear.';
+  } else {
+    const { server, org, apiKey } = JSON.parse(saved) as { server: string; org: string; apiKey: string };
+    let attempts = 0;
+    const poll = async () => {
+      attempts += 1;
+      try {
+        const response = await fetch(
+          `${server}/billing/fulfillment?org_id=${encodeURIComponent(org)}`,
+          { headers: { Authorization: `Bearer ${apiKey}` } },
+        );
+        if (response.ok) {
+          const body = await response.json();
+          creds.hidden = false;
+          creds.textContent = JSON.stringify(
+            { sync_url: body.sync_url, org_slug: body.org_slug, state: body.state },
+            null,
+            2,
+          );
+          message.textContent = 'Your org is entitled. Use rtmx sync --sync-url with a member API key.';
+          return;
+        }
+      } catch {
+        /* retry */
+      }
+      if (attempts < 15) {
+        window.setTimeout(poll, 1500);
+      } else {
+        message.textContent = 'Payment is recorded at Stripe, but entitlement has not appeared yet. Retry this page shortly.';
+      }
+    };
+    void poll();
+  }
+</script>

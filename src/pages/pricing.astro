@@ -2,6 +2,20 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import PricingCard from '../components/PricingCard.astro';
 
+// Monetization MVP: the self-managed Team SKU is buyable through a license
+// file today, so its CTA leads to acquisition rather than the newsletter.
+// Set PUBLIC_RTMX_MONETIZATION_MVP=false to fall back to waitlist-only.
+const monetizationMvp = import.meta.env.PUBLIC_RTMX_MONETIZATION_MVP !== 'false';
+
+const teamCta = monetizationMvp
+  ? {
+      cta: 'Start hosted Team',
+      ctaHref: '/checkout',
+      secondaryCta: 'Self-managed license',
+      secondaryCtaHref: '/license',
+    }
+  : { cta: 'Join Waitlist', ctaHref: undefined, secondaryCta: undefined, secondaryCtaHref: undefined };
+
 const tiers = [
   {
     name: 'Team',
@@ -16,7 +30,10 @@ const tiers = [
       'Up to 10 team members',
       'Community support',
     ],
-    cta: 'Join Waitlist',
+    cta: teamCta.cta,
+    ctaHref: teamCta.ctaHref,
+    secondaryCta: teamCta.secondaryCta,
+    secondaryCtaHref: teamCta.secondaryCtaHref,
     popular: false,
   },
   {
@@ -65,13 +82,18 @@ const tiers = [
           Requirements traceability, test linking, dependency analysis, and MCP integration — all free, forever.
         </p>
         <p class="oss-note">
-          The pricing below is for <strong>RTMX Sync</strong> — real-time collaboration features coming soon.
+          The pricing below is for <strong>RTMX Sync</strong> — real-time collaboration.
+          {monetizationMvp
+            ? ' Self-managed licensing and hosted Team Checkout are available today.'
+            : ' Coming soon.'}
         </p>
       </div>
     </section>
 
     <section class="pricing-header">
-      <span class="coming-soon-badge">Coming Soon</span>
+      <span class="coming-soon-badge">
+        {monetizationMvp ? 'Team Available' : 'Coming Soon'}
+      </span>
       <h1>RTMX Sync</h1>
       <p class="pricing-subtitle">
         Real-time collaboration for your requirements traceability matrix.
@@ -89,6 +111,8 @@ const tiers = [
           features={tier.features}
           cta={tier.cta}
           ctaHref={tier.ctaHref}
+          secondaryCta={'secondaryCta' in tier ? tier.secondaryCta : undefined}
+          secondaryCtaHref={'secondaryCtaHref' in tier ? tier.secondaryCtaHref : undefined}
           popular={tier.popular}
         />
       ))}
