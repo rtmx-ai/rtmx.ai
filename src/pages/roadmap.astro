@@ -647,17 +647,26 @@ function getStatusLabel(status: string): string {
     }
 
     function handleSyncMessage(data: ArrayBuffer) {
-      // Binary y-websocket protocol: first byte is message type
-      const bytes = new Uint8Array(data);
-      if (bytes.length === 0) return;
+      // Binary y-websocket frames prove the room is live. Full CRDT parse
+      // needs a Yjs dependency; instead we refresh the curated HTTP snapshot
+      // so progress bars update within a second (REQ-SITE-007).
+      void refreshRoadmap();
+    }
 
-      // We receive CRDT updates but cannot parse them without a Yjs client.
-      // For the initial implementation, the sync connection proves liveness
-      // and the static data serves as the baseline. Full CRDT parsing
-      // requires adding yjs as a dependency (future enhancement).
-      //
-      // For now, the connection status indicator shows the sync is live,
-      // which is the primary UX requirement of REQ-SITE-007.
+    async function refreshRoadmap() {
+      try {
+        const httpBase = SYNC_URL
+          .replace(/^ws:/, 'http:')
+          .replace(/^wss:/, 'https:');
+        const res = await fetch(`${httpBase}/api/public/${PROJECT_ID}/roadmap`);
+        if (!res.ok) return;
+        const body = await res.json();
+        if (typeof body.complete === 'number' && typeof body.total === 'number') {
+          updateOverall(body.complete, body.total);
+        }
+      } catch {
+        // Keep static baseline on fetch errors.
+      }
     }
 
     function connect() {
@@ -671,6 +680,7 @@ function getStatusLabel(status: string): string {
         ws.onopen = () => {
           setConnectionState('connected');
           reconnectDelay = RECONNECT_BASE_MS;
+          void refreshRoadmap();
         };
 
         ws.onmessage = (event) => {
