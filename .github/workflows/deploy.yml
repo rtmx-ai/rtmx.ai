@@ -40,6 +40,8 @@ jobs:
         run: npm ci
 
       - name: Build with Astro
+        env:
+          PUBLIC_RTMX_SYNC_HTTP_URL: ${{ vars.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai' }}
         run: npm run build
 
       - name: Install Playwright
