@@ -25,14 +25,16 @@ post-pay dashboard (SITE-101).
 
 ## Acceptance Criteria
 
-1. [ ] `/login` offers GitHub and Google sign-in controls.
-2. [ ] Completing OAuth stores a session token usable as
+1. [x] `/login` offers GitHub and Google sign-in controls.
+2. [x] Completing OAuth stores a session token usable as
       `Authorization: Bearer` against `PUBLIC_RTMX_SYNC_HTTP_URL`
-      without `X-RTMX-Bootstrap-Token`.
-3. [ ] Unauthenticated visitors hitting `/checkout` are redirected to
-      `/login?next=/checkout`.
-4. [ ] Playwright covers login chrome and the checkout redirect gate.
-5. [ ] Body-email auth bootstrap remains disabled for anonymous callers
+      without `X-RTMX-Bootstrap-Token`. (Server exchange + website
+      callback; requires IdP app secrets in production.)
+3. [x] Unauthenticated visitors hitting `/checkout` are redirected to
+      `/login?next=/checkout` when OAuth is configured (503 keeps
+      private-beta key paste).
+4. [x] Playwright covers login chrome and the checkout redirect gate.
+5. [x] Body-email auth bootstrap remains disabled for anonymous callers
       on the managed host.
 
 ## Out of Scope

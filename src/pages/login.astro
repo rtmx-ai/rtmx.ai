@@ -1,0 +1,108 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
+---
+
+<StarlightPage frontmatter={{ title: 'Sign in', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page rtmx-splash">
+    <section class="license-header">
+      <h1>Sign in to RTMX</h1>
+      <p class="license-subtitle">
+        Use GitHub or Google to continue to hosted Team Checkout. The managed
+        sync host is <code class="server-fixed">{defaultServer}</code>.
+      </p>
+    </section>
+    <section class="license-form-section not-content">
+      <div class="oauth-actions">
+        <button type="button" class="submit-button" id="login-github" data-provider="github">
+          Continue with GitHub
+        </button>
+        <button type="button" class="submit-button oauth-secondary" id="login-google" data-provider="google">
+          Continue with Google
+        </button>
+      </div>
+      <div class="form-message" id="login-message" role="status" aria-live="polite"></div>
+      <p class="field-help" style="margin-top: 1.5rem;">
+        Self-managed operators stay on <a href="/license">/license</a>.
+      </p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 1.5rem 2rem 0.75rem; }
+  .license-header h1 {
+    font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { font-size: 1.1rem; color: var(--rtmx-text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+  .server-fixed {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.95em; color: var(--rtmx-emerald-light);
+  }
+  .license-form-section { max-width: 420px; margin: 0 auto; padding: 2rem; text-align: center; }
+  .oauth-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+  .submit-button {
+    padding: 0.875rem 2rem; border-radius: 0.5rem; border: none; background: var(--rtmx-emerald);
+    color: var(--rtmx-bg); font-weight: 600; font-size: 1rem; font-family: inherit; cursor: pointer;
+  }
+  .oauth-secondary {
+    background: transparent; color: var(--rtmx-text); border: 1px solid var(--rtmx-border-hover);
+  }
+  .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; }
+  .form-message { margin-top: 1rem; color: var(--rtmx-text-muted); }
+  .form-message.is-error { color: #f87171; }
+</style>
+
+<script define:vars={{ defaultServer }}>
+  const SESSION = 'rtmx.session';
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get('next') || '/checkout';
+  const message = document.getElementById('login-message');
+  const server = defaultServer.replace(/\/+$/, '');
+
+  function show(text, kind) {
+    message.textContent = text;
+    message.className = kind === 'error' ? 'form-message is-error' : 'form-message';
+  }
+
+  async function startOAuth(provider) {
+    show('Redirecting to ' + provider + '...', 'ok');
+    try {
+      const url = new URL(server + '/auth/login/' + provider);
+      url.searchParams.set('next', next);
+      url.searchParams.set('redirect_uri', window.location.origin + '/auth/callback');
+      const resp = await fetch(url.toString());
+      if (resp.status === 503) {
+        show('OAuth is not configured on the sync host yet. Private-beta buyers: use the key from sales@rtmx.ai on /checkout.', 'error');
+        return;
+      }
+      if (!resp.ok) {
+        show('Could not start sign-in (' + resp.status + ').', 'error');
+        return;
+      }
+      const body = await resp.json();
+      sessionStorage.setItem('rtmx.oauth.next', body.next || next);
+      sessionStorage.setItem('rtmx.oauth.provider', provider);
+      window.location.assign(body.authorization_url);
+    } catch {
+      show('Could not reach ' + server + '.', 'error');
+    }
+  }
+
+  document.getElementById('login-github').addEventListener('click', () => startOAuth('github'));
+  document.getElementById('login-google').addEventListener('click', () => startOAuth('google'));
+
+  // Already signed in → continue
+  try {
+    const existing = JSON.parse(sessionStorage.getItem(SESSION) || '');
+    if (existing && existing.token) {
+      window.location.replace(next);
+    }
+  } catch {
+    /* ignore */
+  }
+</script>

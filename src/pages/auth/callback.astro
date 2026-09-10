@@ -1,0 +1,73 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
+---
+
+<StarlightPage frontmatter={{ title: 'Completing sign-in', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page rtmx-splash">
+    <section class="license-header">
+      <h1>Completing sign-in</h1>
+      <p class="license-subtitle" id="callback-status">Exchanging authorization code...</p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 1.5rem 2rem 0.75rem; }
+  .license-header h1 {
+    font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { font-size: 1.1rem; color: var(--rtmx-text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+</style>
+
+<script define:vars={{ defaultServer }}>
+  const SESSION = 'rtmx.session';
+  const status = document.getElementById('callback-status');
+  const server = defaultServer.replace(/\/+$/, '');
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+  const err = params.get('error');
+
+  async function finish() {
+    if (err) {
+      status.textContent = 'Sign-in was canceled or denied.';
+      return;
+    }
+    if (!code || !state) {
+      status.textContent = 'Missing authorization code. Start again from /login.';
+      return;
+    }
+    // Provider was stored when login started.
+    const provider = sessionStorage.getItem('rtmx.oauth.provider') || 'github';
+    try {
+      const resp = await fetch(server + '/auth/callback/' + provider, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, state }),
+      });
+      if (!resp.ok) {
+        status.textContent = 'Could not complete sign-in (' + resp.status + '). Return to /login.';
+        return;
+      }
+      const body = await resp.json();
+      sessionStorage.setItem(
+        SESSION,
+        JSON.stringify({ token: body.session_token, email: body.email }),
+      );
+      const next =
+        body.next || sessionStorage.getItem('rtmx.oauth.next') || '/checkout';
+      sessionStorage.removeItem('rtmx.oauth.next');
+      sessionStorage.removeItem('rtmx.oauth.provider');
+      window.location.replace(next);
+    } catch {
+      status.textContent = 'Could not reach the sync host. Return to /login and try again.';
+    }
+  }
+
+  finish();
+</script>
