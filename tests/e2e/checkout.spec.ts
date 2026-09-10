@@ -30,6 +30,18 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
 });
 
 test.describe('hosted checkout page', () => {
+  test('pins the managed sync host and explains the admin key path', async ({ page }) => {
+    await page.goto('/checkout');
+
+    const server = page.locator('#server-url');
+    await expect(server).toHaveAttribute('type', 'hidden');
+    await expect(server).not.toHaveValue('');
+    await expect(page.locator('body')).toContainText(/Private beta/i);
+    await expect(page.locator('body')).toContainText('sales@rtmx.ai');
+    await expect(page.locator('body')).toContainText('REQ-MONO-020');
+    await expect(page.getByText('RTMX Sync server')).toHaveCount(0);
+  });
+
   test('does not call the server until the org credential is present', async ({ page }) => {
     let called = false;
     await page.route('**/billing/checkout', async (route) => {
