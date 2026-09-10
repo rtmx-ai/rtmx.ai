@@ -45,10 +45,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
             autocomplete="off"
           />
           <span class="field-help">
-            Private beta: issued when we provision your org
-            (<a href="mailto:sales@rtmx.ai">sales@rtmx.ai</a>). Self-serve
-            OAuth and in-browser key mint are tracked as REQ-MONO-020.
-            Prefix <code>rtmx_ad_</code>. Never stored by rtmx.ai after you leave.
+            Prefer <a href="/login?next=/checkout">sign in</a> when OAuth is
+            configured. Private beta: ops-issued
+            <code>rtmx_ad_</code> key (<a href="mailto:sales@rtmx.ai">sales@rtmx.ai</a>)
+            until REQ-MONO-020c. Never stored by rtmx.ai after you leave.
           </span>
         </label>
 
@@ -105,6 +105,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
 <script>
   const STORAGE = 'rtmx.checkout';
+  const SESSION = 'rtmx.session';
   const form = document.getElementById('checkout-form') as HTMLFormElement;
   const serverInput = document.getElementById('server-url') as HTMLInputElement;
   const orgInput = document.getElementById('org-ref') as HTMLInputElement;
@@ -118,14 +119,39 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     message.className = `form-message is-${kind}`;
   }
 
+  function readSession(): { token?: string; email?: string } | null {
+    try {
+      return JSON.parse(sessionStorage.getItem(SESSION) || '');
+    } catch {
+      return null;
+    }
+  }
+
+  async function gateSignIn() {
+    if (readSession()?.token) return;
+    const server = serverInput.value.trim().replace(/\/+$/, '');
+    try {
+      const probe = await fetch(`${server}/auth/login/github?next=/checkout`);
+      // 503 = IdP not configured yet → keep private-beta key paste path.
+      if (probe.status === 503) return;
+    } catch {
+      return;
+    }
+    window.location.replace('/login?next=' + encodeURIComponent('/checkout'));
+  }
+
+  gateSignIn();
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const server = serverInput.value.trim().replace(/\/+$/, '');
     const org = orgInput.value.trim();
     const apiKey = keyInput.value.trim();
+    const session = readSession();
+    const bearer = apiKey || session?.token || '';
     const quantity = Number(quantityInput.value);
-    if (!org || !apiKey || !Number.isInteger(quantity) || quantity < 1) {
-      show('Organization, API key, and seat count are required.', 'error');
+    if (!org || !bearer || !Number.isInteger(quantity) || quantity < 1) {
+      show('Organization, sign-in or API key, and seat count are required.', 'error');
       return;
     }
 
@@ -136,7 +162,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       const origin = window.location.origin;
       const response = await fetch(`${server}/billing/checkout`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${bearer}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           offering: 'managed_sync',
           tier: 'team',
@@ -161,7 +187,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         return;
       }
       const body = await response.json();
-      sessionStorage.setItem(STORAGE, JSON.stringify({ server, org, apiKey }));
+      sessionStorage.setItem(STORAGE, JSON.stringify({ server, org, apiKey: bearer }));
       window.location.assign(body.url);
     } catch {
       show(
