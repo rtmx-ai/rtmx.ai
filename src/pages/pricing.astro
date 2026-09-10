@@ -21,12 +21,13 @@ const tiers = [
     name: 'Team',
     price: '$9',
     period: '/user/month',
-    description: 'Real-time sync for individuals and small teams.',
+    description: 'Multiplayer Sync for developers and their agents.',
     features: [
-      'Real-time CRDT sync',
+      'Live multiplayer matrix across projects',
+      'Humans and agents in the same room',
+      'No Jira/Asana board required',
+      'No SaaS MCP connector tax',
       'End-to-end encryption',
-      'TLS 1.3 transport',
-      'Up to 5 projects',
       'Up to 10 team members',
       'Community support',
     ],
@@ -34,7 +35,7 @@ const tiers = [
     ctaHref: teamCta.ctaHref,
     secondaryCta: teamCta.secondaryCta,
     secondaryCtaHref: teamCta.secondaryCtaHref,
-    popular: false,
+    popular: true,
   },
   {
     name: 'Enterprise',
@@ -50,7 +51,7 @@ const tiers = [
       '99.9% SLA guarantee',
     ],
     cta: 'Join Waitlist',
-    popular: true,
+    popular: false,
   },
   {
     name: 'On-Prem',
@@ -82,9 +83,10 @@ const tiers = [
           Requirements traceability, test linking, dependency analysis, and MCP integration — all free, forever.
         </p>
         <p class="oss-note">
-          The pricing below is for <strong>RTMX Sync</strong> — real-time collaboration.
+          The pricing below is for <strong>RTMX Sync</strong> — multiplayer
+          collaboration for developers and their agents.
           {monetizationMvp
-            ? ' Self-managed licensing and hosted Team Checkout are available today.'
+            ? ' Hosted Team Checkout and self-managed licensing are available today.'
             : ' Coming soon.'}
         </p>
       </div>
@@ -92,12 +94,13 @@ const tiers = [
 
     <section class="pricing-header">
       <span class="coming-soon-badge">
-        {monetizationMvp ? 'Team Available' : 'Coming Soon'}
+        {monetizationMvp ? 'Team Sync Available' : 'Coming Soon'}
       </span>
       <h1>RTMX Sync</h1>
       <p class="pricing-subtitle">
-        Real-time collaboration for your requirements traceability matrix.
-        Powered by CRDTs for conflict-free editing across your team.
+        Multiplayer requirements for humans and agents — one shared matrix
+        across projects, without living in Jira or Asana or paying tokens to
+        keep an MCP connector glued to a SaaS board.
       </p>
     </section>
 
@@ -119,8 +122,12 @@ const tiers = [
     </section>
 
     <section class="waitlist-section" id="waitlist">
-      <h2>Join the Waitlist</h2>
-      <p>Be the first to know when RTMX Sync launches.</p>
+      <h2>Enterprise interest list</h2>
+      <p>
+        Team Sync Checkout is live for private beta. Leave your email if you
+        want Enterprise SSO, residency, and SLA — we will reach out when that
+        tier opens.
+      </p>
       <form
         id="waitlist-form"
         class="waitlist-form"
@@ -151,18 +158,28 @@ const tiers = [
       <h2>Questions</h2>
       <div class="faq-grid not-content">
         <div class="faq-item">
-          <h3>What is CRDT sync?</h3>
+          <h3>What is multiplayer Sync?</h3>
           <p>
-            CRDTs (Conflict-free Replicated Data Types) allow multiple users to edit
-            the same data simultaneously without conflicts. Changes merge automatically,
-            even when offline.
+            Your team and their agents share one live requirements matrix —
+            status, dependencies, and claims — across projects. Edits converge
+            without merge fights or a central kanban board. The CLI stays the
+            workspace; Sync is the room.
           </p>
         </div>
         <div class="faq-item">
-          <h3>When will it launch?</h3>
+          <h3>Do I still need Jira or Asana?</h3>
           <p>
-            RTMX Sync is in active development. Join the waitlist to get priority
-            access and help shape the product.
+            No for day-to-day agentic work. Optional adapters can import or
+            bridge tickets if you must, but Team Sync is built so you are not
+            living in a SaaS board — and not burning tokens to keep an MCP
+            connector synced to one.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Is Team Sync available now?</h3>
+          <p>
+            Yes for private beta. Start hosted Team Checkout above, or download
+            a self-managed license. Enterprise remains waitlist / sales-assisted.
           </p>
         </div>
         <div class="faq-item">
@@ -183,8 +200,9 @@ const tiers = [
         <div class="faq-item">
           <h3>How does it work with RTMX?</h3>
           <p>
-            RTMX Sync integrates directly with your existing RTMX setup. Your CSV remains
-            the source of truth, with real-time sync layered on top for collaboration.
+            Your CSV in git remains the source of truth. Team Sync adds a live
+            multiplayer layer so people and agents converge on the same matrix
+            without a separate project-management product.
           </p>
         </div>
         <div class="faq-item">

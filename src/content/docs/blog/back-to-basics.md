@@ -48,7 +48,15 @@ The future of engineering collaboration is flat and wide. Not hierarchical teams
 
 RTMX makes this architecturally possible because it keeps the entire requirements context in the same structure where the code lives. It's CSV in git. It's already distributed. It's already version-controlled. It's already local-first. That means we can extend it without bolting on a centralized dependency.
 
-RTMX is building CRDT-based sync for real-time, conflict-free collaboration across trust boundaries. Conflict-free replicated data types let multiple users and agents edit the same requirements concurrently — offline, online, across networks — with automatic merge semantics. No central server required for local operation. Add a zero-trust overlay for fault-tolerant collaboration across corporate and sovereign boundaries, and the terminal becomes the team room. Not a centralized platform you depend on, but a protocol that makes your local context authoritative and your collaboration secure.
+RTMX Sync is multiplayer collaboration for developers and their agents —
+one live requirements matrix across projects, without living in Jira or
+Asana or burning tokens to keep an MCP connector glued to a SaaS board.
+Under the hood we use conflict-free replicated data (CRDTs) so concurrent
+edits merge safely across trust boundaries, including offline and
+air-gapped operation. Add a zero-trust overlay for collaboration across
+corporate and sovereign lines, and the terminal becomes the team room.
+Not a centralized platform you depend on, but a protocol that makes your
+local context authoritative and your collaboration secure.
 
 ## Try It
 
