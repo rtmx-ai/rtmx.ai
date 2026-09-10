@@ -1,5 +1,7 @@
 interface Env {
 	HUBSPOT_PORTAL_ID: string;
+	HUBSPOT_FORM_GUID_NEWSLETTER: string;
+	HUBSPOT_FORM_GUID_WAITLIST: string;
 	RECAPTCHA_SECRET_KEY: string;
 	RECAPTCHA_SCORE_THRESHOLD: string;
 	ALLOWED_ORIGIN: string;
@@ -20,10 +22,12 @@ interface RecaptchaResponse {
 	"error-codes"?: string[];
 }
 
-export const ALLOWED_FORM_IDS = new Set([
-	"2e0b417f-2e5c-4cc8-8441-b1982aac6638", // waitlist
-	"c615fe10-5da1-4b75-aacd-cea7b476d3d3", // newsletter
-]);
+function getAllowedFormIds(env: Env): Set<string> {
+	const ids = new Set<string>();
+	if (env.HUBSPOT_FORM_GUID_WAITLIST) ids.add(env.HUBSPOT_FORM_GUID_WAITLIST);
+	if (env.HUBSPOT_FORM_GUID_NEWSLETTER) ids.add(env.HUBSPOT_FORM_GUID_NEWSLETTER);
+	return ids;
+}
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -89,7 +93,7 @@ async function handleFormSubmit(request: Request, env: Env): Promise<Response> {
 		return jsonResponse({ error: "Invalid email address" }, 400, env);
 	}
 
-	if (!formId || !ALLOWED_FORM_IDS.has(formId)) {
+	if (!formId || !getAllowedFormIds(env).has(formId)) {
 		return jsonResponse({ error: "Invalid form ID" }, 400, env);
 	}
 

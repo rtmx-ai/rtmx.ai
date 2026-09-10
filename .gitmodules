@@ -1,3 +1,6 @@
 [submodule "rtmx"]
 	path = rtmx
 	url = https://github.com/rtmx-ai/rtmx.git
+[submodule "aegis-cli"]
+	path = aegis-cli
+	url = https://github.com/rtmx-ai/aegis-cli.git
