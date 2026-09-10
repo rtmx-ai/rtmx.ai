@@ -20,7 +20,27 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       <form id="checkout-form" class="license-form" novalidate>
         <input type="hidden" id="server-url" name="server-url" value={defaultServer} />
 
-        <label class="field">
+        <div class="field" id="org-session-panel" hidden>
+          <span class="field-label">Your organizations</span>
+          <select id="org-select" class="text-input" aria-label="Select organization">
+            <option value="">Select an organization</option>
+          </select>
+          <div class="org-create-row">
+            <input
+              type="text"
+              id="org-create-name"
+              class="text-input"
+              placeholder="New org name"
+              autocomplete="organization"
+            />
+            <button type="button" class="submit-button org-create-button" id="org-create">
+              Create
+            </button>
+          </div>
+          <span class="field-help">Signed-in buyers create or select an org here — no ops bootstrap.</span>
+        </div>
+
+        <label class="field" id="org-manual-field">
           <span class="field-label">Organization</span>
           <input
             type="text"
@@ -30,10 +50,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
             placeholder="acme"
             required
           />
-          <span class="field-help">Slug or id from your private-beta invite. Checkout refuses to start without one.</span>
+          <span class="field-help">Slug or id. Checkout refuses to start without one.</span>
         </label>
 
-        <label class="field">
+        <label class="field" id="api-key-field">
           <span class="field-label">Admin API key</span>
           <input
             type="password"
@@ -41,7 +61,6 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
             name="api-key"
             class="text-input"
             placeholder="rtmx_ad_..."
-            required
             autocomplete="off"
           />
           <span class="field-help">
@@ -101,6 +120,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     color: var(--rtmx-bg); font-weight: 600; font-size: 1rem; font-family: inherit; cursor: pointer;
   }
   .license-form .submit-button:disabled { opacity: 0.7; cursor: not-allowed; }
+  .org-create-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+  .org-create-row .text-input { flex: 1; }
+  .org-create-button { padding: 0.75rem 1rem; white-space: nowrap; }
 </style>
 
 <script>
@@ -109,7 +131,13 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const form = document.getElementById('checkout-form') as HTMLFormElement;
   const serverInput = document.getElementById('server-url') as HTMLInputElement;
   const orgInput = document.getElementById('org-ref') as HTMLInputElement;
+  const orgSelect = document.getElementById('org-select') as HTMLSelectElement;
+  const orgSessionPanel = document.getElementById('org-session-panel') as HTMLDivElement;
+  const orgManualField = document.getElementById('org-manual-field') as HTMLLabelElement;
+  const orgCreateName = document.getElementById('org-create-name') as HTMLInputElement;
+  const orgCreateBtn = document.getElementById('org-create') as HTMLButtonElement;
   const keyInput = document.getElementById('api-key') as HTMLInputElement;
+  const apiKeyField = document.getElementById('api-key-field') as HTMLLabelElement;
   const quantityInput = document.getElementById('quantity') as HTMLInputElement;
   const submitBtn = document.getElementById('checkout-submit') as HTMLButtonElement;
   const message = document.getElementById('checkout-message') as HTMLDivElement;
@@ -127,9 +155,87 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
-  async function gateSignIn() {
-    if (readSession()?.token) return;
+  function fillOrgSelect(orgs: Array<{ id: string; name: string; slug: string }>) {
+    orgSelect.innerHTML = '<option value="">Select an organization</option>';
+    for (const org of orgs) {
+      const opt = document.createElement('option');
+      opt.value = org.slug || org.id;
+      opt.textContent = `${org.name} (${org.slug || org.id})`;
+      orgSelect.appendChild(opt);
+    }
+    if (orgs.length === 1) {
+      orgSelect.value = orgs[0].slug || orgs[0].id;
+      orgInput.value = orgSelect.value;
+    }
+  }
+
+  async function loadOrgs(server: string, token: string) {
+    const resp = await fetch(`${server}/orgs`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!resp.ok) {
+      show(`Could not list organizations (${resp.status}).`, 'error');
+      return;
+    }
+    const body = await resp.json();
+    fillOrgSelect(body.organizations || []);
+  }
+
+  async function enableSessionOrgUi(server: string, token: string) {
+    orgSessionPanel.hidden = false;
+    orgManualField.hidden = true;
+    apiKeyField.hidden = true;
+    keyInput.removeAttribute('required');
+    orgInput.removeAttribute('required');
+    await loadOrgs(server, token);
+  }
+
+  orgSelect.addEventListener('change', () => {
+    orgInput.value = orgSelect.value;
+  });
+
+  orgCreateBtn.addEventListener('click', async () => {
+    const session = readSession();
+    const name = orgCreateName.value.trim();
     const server = serverInput.value.trim().replace(/\/+$/, '');
+    if (!session?.token || !name) {
+      show('Sign in and enter an organization name to create one.', 'error');
+      return;
+    }
+    orgCreateBtn.disabled = true;
+    try {
+      const resp = await fetch(`${server}/orgs`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      if (!resp.ok) {
+        show(`Could not create organization (${resp.status}).`, 'error');
+        return;
+      }
+      const org = await resp.json();
+      await loadOrgs(server, session.token);
+      orgSelect.value = org.slug || org.id;
+      orgInput.value = orgSelect.value;
+      orgCreateName.value = '';
+      show(`Created organization ${org.name}.`, 'success');
+    } catch {
+      show(`Could not reach ${server}.`, 'error');
+    } finally {
+      orgCreateBtn.disabled = false;
+    }
+  });
+
+  async function gateSignIn() {
+    const session = readSession();
+    const server = serverInput.value.trim().replace(/\/+$/, '');
+    if (session?.token) {
+      await enableSessionOrgUi(server, session.token);
+      return;
+    }
     try {
       const probe = await fetch(`${server}/auth/login/github?next=/checkout`);
       // 503 = IdP not configured yet → keep private-beta key paste path.
@@ -145,6 +251,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const server = serverInput.value.trim().replace(/\/+$/, '');
+    if (orgSelect.value) orgInput.value = orgSelect.value;
     const org = orgInput.value.trim();
     const apiKey = keyInput.value.trim();
     const session = readSession();
@@ -173,13 +280,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         }),
       });
       if (response.status === 401 || response.status === 400) {
-        const detail = await response.text();
-        show(
-          detail.toLowerCase().includes('organization')
-            ? 'Sign in or create an organization first.'
-            : 'Sign in or create an organization first.',
-          'error',
-        );
+        show('Sign in or create an organization first.', 'error');
         return;
       }
       if (!response.ok) {
