@@ -1,14 +1,10 @@
 # REQ-SITE-110: Private-beta pricing drives Team Sync Checkout
 
-## Metadata
-- **Category**: WEBSITE
-- **Subcategory**: BILLING
-- **Priority**: P0
-- **Phase**: 6
-- **Status**: MISSING
-- **Dependencies**: REQ-SITE-106, REQ-SITE-107, REQ-SITE-109
-- **Blocks**: (none)
-- **External ID**: rtmx-ai/REQ-MONO-019
+## Status: COMPLETE
+## Priority: P0
+## Phase: 6
+## Dependencies: REQ-SITE-106, REQ-SITE-107, REQ-SITE-109
+## External ID: rtmx-ai/REQ-MONO-019
 
 ## Requirement
 
@@ -24,35 +20,25 @@ as the primary message when Team Checkout is live.
 ## Rationale
 
 REQ-SITE-105/106 already switched the Team card CTA off waitlist-only
-(`Start hosted Team` → `/checkout`). Production still leads with a
-waitlist section, “Coming soon” framing, and FAQ copy that tells buyers
-Sync is not available. That undoes the private-beta funnel: pay for
-Team Sync on rtmx.ai → Stripe → entitle org → use OSS CLI against
-`sync.rtmx.ai`.
-
-Enterprise at $29/user/month stays on the page as aspiration / waitlist;
-it must not get a Stripe Price or Checkout Session in this phase.
+(`Start hosted Team` → `/checkout`). Waitlist-first chrome undid the
+private-beta funnel. Closed together with REQ-SITE-111 (multiplayer
+messaging).
 
 ## Acceptance Criteria
 
-1. Team primary CTA is hosted Checkout (`/checkout` or equivalent) for
-   `managed_sync`; secondary CTA may remain self-managed `/license`.
-2. Enterprise CTA does **not** create a Checkout Session (waitlist or
-   contact sales only).
-3. On-Prem remains contact sales.
-4. Page chrome (badge, hero note, FAQ) states Team Sync is available to
-   subscribe; waitlist is not framed as the only way to get Sync.
-5. If a waitlist form remains, it is clearly for Enterprise interest /
-   newsletter — not the Team buy path (copy distinguishes the two).
-6. No production UI implies an Enterprise self-serve Stripe Price exists
-   for this launch.
+1. [x] Team primary CTA is hosted Checkout (`/checkout`) for
+   `managed_sync`; secondary CTA remains self-managed `/license`.
+2. [x] Enterprise CTA does **not** create a Checkout Session (waitlist).
+3. [x] On-Prem remains contact sales.
+4. [x] Page chrome states Team Sync is available; waitlist is not the
+   Team buy path.
+5. [x] Waitlist form is Enterprise interest / newsletter copy.
+6. [x] No production UI implies an Enterprise self-serve Stripe Price.
 
 ## Test Strategy
 
-- Extend `tests/e2e/checkout.spec.ts` / `licensing.spec.ts`: Team CTA →
-  checkout; Enterprise CTA not → checkout; waitlist section (if present)
-  does not claim Sync is unlaunched for Team.
-- Manual: live `https://rtmx.ai/pricing` after Pages deploy.
+- `tests/e2e/checkout.spec.ts` — Team Checkout vs Enterprise/On-Prem
+- `tests/e2e/multiplayer.spec.ts` — waitlist reframed; Team available
 
 ## Out of scope
 
