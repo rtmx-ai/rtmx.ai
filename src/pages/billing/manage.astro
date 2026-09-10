@@ -5,7 +5,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 ---
 
 <StarlightPage frontmatter={{ title: 'Manage billing', template: 'splash', hero: { tagline: '' } }}>
-  <div class="license-page">
+  <div class="license-page rtmx-splash">
     <section class="license-header">
       <h1>Manage your subscription</h1>
       <p class="license-subtitle">
@@ -17,10 +17,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
     <section class="license-form-section not-content">
       <form id="portal-form" class="license-form" novalidate>
-        <label class="field">
-          <span class="field-label">RTMX Sync server</span>
-          <input type="url" id="server-url" class="text-input" value={defaultServer} required />
-        </label>
+        <input type="hidden" id="server-url" value={defaultServer} />
+        <p class="field-help">
+          Hosted billing talks to <code class="server-fixed">{defaultServer}</code> only.
+        </p>
         <label class="field">
           <span class="field-label">Organization</span>
           <input type="text" id="org-ref" class="text-input" placeholder="acme" required />
@@ -28,6 +28,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         <label class="field">
           <span class="field-label">Admin API key</span>
           <input type="password" id="api-key" class="text-input" placeholder="rtmx_ad_..." required autocomplete="off" />
+          <span class="field-help">
+            Same <code>rtmx_ad_</code> key from your private-beta invite
+            (<a href="mailto:sales@rtmx.ai">sales@rtmx.ai</a>).
+          </span>
         </label>
         <button type="submit" class="submit-button" id="portal-submit">
           Open Stripe Billing Portal
@@ -43,7 +47,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
 <style is:global>
   .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
-  .license-header { text-align: center; padding: 3rem 2rem 1rem; }
+  .license-header { text-align: center; padding: 1.5rem 2rem 0.75rem; }
   .license-header h1 {
     font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
     background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
@@ -55,6 +59,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .field { display: flex; flex-direction: column; gap: 0.375rem; }
   .field-label { color: var(--rtmx-text); font-weight: 600; font-size: 0.95rem; }
   .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; }
+  .server-fixed {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.95em;
+    color: var(--rtmx-emerald-light);
+  }
   .text-input {
     padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid var(--rtmx-border-hover);
     background: var(--rtmx-bg-card); color: var(--rtmx-text); font-size: 1rem; font-family: inherit;
@@ -78,8 +87,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     const server = serverInput.value.trim().replace(/\/+$/, '');
     const org = orgInput.value.trim();
     const apiKey = keyInput.value.trim();
-    if (!server || !org || !apiKey) {
-      message.textContent = 'Server, organization, and API key are required.';
+    if (!org || !apiKey) {
+      message.textContent = 'Organization and API key are required.';
       message.className = 'form-message is-error';
       return;
     }
