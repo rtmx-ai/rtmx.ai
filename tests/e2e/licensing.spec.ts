@@ -41,9 +41,18 @@ test.describe('license acquisition page', () => {
     await page.goto('/license');
 
     await expect(page.locator('#server-url')).toBeVisible();
+    await expect(page.locator('#server-url')).toHaveAttribute('type', 'url');
     await expect(page.locator('#org-ref')).toBeVisible();
     await expect(page.locator('#api-key')).toHaveAttribute('type', 'password');
     await expect(page.locator('#tier')).toBeVisible();
+  });
+
+  test('keeps an editable sync server for self-managed (REQ-MONO-020d AC6)', async ({ page }) => {
+    await page.goto('/license');
+    const server = page.locator('#server-url');
+    await expect(server).toBeVisible();
+    await expect(server).not.toHaveAttribute('type', 'hidden');
+    await expect(server).toBeEditable();
   });
 
   test('requires every field before calling a server', async ({ page }) => {
