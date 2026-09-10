@@ -26,14 +26,14 @@ buyable without sales/ops in the loop.
 
 ## Acceptance Criteria
 
-1. [ ] Unauthenticated `/checkout` redirects to OAuth sign-in.
-2. [ ] After sign-in, buyer can create/select an org in-browser.
-3. [ ] Buyer can mint an admin API key (shown once) and/or start Checkout
-      with the session.
+1. [x] Unauthenticated `/checkout` redirects to OAuth sign-in.
+      (When OAuth configured; 503 keeps private-beta key path — SITE-102.)
+2. [x] After sign-in, buyer can create/select an org in-browser. (020b)
+3. [x] Buyer can mint an admin API key (shown once) and/or start Checkout
+      with the session. (020c + session Bearer)
 4. [x] Sync server is fixed (`PUBLIC_RTMX_SYNC_HTTP_URL`); no editable
-      field on `/checkout` or `/billing/manage`. (Partial — landed ahead of
-      OAuth; private-beta key paste remains until 020a–c.)
-5. [ ] Playwright covers sign-in gate, fixed host, and key-mint chrome.
+      field on `/checkout` or `/billing/manage`.
+5. [x] Playwright covers sign-in gate, fixed host, and key-mint chrome.
 6. [x] Self-managed `/license` retains an editable server URL.
 
 ## Out of Scope
