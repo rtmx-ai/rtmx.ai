@@ -30,6 +30,13 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
 });
 
 test.describe('hosted checkout page', () => {
+  test.beforeEach(async ({ page }) => {
+    // Default: OAuth unconfigured so private-beta key-paste e2e still works.
+    await page.route('**/auth/login/**', async (route) => {
+      await route.fulfill({ status: 503, body: 'OAuth provider not configured' });
+    });
+  });
+
   test('pins the managed sync host and explains the admin key path', async ({ page }) => {
     await page.goto('/checkout');
 
