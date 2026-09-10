@@ -25,6 +25,16 @@
   --rtmx-text: #f9fafb;
   --rtmx-text-muted: #9ca3af;
   --rtmx-text-dim: #6b7280;
+
+  /* Compact Starlight site header — matches dense marketing chrome */
+  --sl-nav-height: 3rem;
+  --sl-nav-pad-y: 0.5rem;
+}
+
+@media (min-width: 50rem) {
+  :root {
+    --sl-nav-height: 3.25rem;
+  }
 }
 
 /* Dark mode - true dark for contrast */
@@ -381,6 +391,42 @@ textarea:focus-visible,
 .header-nav-link:hover {
   color: var(--rtmx-text);
   background: var(--rtmx-border);
+}
+
+/*
+ * Splash form / acquisition pages (checkout, license, billing).
+ * Same pattern as /pricing: hide Starlight's stacked page title so the
+ * in-page h1 is the only composition header (no double title + gap).
+ */
+body:has(.rtmx-splash) .hero,
+body:has(.rtmx-splash) main > header,
+body:has(.rtmx-splash) .content-panel > header,
+body:has(.rtmx-splash) [aria-label='Main'] > header {
+  display: none !important;
+}
+
+body:has(.rtmx-splash) .main-pane,
+body:has(.rtmx-splash) .content-panel {
+  padding: 0 !important;
+  padding-block: 0 !important;
+}
+
+body:has(.rtmx-splash) .sl-container {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+body:has(.rtmx-splash) main {
+  padding: 0 !important;
+}
+
+.rtmx-splash .license-header {
+  text-align: center;
+  padding: 1.5rem 1.5rem 0.75rem;
+}
+
+.rtmx-splash .license-form-section {
+  padding-top: 1rem;
 }
 
 /* Responsive adjustments */

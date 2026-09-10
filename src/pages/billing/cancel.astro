@@ -3,7 +3,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 ---
 
 <StarlightPage frontmatter={{ title: 'Checkout canceled', template: 'splash', hero: { tagline: '' } }}>
-  <div class="license-page">
+  <div class="license-page rtmx-splash">
     <section class="license-header">
       <h1>Checkout canceled</h1>
       <p class="license-subtitle">
@@ -22,7 +22,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 <style is:global>
   .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
-  .license-header { text-align: center; padding: 3rem 2rem 1rem; }
+  .license-header { text-align: center; padding: 1.5rem 2rem 0.75rem; }
   .license-header h1 {
     font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
     background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
