@@ -43,7 +43,9 @@ messaging).
 ## Out of scope
 
 - Enterprise Stripe Price / Checkout
-- Hosted SaaS org dashboard auth (REQ-SITE-101+)
+- Full SaaS rooms dashboard (REQ-SITE-103/104)
+- Self-serve OAuth → key → Checkout without ops paste (REQ-MONO-020 /
+  REQ-SITE-112); private beta still uses RUNBOOK §5 interim keys
 - Live-mode Stripe cutover (REQ-MONO-018d / REQ-BILLING-016)
 
 ## Effort Estimate
