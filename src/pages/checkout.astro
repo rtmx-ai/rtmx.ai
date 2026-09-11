@@ -140,6 +140,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     color: var(--rtmx-emerald-light); font-size: 0.85rem; overflow-x: auto;
     white-space: pre-wrap; word-break: break-all;
   }
+  /* Author .field { display:flex } would otherwise override the HTML hidden attr. */
+  [hidden] { display: none !important; }
 </style>
 
 <script>

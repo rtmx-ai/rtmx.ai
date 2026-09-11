@@ -49,13 +49,14 @@ test.describe('self-serve organization on checkout', () => {
 
   test('creates an org via POST /orgs with the session (AC1/AC3)', async ({ page }) => {
     let createdWithBearer = '';
+    const orgs: Array<{ id: string; name: string; slug: string; tier: string }> = [];
     await page.route('**/orgs', async (route) => {
       const auth = route.request().headers()['authorization'] || '';
       if (route.request().method() === 'GET') {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ organizations: [] }),
+          body: JSON.stringify({ organizations: orgs }),
         });
         return;
       }
@@ -63,10 +64,12 @@ test.describe('self-serve organization on checkout', () => {
         createdWithBearer = auth;
         expect(auth).toBe('Bearer session-test');
         expect(auth.toLowerCase()).not.toContain('bootstrap');
+        const created = { id: 'o2', name: 'Globex', slug: 'globex', tier: 'free' };
+        orgs.push(created);
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ id: 'o2', name: 'Globex', slug: 'globex', tier: 'free' }),
+          body: JSON.stringify(created),
         });
         return;
       }

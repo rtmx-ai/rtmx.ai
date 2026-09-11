@@ -27,7 +27,9 @@ test.describe('OAuth login chrome', () => {
 
     await page.goto('/login?next=/checkout');
     await page.getByRole('button', { name: /Continue with GitHub/i }).click();
-    await page.waitForURL(/github\.com\/login\/oauth\/authorize/);
+    // GitHub may land on /login?return_to=.../oauth/authorize rather than the
+    // authorize path itself when the client_id is a test stub.
+    await page.waitForURL(/github\.com\/login/);
   });
 });
 
