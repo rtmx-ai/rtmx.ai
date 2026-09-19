@@ -29,10 +29,13 @@ test.describe('pricing entitlement CTA', () => {
     await expect(page.locator('.oss-clarification')).toContainText('Apache 2.0');
   });
 
-  test('negotiated tiers may still contact sales', async ({ page }) => {
+  test('negotiated tiers route to the sales contact form', async ({ page }) => {
     await page.goto('/pricing');
     const onPrem = page.locator('.pricing-card', { hasText: 'On-Prem' }).first();
-    await expect(onPrem.locator('.cta-button')).toHaveAttribute('href', /mailto:sales@rtmx\.ai/);
+    await expect(onPrem.locator('.cta-button')).toHaveAttribute(
+      'href',
+      '/contact?intent=on-prem',
+    );
   });
 });
 

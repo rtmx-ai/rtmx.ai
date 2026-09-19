@@ -29,7 +29,8 @@ messaging).
 1. [x] Team primary CTA is hosted Checkout (`/checkout`) for
    `managed_sync`; secondary CTA remains self-managed `/license`.
 2. [x] Enterprise CTA does **not** create a Checkout Session (waitlist).
-3. [x] On-Prem remains contact sales.
+3. [x] On-Prem remains contact sales (mailto until REQ-SITE-113;
+      then `/contact` form — not Checkout).
 4. [x] Page chrome states Team Sync is available; waitlist is not the
    Team buy path.
 5. [x] Waitlist form is Enterprise interest / newsletter copy.

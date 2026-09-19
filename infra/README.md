@@ -56,9 +56,14 @@ npm run deploy
 {
   "formId": "<HubSpot form GUID>",
   "email": "user@example.com",
-  "recaptchaToken": "<reCAPTCHA v3 token>"
+  "recaptchaToken": "<reCAPTCHA v3 token>",
+  "name": "Optional for sales",
+  "company": "Optional for sales",
+  "intent": "enterprise | on-prem | general",
+  "message": "Optional notes"
 }
 ```
 
-Allowed form IDs are configured as Wrangler secrets (`HUBSPOT_FORM_GUID_WAITLIST`, `HUBSPOT_FORM_GUID_NEWSLETTER`).
+Allowed form IDs are configured as Wrangler secrets (`HUBSPOT_FORM_GUID_WAITLIST`,
+`HUBSPOT_FORM_GUID_NEWSLETTER`, `HUBSPOT_FORM_GUID_SALES`).
 See `wrangler.toml` for setup instructions.

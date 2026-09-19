@@ -75,5 +75,5 @@ rtmx bootstrap          # Generate RTM from tests, GitHub, or Jira
 - [Architecture](/reference/architecture) — understand the system design
 
 :::tip[Enterprise Inquiries]
-Contact [sales@rtmx.ai](mailto:sales@rtmx.ai) for enterprise licensing, support plans, and deployment assistance.
+Contact [sales](/contact) for enterprise licensing, support plans, and deployment assistance.
 :::

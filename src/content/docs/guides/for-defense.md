@@ -106,5 +106,5 @@ RTMX integrates with existing defense and government development workflows:
 - [Patterns](/guides/patterns) — requirements management patterns for complex programs
 
 :::tip[Defense & Government Inquiries]
-Contact [sales@rtmx.ai](mailto:sales@rtmx.ai?subject=Defense%20Inquiry) for classified environment support, compliance documentation, and deployment assistance.
+Contact [sales](/contact?intent=on-prem) for classified environment support, compliance documentation, and deployment assistance.
 :::

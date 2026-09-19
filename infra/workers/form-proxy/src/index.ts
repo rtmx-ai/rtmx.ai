@@ -2,6 +2,7 @@ interface Env {
 	HUBSPOT_PORTAL_ID: string;
 	HUBSPOT_FORM_GUID_NEWSLETTER: string;
 	HUBSPOT_FORM_GUID_WAITLIST: string;
+	HUBSPOT_FORM_GUID_SALES: string;
 	RECAPTCHA_SECRET_KEY: string;
 	RECAPTCHA_SCORE_THRESHOLD: string;
 	ALLOWED_ORIGIN: string;
@@ -11,6 +12,15 @@ interface FormSubmission {
 	formId: string;
 	email: string;
 	recaptchaToken: string;
+	name?: string;
+	company?: string;
+	intent?: string;
+	message?: string;
+}
+
+interface HubSpotField {
+	name: string;
+	value: string;
 }
 
 interface RecaptchaResponse {
@@ -26,10 +36,12 @@ function getAllowedFormIds(env: Env): Set<string> {
 	const ids = new Set<string>();
 	if (env.HUBSPOT_FORM_GUID_WAITLIST) ids.add(env.HUBSPOT_FORM_GUID_WAITLIST);
 	if (env.HUBSPOT_FORM_GUID_NEWSLETTER) ids.add(env.HUBSPOT_FORM_GUID_NEWSLETTER);
+	if (env.HUBSPOT_FORM_GUID_SALES) ids.add(env.HUBSPOT_FORM_GUID_SALES);
 	return ids;
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_INTENTS = new Set(["enterprise", "on-prem", "general"]);
 
 function corsHeaders(origin: string): HeadersInit {
 	return {
@@ -61,16 +73,38 @@ async function verifyRecaptcha(token: string, secretKey: string, threshold: numb
 	return result.success === true && (result.score ?? 0) >= threshold;
 }
 
-async function submitToHubSpot(portalId: string, formId: string, email: string): Promise<Response> {
+function buildHubSpotFields(body: FormSubmission): HubSpotField[] {
+	const fields: HubSpotField[] = [{ name: "email", value: body.email.trim() }];
+	const name = body.name?.trim();
+	if (name) fields.push({ name: "firstname", value: name });
+	const company = body.company?.trim();
+	if (company) fields.push({ name: "company", value: company });
+
+	const intent = body.intent?.trim().toLowerCase();
+	const message = body.message?.trim() ?? "";
+	const parts: string[] = [];
+	if (intent && ALLOWED_INTENTS.has(intent)) {
+		parts.push(`Intent: ${intent}`);
+	}
+	if (message) parts.push(message);
+	if (parts.length > 0) {
+		fields.push({ name: "message", value: parts.join("\n\n") });
+	}
+	return fields;
+}
+
+async function submitToHubSpot(
+	portalId: string,
+	formId: string,
+	fields: HubSpotField[],
+): Promise<Response> {
 	return fetch(
 		`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`,
 		{
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				fields: [{ name: "email", value: email }],
-			}),
-		}
+			body: JSON.stringify({ fields }),
+		},
 	);
 }
 
@@ -101,6 +135,11 @@ async function handleFormSubmit(request: Request, env: Env): Promise<Response> {
 		return jsonResponse({ error: "Missing reCAPTCHA token" }, 400, env);
 	}
 
+	const intent = body.intent?.trim().toLowerCase();
+	if (intent && !ALLOWED_INTENTS.has(intent)) {
+		return jsonResponse({ error: "Invalid intent" }, 400, env);
+	}
+
 	const threshold = parseFloat(env.RECAPTCHA_SCORE_THRESHOLD) || 0.5;
 	const recaptchaValid = await verifyRecaptcha(recaptchaToken, env.RECAPTCHA_SECRET_KEY, threshold);
 	if (!recaptchaValid) {
@@ -108,7 +147,8 @@ async function handleFormSubmit(request: Request, env: Env): Promise<Response> {
 	}
 
 	try {
-		const hubspotResponse = await submitToHubSpot(env.HUBSPOT_PORTAL_ID, formId, email);
+		const fields = buildHubSpotFields(body);
+		const hubspotResponse = await submitToHubSpot(env.HUBSPOT_PORTAL_ID, formId, fields);
 		if (!hubspotResponse.ok) {
 			console.error("HubSpot error:", await hubspotResponse.text());
 			return jsonResponse({ error: "Submission failed" }, 500, env);

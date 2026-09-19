@@ -393,8 +393,39 @@ textarea:focus-visible,
   background: var(--rtmx-border);
 }
 
+/* Content links: theme emerald, not Starlight purple visited */
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link),
+.not-content a:not(.cta-button):not(.submit-button),
+.license-page a:not(.submit-button),
+.contact-page a:not(.submit-button),
+.pricing-page a:not(.cta-button),
+.about-page a {
+  color: var(--rtmx-emerald-light);
+  text-decoration-color: color-mix(in srgb, var(--rtmx-emerald-light) 45%, transparent);
+}
+
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link):visited,
+.not-content a:not(.cta-button):not(.submit-button):visited,
+.license-page a:not(.submit-button):visited,
+.contact-page a:not(.submit-button):visited,
+.pricing-page a:not(.cta-button):visited,
+.about-page a:visited {
+  color: var(--rtmx-emerald);
+  text-decoration-color: color-mix(in srgb, var(--rtmx-emerald) 40%, transparent);
+}
+
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link):hover,
+.not-content a:not(.cta-button):not(.submit-button):hover,
+.license-page a:not(.submit-button):hover,
+.contact-page a:not(.submit-button):hover,
+.pricing-page a:not(.cta-button):hover,
+.about-page a:hover {
+  color: var(--rtmx-text);
+  text-decoration-color: var(--rtmx-emerald-light);
+}
+
 /*
- * Splash form / acquisition pages (checkout, license, billing).
+ * Splash form / acquisition pages (checkout, license, billing, contact).
  * Same pattern as /pricing: hide Starlight's stacked page title so the
  * in-page h1 is the only composition header (no double title + gap).
  */

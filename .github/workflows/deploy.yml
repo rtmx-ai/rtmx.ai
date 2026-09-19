@@ -42,6 +42,7 @@ jobs:
       - name: Build with Astro
         env:
           PUBLIC_RTMX_SYNC_HTTP_URL: ${{ vars.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai' }}
+          PUBLIC_RTMX_SALES_FORM_ID: ${{ vars.PUBLIC_RTMX_SALES_FORM_ID || '7f0d3d5f-7dbb-4d17-88a4-3913256730b7' }}
         run: npm run build
 
       - name: Install Playwright

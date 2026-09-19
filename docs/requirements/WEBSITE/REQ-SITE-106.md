@@ -18,7 +18,8 @@ sales-assisted. The CLI Apache-2.0 claim stays visible.
 - [ ] Self-managed Team still reaches `/license`
 - [ ] Hosted CTA is disabled or redirects to sign-in when there is
       no org session
-- [ ] Enterprise / On-Prem do not start Checkout
+- [ ] Enterprise / On-Prem do not start Checkout (sales path:
+      REQ-SITE-113 `/contact` form, not mailto)
 
 ## Test Cases
 

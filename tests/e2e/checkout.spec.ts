@@ -21,11 +21,19 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
     );
 
     const enterprise = page.locator('.pricing-card', { hasText: 'Enterprise' }).first();
+    await expect(enterprise.locator('.cta-button')).toHaveAttribute(
+      'href',
+      '/contact?intent=enterprise',
+    );
     await expect(enterprise.locator('.cta-button')).not.toHaveAttribute('href', /checkout/);
-    await expect(enterprise.locator('.cta-button')).not.toHaveAttribute('href', /license/);
+    await expect(enterprise.locator('.cta-button')).not.toHaveAttribute('href', /mailto:/);
 
     const onPrem = page.locator('.pricing-card', { hasText: 'On-Prem' }).first();
-    await expect(onPrem.locator('.cta-button')).toHaveAttribute('href', /mailto:sales@rtmx\.ai/);
+    await expect(onPrem.locator('.cta-button')).toHaveAttribute(
+      'href',
+      '/contact?intent=on-prem',
+    );
+    await expect(onPrem.locator('.cta-button')).not.toHaveAttribute('href', /mailto:/);
   });
 });
 
@@ -44,8 +52,10 @@ test.describe('hosted checkout page', () => {
     await expect(server).toHaveAttribute('type', 'hidden');
     await expect(server).not.toHaveValue('');
     await expect(page.locator('body')).toContainText(/Private beta/i);
-    await expect(page.locator('body')).toContainText('sales@rtmx.ai');
-    await expect(page.locator('body')).toContainText('REQ-MONO-020');
+    await expect(page.getByRole('link', { name: /sales-assisted/i })).toHaveAttribute(
+      'href',
+      '/contact',
+    );
     await expect(page.getByText('RTMX Sync server')).toHaveCount(0);
   });
 
