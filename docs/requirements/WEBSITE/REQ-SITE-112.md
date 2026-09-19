@@ -1,11 +1,13 @@
 # REQ-SITE-112: Self-serve Managed Checkout Funnel
 
+## Status: COMPLETE
+
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: BILLING
 - **Priority**: P0
 - **Phase**: 7
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-102, REQ-SITE-110
 - **External ID**: rtmx-ai/REQ-MONO-020d
 
