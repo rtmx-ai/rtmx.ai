@@ -63,6 +63,8 @@ const githubHref = 'https://github.com/rtmx-ai/rtmx';
 			justify-content: space-between;
 			align-items: center;
 			height: 100%;
+			/* Leave room so search cannot sit under the pinned identity. */
+			padding-inline-end: 14rem;
 		}
 
 		.title-wrapper {
@@ -75,10 +77,17 @@ const githubHref = 'https://github.com/rtmx-ai/rtmx';
 		}
 
 		.right-group {
+			/* Starlight's content-aligned header grid puts this column in the
+			   middle of splash pages. Pin it to the site header's top-right. */
+			position: absolute;
+			inset-inline-end: var(--sl-nav-pad-x);
+			inset-block-start: 0;
+			height: var(--sl-nav-height);
+			z-index: 5;
 			gap: 1rem;
 			align-items: center;
 			justify-content: flex-end;
-			margin-inline-start: auto;
+			margin: 0;
 		}
 		.session-chrome-slot,
 		.language-slot {

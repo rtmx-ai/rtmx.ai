@@ -34,15 +34,21 @@
 		}
 	}
 
+	function githubLogin(value: string): string | null {
+		const match = value
+			.trim()
+			.match(/^(?:\d+\+)?([^@\s]+)@users\.noreply\.github\.com$/i);
+		return match?.[1] || null;
+	}
+
 	function identityLabel(session: { email?: string; display_name?: string }): string {
-		const noreply = /@users\.noreply\.github\.com$/i;
 		const display = (session.display_name || '').trim();
 		const email = (session.email || '').trim();
-		const candidate = display || email || 'Signed in';
-		if (noreply.test(candidate)) {
-			return candidate.split('@')[0] || 'Signed in';
-		}
-		return candidate;
+		const fromDisplay = githubLogin(display);
+		if (fromDisplay) return fromDisplay;
+		const fromEmail = githubLogin(email);
+		if (fromEmail && (!display || display.includes('@'))) return fromEmail;
+		return display || email || 'Signed in';
 	}
 
 	function render() {

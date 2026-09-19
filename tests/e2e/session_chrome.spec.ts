@@ -53,6 +53,23 @@ test.describe('header session chrome', () => {
     await expect(page.getByTestId('session-identity')).toHaveText('rhino11');
   });
 
+  test('numeric GitHub noreply prefix is dropped', async ({ page }) => {
+    await page.goto('/checkout');
+    await page.evaluate(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: '12345678+rhino11@users.noreply.github.com',
+          display_name: '12345678+rhino11@users.noreply.github.com',
+        }),
+      );
+    });
+    await page.reload();
+    await expect(page.getByTestId('session-identity')).toHaveText('rhino11');
+    await expect(page.getByTestId('session-identity')).not.toContainText('noreply');
+  });
+
   test('Sign in points at /login', async ({ page }) => {
     await page.goto('/about');
     await expect(page.getByTestId('session-chrome').getByRole('link', { name: 'Sign in' })).toHaveAttribute(
@@ -71,13 +88,36 @@ test.describe('header session chrome', () => {
 
     const chromeBox = await chrome.boundingBox();
     const fabBox = await fab.boundingBox();
+    const width = page.viewportSize()!.width;
     expect(chromeBox).toBeTruthy();
     expect(fabBox).toBeTruthy();
-    // Identity chrome is in the top-right of the header (not centered).
-    expect(chromeBox!.x).toBeGreaterThan(page.viewportSize()!.width * 0.55);
+    // Pinned to the top-right of the site header, not the content column.
+    expect(chromeBox!.x + chromeBox!.width).toBeGreaterThan(width - 48);
     expect(chromeBox!.y).toBeLessThan(80);
     // GitHub FAB is bottom-right.
-    expect(fabBox!.x).toBeGreaterThan(page.viewportSize()!.width * 0.7);
+    expect(fabBox!.x).toBeGreaterThan(width * 0.7);
     expect(fabBox!.y).toBeGreaterThan(page.viewportSize()!.height * 0.7);
+  });
+
+  test('checkout splash keeps identity at the top-right, not beside search', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/checkout');
+    await page.evaluate(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: 'rhino11@users.noreply.github.com',
+          display_name: 'rhino11@users.noreply.github.com',
+        }),
+      );
+    });
+    await page.reload();
+    const chrome = page.getByTestId('session-chrome');
+    await expect(chrome.getByTestId('session-identity')).toHaveText('rhino11');
+    const box = await chrome.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.x + box!.width).toBeGreaterThan(1280 - 48);
+    expect(box!.y).toBeLessThan(80);
   });
 });
