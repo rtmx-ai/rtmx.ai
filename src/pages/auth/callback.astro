@@ -63,6 +63,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           display_name: body.display_name || body.email,
         }),
       );
+      if (body.cli_redirect) {
+        const handoff = new URL(body.cli_redirect);
+        handoff.searchParams.set('session_token', body.session_token);
+        handoff.searchParams.set('email', body.email || '');
+        handoff.searchParams.set('display_name', body.display_name || body.email || '');
+        window.location.replace(handoff.toString());
+        return;
+      }
       const next =
         body.next || sessionStorage.getItem('rtmx.oauth.next') || '/checkout';
       sessionStorage.removeItem('rtmx.oauth.next');
