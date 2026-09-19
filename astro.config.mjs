@@ -58,10 +58,10 @@ export default defineConfig({
 					},
 				},
 				{
-					// REQ-SITE-019: Default to dark, but respect user's saved preference
-					// Also append slogan to browser tab title (not visible header)
+					// Site is dark-only (theme selector removed from header).
 					tag: 'script',
-					content: `(function(){var t=localStorage.getItem('starlight-theme');if(!t)document.documentElement.dataset.theme='dark';})();
+					content: `document.documentElement.setAttribute("data-theme","dark");
+						try { localStorage.removeItem('starlight-theme'); } catch (e) {}
 						if (!document.title.includes('Intent for AI')) {
 							document.title = document.title.replace(/RTMX/, 'RTMX | Intent for AI');
 						}`,

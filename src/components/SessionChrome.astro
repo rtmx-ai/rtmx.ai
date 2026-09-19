@@ -34,11 +34,22 @@
 		}
 	}
 
+	function identityLabel(session: { email?: string; display_name?: string }): string {
+		const noreply = /@users\.noreply\.github\.com$/i;
+		const display = (session.display_name || '').trim();
+		const email = (session.email || '').trim();
+		const candidate = display || email || 'Signed in';
+		if (noreply.test(candidate)) {
+			return candidate.split('@')[0] || 'Signed in';
+		}
+		return candidate;
+	}
+
 	function render() {
 		const session = readSession();
 		if (!signIn || !signedIn || !identity) return;
 		if (session) {
-			const label = session.display_name || session.email || 'Signed in';
+			const label = identityLabel(session);
 			identity.textContent = label;
 			identity.title = session.email || label;
 			signIn.hidden = true;

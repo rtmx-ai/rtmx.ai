@@ -55,12 +55,19 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         return;
       }
       const body = await resp.json();
+      const email = body.email || '';
+      let displayName = (body.display_name || '').trim();
+      if (!displayName || /@users\.noreply\.github\.com$/i.test(displayName)) {
+        displayName = /@users\.noreply\.github\.com$/i.test(email)
+          ? email.split('@')[0]
+          : displayName || email;
+      }
       sessionStorage.setItem(
         SESSION,
         JSON.stringify({
           token: body.session_token,
-          email: body.email,
-          display_name: body.display_name || body.email,
+          email,
+          display_name: displayName || email,
         }),
       );
       if (body.cli_redirect) {
