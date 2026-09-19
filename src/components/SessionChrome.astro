@@ -1,0 +1,106 @@
+---
+/**
+ * REQ-SITE-114: Signed-in identity chrome in the site header.
+ * Session is client-only (sessionStorage `rtmx.session`) until a cookie path exists.
+ */
+---
+
+<div class="session-chrome" id="rtmx-session-chrome" data-testid="session-chrome">
+	<a href="/login" class="session-chrome-link" id="rtmx-session-signin" hidden>Sign in</a>
+	<div class="session-chrome-signed-in" id="rtmx-session-signed-in" hidden>
+		<span class="session-chrome-identity" id="rtmx-session-identity" data-testid="session-identity"></span>
+		<button type="button" class="session-chrome-link session-chrome-signout" id="rtmx-session-signout">
+			Sign out
+		</button>
+	</div>
+</div>
+
+<script>
+	const SESSION_KEY = 'rtmx.session';
+	const signIn = document.getElementById('rtmx-session-signin');
+	const signedIn = document.getElementById('rtmx-session-signed-in');
+	const identity = document.getElementById('rtmx-session-identity');
+	const signOut = document.getElementById('rtmx-session-signout');
+
+	function readSession(): { email?: string; display_name?: string; token?: string } | null {
+		try {
+			const raw = sessionStorage.getItem(SESSION_KEY);
+			if (!raw) return null;
+			const parsed = JSON.parse(raw) as { email?: string; display_name?: string; token?: string };
+			if (!parsed?.token) return null;
+			return parsed;
+		} catch {
+			return null;
+		}
+	}
+
+	function render() {
+		const session = readSession();
+		if (!signIn || !signedIn || !identity) return;
+		if (session) {
+			const label = session.display_name || session.email || 'Signed in';
+			identity.textContent = label;
+			identity.title = session.email || label;
+			signIn.hidden = true;
+			signedIn.hidden = false;
+		} else {
+			signIn.hidden = false;
+			signedIn.hidden = true;
+			identity.textContent = '';
+		}
+	}
+
+	signOut?.addEventListener('click', () => {
+		sessionStorage.removeItem(SESSION_KEY);
+		sessionStorage.removeItem('rtmx.oauth.next');
+		sessionStorage.removeItem('rtmx.oauth.provider');
+		render();
+		const path = window.location.pathname;
+		if (path.startsWith('/checkout') || path.startsWith('/dashboard') || path.startsWith('/billing')) {
+			window.location.assign('/');
+		}
+	});
+
+	render();
+</script>
+
+<style>
+	.session-chrome {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-size: 0.875rem;
+	}
+	.session-chrome-signed-in[hidden],
+.session-chrome-link[hidden] {
+	display: none !important;
+}
+.session-chrome-signed-in:not([hidden]) {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+	.session-chrome-identity {
+		color: var(--rtmx-text-muted);
+		max-width: 12rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.session-chrome-link {
+		color: var(--rtmx-emerald-light);
+		text-decoration: none;
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+	}
+	.session-chrome-link:hover {
+		color: var(--rtmx-text);
+		text-decoration: underline;
+	}
+	.session-chrome-signout {
+		color: var(--rtmx-text-dim);
+	}
+</style>

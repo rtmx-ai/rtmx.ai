@@ -9,6 +9,7 @@ import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
 import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
 import HeaderNav from './HeaderNav.astro';
+import SessionChrome from './SessionChrome.astro';
 
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
@@ -21,6 +22,9 @@ const shouldRenderSearch =
 	</div>
 	<div class="sl-flex print:hidden">
 		{shouldRenderSearch && <Search />}
+		<div class="session-chrome-slot print:hidden">
+			<SessionChrome />
+		</div>
 	</div>
 	<div class="sl-hidden md:sl-flex print:hidden right-group">
 		<div class="sl-flex social-icons">
@@ -54,6 +58,11 @@ const shouldRenderSearch =
 		.social-icons {
 			gap: 1rem;
 			align-items: center;
+		}
+		.session-chrome-slot {
+			display: flex;
+			align-items: center;
+			margin-inline-start: 0.75rem;
 		}
 		.social-icons::after {
 			content: '';

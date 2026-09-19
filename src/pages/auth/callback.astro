@@ -57,7 +57,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       const body = await resp.json();
       sessionStorage.setItem(
         SESSION,
-        JSON.stringify({ token: body.session_token, email: body.email }),
+        JSON.stringify({
+          token: body.session_token,
+          email: body.email,
+          display_name: body.display_name || body.email,
+        }),
       );
       const next =
         body.next || sessionStorage.getItem('rtmx.oauth.next') || '/checkout';
