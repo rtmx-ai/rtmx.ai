@@ -28,6 +28,8 @@ trails paying; this thin chrome closes the identity gap now.
 3. [x] Signed-out: Sign in links to `/login` (with safe `next` when known).
 4. [x] Does not require `/dashboard` (SITE-101) to be implemented.
 5. [x] Playwright covers signed-in vs signed-out header states.
+6. [x] Splash pages (`/checkout`, `/login`, `/account`, `/billing/*`) hide the GitHub FAB (REQ-MONO-023a).
+7. [x] Signed-in identity links to `/account` (REQ-SITE-115).
 
 ## Files (expected)
 

@@ -127,6 +127,12 @@ const githubHref = 'https://github.com/rtmx-ai/rtmx';
 			outline-offset: 2px;
 		}
 
+		/* REQ-MONO-023a / SITE-114: acquisition splash pages reserve top-right
+		   for account chrome only — hide the GitHub FAB. */
+		:global(body:has(.rtmx-splash)) .github-fab {
+			display: none !important;
+		}
+
 		@media (min-width: 50rem) {
 			:global(:root[data-has-sidebar]) {
 				--__sidebar-pad: calc(2 * var(--sl-nav-pad-x));

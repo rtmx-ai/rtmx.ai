@@ -68,6 +68,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           token: body.session_token,
           email,
           display_name: displayName || email,
+          user_id: body.user_id || '',
+          login: body.login || '',
         }),
       );
       if (body.cli_redirect) {

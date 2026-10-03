@@ -1,0 +1,342 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
+---
+
+<StarlightPage frontmatter={{ title: 'Account', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page rtmx-splash">
+    <section class="license-header">
+      <h1>Your account</h1>
+      <p class="license-subtitle">
+        Profile, organizations, connections, and billing for hosted RTMX Sync
+        (<code class="server-fixed">{defaultServer}</code>).
+      </p>
+    </section>
+
+    <section class="license-form-section not-content account-panel">
+      <div class="account-card" id="account-profile">
+        <p class="field-label">Signed in as</p>
+        <p class="account-name" id="account-display-name">…</p>
+        <p class="field-help" id="account-email"></p>
+      </div>
+
+      <div class="account-card" id="organizations">
+        <h2 class="account-section-title">Organizations</h2>
+        <ul class="org-list" id="org-list"></ul>
+        <p class="field-help" id="org-empty" hidden>No organizations yet. Create one on Checkout.</p>
+        <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
+      </div>
+
+      <nav class="account-nav">
+        <a href="/billing/manage">Billing</a>
+        <a href="#connections">Connections</a>
+      </nav>
+
+      <div class="account-card" id="connections">
+        <h2 class="account-section-title">Connections</h2>
+        <p class="field-help">
+          Project-management SaaS OAuth (Asana first). Connect from the CLI with
+          <code>rtmx connect asana</code>, or start here when configured.
+        </p>
+        <ul class="connection-list" id="connection-list"></ul>
+        <p class="field-help" id="connection-empty" hidden>No connections yet.</p>
+        <button type="button" class="secondary-button" id="connect-asana">Connect Asana</button>
+        <div class="form-message" id="account-message" role="status" aria-live="polite"></div>
+      </div>
+
+      <button type="button" class="ghost-danger" id="account-signout">Sign out</button>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 2rem 1.5rem 0.5rem; }
+  .license-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.35rem); font-weight: 700; margin: 0 0 0.75rem;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { font-size: 1.05rem; color: var(--rtmx-text-muted); max-width: 34rem; margin: 0 auto; line-height: 1.55; }
+  .server-fixed { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: var(--rtmx-emerald-light); }
+  .license-form-section { max-width: 28rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  .account-card {
+    background: var(--rtmx-bg-card); border: 1px solid var(--rtmx-border); border-radius: 0.75rem; padding: 1.25rem;
+  }
+  .account-name { margin: 0.25rem 0; font-size: 1.25rem; font-weight: 650; color: var(--rtmx-text); }
+  .field-label { color: var(--rtmx-text); font-weight: 600; font-size: 0.9rem; margin: 0; }
+  .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; line-height: 1.45; margin: 0.35rem 0 0; }
+  .account-section-title { margin: 0 0 0.5rem; font-size: 1.05rem; color: var(--rtmx-text); }
+  .account-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+  .account-nav a { color: var(--rtmx-emerald-light); }
+  .org-list, .connection-list { list-style: none; padding: 0; margin: 0.75rem 0; }
+  .org-list li, .connection-list li {
+    padding: 0.6rem 0; border-bottom: 1px solid var(--rtmx-border); color: var(--rtmx-text); font-size: 0.9rem;
+    display: flex; justify-content: space-between; gap: 0.75rem; align-items: center;
+  }
+  .connection-actions { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+  .share-select {
+    background: var(--rtmx-bg-elevated); color: var(--rtmx-text); border: 1px solid var(--rtmx-border-hover);
+    border-radius: 0.35rem; padding: 0.25rem 0.4rem; font: inherit; font-size: 0.8rem; max-width: 9rem;
+  }
+  .org-list a, .connection-list a { color: var(--rtmx-emerald-light); font-size: 0.85rem; }
+  .secondary-button, .secondary-button-link {
+    margin-top: 0.75rem; padding: 0.65rem 1rem; border-radius: 0.5rem; border: 1px solid var(--rtmx-border-hover);
+    background: transparent; color: var(--rtmx-text); font-weight: 600; font-family: inherit; cursor: pointer;
+    display: inline-block; text-decoration: none; font-size: 0.95rem;
+  }
+  .ghost-danger {
+    border: none; background: transparent; color: #f87171; cursor: pointer; font: inherit; text-align: left; padding: 0;
+  }
+  .form-message { margin-top: 0.75rem; font-size: 0.9rem; }
+  .form-message.is-error { color: #fecaca; }
+  .form-message.is-success { color: var(--rtmx-emerald-light); }
+  .form-message:empty { display: none; }
+</style>
+
+<script define:vars={{ defaultServer }}>
+  const SESSION = 'rtmx.session';
+  const server = defaultServer.replace(/\/+$/, '');
+  const displayEl = document.getElementById('account-display-name');
+  const emailEl = document.getElementById('account-email');
+  const orgListEl = document.getElementById('org-list');
+  const orgEmptyEl = document.getElementById('org-empty');
+  const listEl = document.getElementById('connection-list');
+  const emptyEl = document.getElementById('connection-empty');
+  const message = document.getElementById('account-message');
+  /** @type {{ id: string, name?: string, slug?: string }[]} */
+  let cachedOrgs = [];
+
+  function readSession() {
+    try {
+      const parsed = JSON.parse(sessionStorage.getItem(SESSION) || '');
+      if (!parsed?.token) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  function show(text, kind) {
+    message.textContent = text;
+    message.className = 'form-message is-' + kind;
+  }
+
+  async function loadOrgs(token) {
+    const resp = await fetch(server + '/orgs', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) {
+      orgEmptyEl.hidden = false;
+      orgEmptyEl.textContent = 'Could not list organizations (' + resp.status + ').';
+      return;
+    }
+    const body = await resp.json();
+    const orgs = body.organizations || [];
+    cachedOrgs = orgs;
+    orgListEl.innerHTML = '';
+    orgEmptyEl.hidden = orgs.length > 0;
+    for (const org of orgs) {
+      const li = document.createElement('li');
+      const label = document.createElement('span');
+      label.textContent = (org.name || org.slug) + ' (' + (org.slug || org.id) + ')';
+      const admin = document.createElement('a');
+      admin.href = '/orgs/' + encodeURIComponent(org.slug || org.id) + '/admin';
+      admin.textContent = 'Admin';
+      li.appendChild(label);
+      li.appendChild(admin);
+      orgListEl.appendChild(li);
+    }
+  }
+
+  async function shareConnection(token, connectionId, orgId) {
+    const resp = await fetch(server + '/connections/' + connectionId + '/share', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ org_id: orgId }),
+    });
+    if (!resp.ok) {
+      show('Could not share connection (' + resp.status + ').', 'error');
+      return;
+    }
+    show('Connection shared into the organization.', 'success');
+    await loadConnections(token);
+  }
+
+  async function loadConnections(token) {
+    const resp = await fetch(server + '/connections', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) {
+      show('Could not load connections (' + resp.status + ').', 'error');
+      return;
+    }
+    const body = await resp.json();
+    const connections = body.connections || [];
+    listEl.innerHTML = '';
+    emptyEl.hidden = connections.length > 0;
+    const session = readSession();
+    for (const c of connections) {
+      const li = document.createElement('li');
+      li.className = 'connection-row';
+      const span = document.createElement('span');
+      const shared = (c.shared_org_ids || []).length
+        ? ' · shared with ' + c.shared_org_ids.length + ' org(s)'
+        : '';
+      span.textContent = (c.display_label || c.provider) + ' · ' + c.status + shared;
+
+      const actions = document.createElement('div');
+      actions.className = 'connection-actions';
+
+      if (session?.user_id && c.owner_user_id === session.user_id && cachedOrgs.length) {
+        const select = document.createElement('select');
+        select.setAttribute('aria-label', 'Share connection into organization');
+        select.className = 'share-select';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Share to org…';
+        select.appendChild(placeholder);
+        for (const org of cachedOrgs) {
+          if ((c.shared_org_ids || []).includes(org.id)) continue;
+          const opt = document.createElement('option');
+          opt.value = org.id;
+          opt.textContent = org.name || org.slug || org.id;
+          select.appendChild(opt);
+        }
+        select.addEventListener('change', async () => {
+          if (!select.value) return;
+          await shareConnection(token, c.id, select.value);
+          select.value = '';
+        });
+        actions.appendChild(select);
+      }
+
+      const revoke = document.createElement('button');
+      revoke.type = 'button';
+      revoke.className = 'ghost-danger';
+      revoke.textContent = 'Revoke';
+      revoke.addEventListener('click', async () => {
+        const del = await fetch(server + '/connections/' + c.id, {
+          method: 'DELETE',
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        if (!del.ok) {
+          show('Could not revoke (' + del.status + ').', 'error');
+          return;
+        }
+        show('Connection revoked.', 'success');
+        loadConnections(token);
+      });
+      actions.appendChild(revoke);
+      li.appendChild(span);
+      li.appendChild(actions);
+      listEl.appendChild(li);
+    }
+  }
+
+  async function completeAsanaIfPresent(token) {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+    const err = params.get('error');
+    if (err) {
+      show('Asana authorization was canceled or denied.', 'error');
+      return;
+    }
+    if (!code || !state) return;
+    show('Completing Asana connection...', 'success');
+    try {
+      const resp = await fetch(server + '/connections/asana/callback', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, state }),
+      });
+      // Clear OAuth params from the URL without a reload.
+      window.history.replaceState({}, '', '/account');
+      if (!resp.ok) {
+        show('Could not complete Asana OAuth (' + resp.status + ').', 'error');
+        return;
+      }
+      show('Asana connected.', 'success');
+      await loadConnections(token);
+    } catch {
+      show('Could not reach ' + server + '.', 'error');
+    }
+  }
+
+  async function enrichSessionFromMe(session) {
+    try {
+      const resp = await fetch(server + '/auth/me', {
+        headers: { Authorization: 'Bearer ' + session.token },
+      });
+      if (!resp.ok) return session;
+      const me = await resp.json();
+      const next = {
+        ...session,
+        user_id: me.id || session.user_id || '',
+        email: me.email || session.email || '',
+        display_name: me.display_name || session.display_name || '',
+      };
+      sessionStorage.setItem(SESSION, JSON.stringify(next));
+      return next;
+    } catch {
+      return session;
+    }
+  }
+
+  (async () => {
+    let session = readSession();
+    if (!session) {
+      window.location.replace('/login?next=' + encodeURIComponent('/account'));
+      return;
+    }
+    session = await enrichSessionFromMe(session);
+    displayEl.textContent = session.display_name || session.login || session.email || 'Signed in';
+    emailEl.textContent = session.email || '';
+    await completeAsanaIfPresent(session.token);
+    await loadOrgs(session.token);
+    await loadConnections(session.token);
+  })();
+
+  document.getElementById('account-signout').addEventListener('click', () => {
+    sessionStorage.removeItem(SESSION);
+    window.location.assign('/');
+  });
+
+  document.getElementById('connect-asana').addEventListener('click', async () => {
+    const s = readSession();
+    if (!s) return;
+    show('Starting Asana OAuth...', 'success');
+    try {
+      const resp = await fetch(server + '/connections/asana/start', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + s.token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          redirect_uri: window.location.origin + '/account',
+        }),
+      });
+      if (resp.status === 503) {
+        show('Asana OAuth is not configured on the sync host yet. Use rtmx connect asana when ready.', 'error');
+        return;
+      }
+      if (!resp.ok) {
+        show('Could not start Asana OAuth (' + resp.status + ').', 'error');
+        return;
+      }
+      const body = await resp.json();
+      window.location.assign(body.authorization_url);
+    } catch {
+      show('Could not reach ' + server + '.', 'error');
+    }
+  });
+</script>

@@ -7,24 +7,27 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 <StarlightPage frontmatter={{ title: 'Hosted Team Checkout', template: 'splash', hero: { tagline: '' } }}>
   <div class="license-page rtmx-splash">
     <section class="license-header">
+      <p class="checkout-kicker">Hosted Team · $9/user/month</p>
       <h1>Start hosted RTMX Sync</h1>
       <p class="license-subtitle">
-        Pays for a tenant-isolated room on our shared server
-        (<code class="server-fixed">{defaultServer}</code>). Card details stay
-        on Stripe. This page never sees a card number, and GET will not entitle
-        anyone — the webhook does. The RTMX CLI stays free under Apache 2.0.
+        A tenant-isolated room on
+        <code class="server-fixed">{defaultServer}</code>.
+        Card details stay on Stripe. The RTMX CLI stays free under Apache 2.0.
       </p>
     </section>
 
     <section class="license-form-section not-content">
-      <form id="checkout-form" class="license-form" novalidate>
+      <form id="checkout-form" class="license-form checkout-panel" novalidate>
         <input type="hidden" id="server-url" name="server-url" value={defaultServer} />
 
-        <div class="field" id="org-session-panel" hidden>
-          <span class="field-label">Your organizations</span>
-          <select id="org-select" class="text-input" aria-label="Select organization">
-            <option value="">Select an organization</option>
-          </select>
+        <fieldset class="checkout-step" id="org-session-panel" hidden>
+          <legend class="checkout-step-title">Organization</legend>
+          <label class="field">
+            <span class="field-label">Your organizations</span>
+            <select id="org-select" class="text-input" aria-label="Select organization">
+              <option value="">Select an organization</option>
+            </select>
+          </label>
           <div class="org-create-row">
             <input
               type="text"
@@ -32,23 +35,28 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
               class="text-input"
               placeholder="New org name"
               autocomplete="organization"
+              aria-label="New organization name"
             />
-            <button type="button" class="submit-button org-create-button" id="org-create">
+            <button type="button" class="secondary-button" id="org-create">
               Create
             </button>
           </div>
-          <span class="field-help">Signed-in buyers create or select an org here — no ops bootstrap.</span>
+          <p class="field-help">Create or select an org — no ops bootstrap.</p>
+          <p class="field-help" id="org-admin-link" hidden>
+            <a href="#" id="org-admin-anchor">Open organization admin</a>
+          </p>
           <div class="key-mint-row">
-            <button type="button" class="submit-button org-create-button" id="key-mint" disabled>
+            <button type="button" class="ghost-button" id="key-mint" disabled>
               Mint admin API key
             </button>
+            <span class="field-help key-mint-hint">Optional · for CLI / agents</span>
           </div>
           <pre id="key-once" class="key-once" hidden></pre>
-          <span class="field-help" id="key-once-help" hidden>
-            Copy this <code>rtmx_ad_</code> key now — it is shown once and is for CLI/agents.
+          <p class="field-help" id="key-once-help" hidden>
+            Copy this <code>rtmx_ad_</code> key now — it is shown once.
             Checkout can continue with your session alone.
-          </span>
-        </div>
+          </p>
+        </fieldset>
 
         <label class="field" id="org-manual-field">
           <span class="field-label">Organization</span>
@@ -81,21 +89,42 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           </span>
         </label>
 
-        <label class="field">
-          <span class="field-label">Seats</span>
-          <input type="number" id="quantity" name="quantity" class="text-input" min="1" value="1" required />
-        </label>
+        <fieldset class="checkout-step checkout-step-plan">
+          <legend class="checkout-step-title">Seats</legend>
+          <div class="seats-row">
+            <label class="field seats-field">
+              <span class="field-label">Team seats</span>
+              <input
+                type="number"
+                id="quantity"
+                name="quantity"
+                class="text-input seats-input"
+                min="1"
+                value="1"
+                required
+              />
+            </label>
+            <p class="seats-meta">
+              <span class="seats-price">$9</span>
+              <span class="field-help">per user / month</span>
+            </p>
+          </div>
+        </fieldset>
 
         <input type="hidden" id="offering" name="offering" value="managed_sync" />
 
-        <button type="submit" class="submit-button" id="checkout-submit">
-          <span class="button-text">Continue to Stripe Checkout</span>
-        </button>
+        <div class="checkout-actions">
+          <div class="form-message" id="checkout-message" role="status" aria-live="polite"></div>
+          <button type="submit" class="submit-button" id="checkout-submit">
+            <span class="button-text">Continue to Stripe Checkout</span>
+          </button>
+        </div>
       </form>
-      <div class="form-message" id="checkout-message" role="status" aria-live="polite"></div>
-      <p class="field-help" style="margin-top: 1rem;">
+
+      <p class="checkout-alt">
         Operating your own node instead?
         <a href="/license">Download a self-managed license</a>.
+        <br />
         Enterprise and On-Prem stay <a href="/contact">sales-assisted</a>.
       </p>
     </section>
@@ -104,43 +133,334 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
 <style is:global>
   .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
-  .license-header { text-align: center; padding: 1.5rem 2rem 0.75rem; }
-  .license-header h1 {
-    font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+
+  .license-header {
+    text-align: center;
+    padding: 2rem 1.5rem 0.5rem;
   }
-  .license-subtitle { font-size: 1.1rem; color: var(--rtmx-text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+
+  .checkout-kicker {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--rtmx-text-dim);
+  }
+
+  .license-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.35rem);
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .license-subtitle {
+    font-size: 1.05rem;
+    color: var(--rtmx-text-muted);
+    max-width: 34rem;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
   .license-subtitle .server-fixed {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.95em;
+    font-size: 0.92em;
+    color: var(--rtmx-emerald-light);
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
+    border-radius: 0.35rem;
+    padding: 0.1em 0.4em;
+  }
+
+  .license-form-section {
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 1.25rem 1.25rem 3rem;
+  }
+
+  .checkout-panel {
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--rtmx-emerald) 8%, transparent);
+  }
+
+  .license-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .checkout-step {
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-inline-size: 0;
+  }
+
+  .checkout-step-title {
+    padding: 0;
+    margin: 0 0 0.15rem;
+    float: none;
+    width: 100%;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rtmx-text-dim);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin: 0;
+  }
+
+  .field-label {
+    color: var(--rtmx-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .field-help {
+    color: var(--rtmx-text-dim);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .text-input {
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--rtmx-border-hover);
+    background: var(--rtmx-bg-elevated);
+    color: var(--rtmx-text);
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .text-input:focus {
+    outline: none;
+    border-color: var(--rtmx-emerald);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rtmx-emerald) 25%, transparent);
+  }
+
+  .text-input:disabled {
+    opacity: 0.55;
+  }
+
+  select.text-input {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--rtmx-text-muted) 50%),
+      linear-gradient(135deg, var(--rtmx-text-muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 1.15rem) calc(50% - 0.15rem),
+      calc(100% - 0.85rem) calc(50% - 0.15rem);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 2.25rem;
+  }
+
+  .org-create-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .org-create-row .text-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .secondary-button,
+  .ghost-button,
+  .license-form .submit-button {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .secondary-button {
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+    border: 1px solid var(--rtmx-border-hover);
+    background: transparent;
+    color: var(--rtmx-text);
+  }
+
+  .secondary-button:hover:not(:disabled) {
+    border-color: var(--rtmx-emerald);
     color: var(--rtmx-emerald-light);
   }
-  .license-form-section { max-width: 560px; margin: 0 auto; padding: 2rem; }
-  .license-form { display: flex; flex-direction: column; gap: 1.25rem; }
-  .field { display: flex; flex-direction: column; gap: 0.375rem; }
-  .field-label { color: var(--rtmx-text); font-weight: 600; font-size: 0.95rem; }
-  .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; }
-  .text-input {
-    padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid var(--rtmx-border-hover);
-    background: var(--rtmx-bg-card); color: var(--rtmx-text); font-size: 1rem; font-family: inherit;
+
+  .ghost-button {
+    padding: 0.35rem 0;
+    border: none;
+    background: transparent;
+    color: var(--rtmx-emerald-light);
+    font-size: 0.88rem;
+    font-weight: 550;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: color-mix(in srgb, var(--rtmx-emerald-light) 40%, transparent);
   }
-  .license-form .submit-button {
-    padding: 0.875rem 2rem; border-radius: 0.5rem; border: none; background: var(--rtmx-emerald);
-    color: var(--rtmx-bg); font-weight: 600; font-size: 1rem; font-family: inherit; cursor: pointer;
+
+  .ghost-button:hover:not(:disabled) {
+    color: var(--rtmx-emerald);
+    text-decoration-color: var(--rtmx-emerald);
   }
-  .license-form .submit-button:disabled { opacity: 0.7; cursor: not-allowed; }
-  .org-create-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-  .org-create-row .text-input { flex: 1; }
-  .org-create-button { padding: 0.75rem 1rem; white-space: nowrap; }
-  .key-mint-row { margin-top: 0.75rem; }
+
+  .ghost-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+
+  .key-mint-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    padding-top: 0.15rem;
+  }
+
+  .key-mint-hint {
+    font-size: 0.78rem;
+  }
+
   .key-once {
-    margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem;
-    background: var(--rtmx-bg-card); border: 1px solid var(--rtmx-border-hover);
-    color: var(--rtmx-emerald-light); font-size: 0.85rem; overflow-x: auto;
-    white-space: pre-wrap; word-break: break-all;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--rtmx-bg);
+    border: 1px solid var(--rtmx-border-hover);
+    color: var(--rtmx-emerald-light);
+    font-size: 0.82rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
-  /* Author .field { display:flex } would otherwise override the HTML hidden attr. */
+
+  .seats-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.25rem;
+  }
+
+  .seats-field {
+    flex: 0 0 auto;
+  }
+
+  .seats-input {
+    width: 5.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .seats-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .seats-price {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--rtmx-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .checkout-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+  }
+
+  .license-form .submit-button {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    border: none;
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
+  }
+
+  .license-form .submit-button:hover:not(:disabled) {
+    background: var(--rtmx-emerald-light);
+  }
+
+  .license-form .submit-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    border-radius: 0.5rem;
+    padding: 0;
+  }
+
+  .form-message:empty {
+    display: none;
+  }
+
+  .form-message.is-success,
+  .form-message.is-error {
+    padding: 0.7rem 0.85rem;
+  }
+
+  .form-message.is-success {
+    color: var(--rtmx-emerald-light);
+    background: color-mix(in srgb, var(--rtmx-emerald) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rtmx-emerald) 35%, transparent);
+  }
+
+  .form-message.is-error {
+    color: #fecaca;
+    background: color-mix(in srgb, #f43f5e 14%, transparent);
+    border: 1px solid color-mix(in srgb, #f43f5e 40%, transparent);
+  }
+
+  .checkout-alt {
+    margin: 1.25rem 0 0;
+    text-align: center;
+    color: var(--rtmx-text-dim);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .checkout-alt a {
+    color: var(--rtmx-emerald-light);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-decoration-color: color-mix(in srgb, var(--rtmx-emerald-light) 40%, transparent);
+  }
+
+  .checkout-alt a:hover {
+    color: var(--rtmx-text);
+    text-decoration-color: var(--rtmx-emerald-light);
+  }
+
+  /* Author .field / fieldset display would otherwise override the HTML hidden attr. */
   [hidden] { display: none !important; }
 </style>
 
@@ -151,22 +471,33 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const serverInput = document.getElementById('server-url') as HTMLInputElement;
   const orgInput = document.getElementById('org-ref') as HTMLInputElement;
   const orgSelect = document.getElementById('org-select') as HTMLSelectElement;
-  const orgSessionPanel = document.getElementById('org-session-panel') as HTMLDivElement;
+  const orgSessionPanel = document.getElementById('org-session-panel') as HTMLFieldSetElement;
   const orgManualField = document.getElementById('org-manual-field') as HTMLLabelElement;
   const orgCreateName = document.getElementById('org-create-name') as HTMLInputElement;
   const orgCreateBtn = document.getElementById('org-create') as HTMLButtonElement;
   const keyMintBtn = document.getElementById('key-mint') as HTMLButtonElement;
   const keyOnce = document.getElementById('key-once') as HTMLPreElement;
-  const keyOnceHelp = document.getElementById('key-once-help') as HTMLSpanElement;
+  const keyOnceHelp = document.getElementById('key-once-help') as HTMLParagraphElement;
   const keyInput = document.getElementById('api-key') as HTMLInputElement;
   const apiKeyField = document.getElementById('api-key-field') as HTMLLabelElement;
   const quantityInput = document.getElementById('quantity') as HTMLInputElement;
   const submitBtn = document.getElementById('checkout-submit') as HTMLButtonElement;
   const message = document.getElementById('checkout-message') as HTMLDivElement;
+  const orgAdminLink = document.getElementById('org-admin-link') as HTMLParagraphElement;
+  const orgAdminAnchor = document.getElementById('org-admin-anchor') as HTMLAnchorElement;
 
   function show(text: string, kind: 'success' | 'error') {
     message.textContent = text;
     message.className = `form-message is-${kind}`;
+  }
+
+  function updateOrgAdminLink(slug: string) {
+    if (!slug) {
+      orgAdminLink.hidden = true;
+      return;
+    }
+    orgAdminAnchor.href = `/orgs/${encodeURIComponent(slug)}/admin`;
+    orgAdminLink.hidden = false;
   }
 
   function readSession(): { token?: string; email?: string } | null {
@@ -189,6 +520,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       orgSelect.value = orgs[0].slug || orgs[0].id;
       orgInput.value = orgSelect.value;
       keyMintBtn.disabled = false;
+      updateOrgAdminLink(orgSelect.value);
+    } else {
+      updateOrgAdminLink(orgSelect.value);
     }
   }
 
@@ -197,7 +531,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!resp.ok) {
-      show(`Could not list organizations (${resp.status}).`, 'error');
+      if (resp.status === 401) {
+        show('Session expired or invalid. Sign out and sign in again.', 'error');
+      } else {
+        show(`Could not list organizations (${resp.status}).`, 'error');
+      }
       return;
     }
     const body = await resp.json();
@@ -216,6 +554,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   orgSelect.addEventListener('change', () => {
     orgInput.value = orgSelect.value;
     keyMintBtn.disabled = !orgSelect.value;
+    updateOrgAdminLink(orgSelect.value);
     keyOnce.hidden = true;
     keyOnceHelp.hidden = true;
     keyOnce.textContent = '';
@@ -286,6 +625,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       orgSelect.value = org.slug || org.id;
       orgInput.value = orgSelect.value;
       orgCreateName.value = '';
+      keyMintBtn.disabled = !orgSelect.value;
+      updateOrgAdminLink(orgSelect.value);
       show(`Created organization ${org.name}.`, 'success');
     } catch {
       show(`Could not reach ${server}.`, 'error');

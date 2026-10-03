@@ -115,6 +115,8 @@ test.describe('header session chrome', () => {
     await page.reload();
     const chrome = page.getByTestId('session-chrome');
     await expect(chrome.getByTestId('session-identity')).toHaveText('rhino11');
+    await expect(chrome.getByTestId('session-identity')).toHaveAttribute('href', '/account');
+    await expect(page.getByTestId('github-fab')).toBeHidden();
     const box = await chrome.boundingBox();
     expect(box).toBeTruthy();
     expect(box!.x + box!.width).toBeGreaterThan(1280 - 48);

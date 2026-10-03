@@ -8,7 +8,12 @@
 <div class="session-chrome" id="rtmx-session-chrome" data-testid="session-chrome">
 	<a href="/login" class="session-chrome-link" id="rtmx-session-signin" hidden>Sign in</a>
 	<div class="session-chrome-signed-in" id="rtmx-session-signed-in" hidden>
-		<span class="session-chrome-identity" id="rtmx-session-identity" data-testid="session-identity"></span>
+		<a
+			href="/account"
+			class="session-chrome-identity"
+			id="rtmx-session-identity"
+			data-testid="session-identity"
+		></a>
 		<button type="button" class="session-chrome-link session-chrome-signout" id="rtmx-session-signout">
 			Sign out
 		</button>
@@ -22,18 +27,6 @@
 	const identity = document.getElementById('rtmx-session-identity');
 	const signOut = document.getElementById('rtmx-session-signout');
 
-	function readSession(): { email?: string; display_name?: string; token?: string } | null {
-		try {
-			const raw = sessionStorage.getItem(SESSION_KEY);
-			if (!raw) return null;
-			const parsed = JSON.parse(raw) as { email?: string; display_name?: string; token?: string };
-			if (!parsed?.token) return null;
-			return parsed;
-		} catch {
-			return null;
-		}
-	}
-
 	function githubLogin(value: string): string | null {
 		const match = value
 			.trim()
@@ -41,14 +34,48 @@
 		return match?.[1] || null;
 	}
 
-	function identityLabel(session: { email?: string; display_name?: string }): string {
+	function identityLabel(session: {
+		email?: string;
+		display_name?: string;
+		login?: string;
+	}): string {
 		const display = (session.display_name || '').trim();
+		const login = (session.login || '').trim();
 		const email = (session.email || '').trim();
+		if (display && !githubLogin(display) && !/@users\.noreply\.github\.com$/i.test(display)) {
+			return display;
+		}
 		const fromDisplay = githubLogin(display);
 		if (fromDisplay) return fromDisplay;
+		if (login) return login;
 		const fromEmail = githubLogin(email);
-		if (fromEmail && (!display || display.includes('@'))) return fromEmail;
-		return display || email || 'Signed in';
+		if (fromEmail) return fromEmail;
+		if (email && !/@users\.noreply\.github\.com$/i.test(email)) return email;
+		return display || login || 'Signed in';
+	}
+
+	function readSession(): {
+		email?: string;
+		display_name?: string;
+		token?: string;
+		login?: string;
+		user_id?: string;
+	} | null {
+		try {
+			const raw = sessionStorage.getItem(SESSION_KEY);
+			if (!raw) return null;
+			const parsed = JSON.parse(raw) as {
+				email?: string;
+				display_name?: string;
+				token?: string;
+				login?: string;
+				user_id?: string;
+			};
+			if (!parsed?.token) return null;
+			return parsed;
+		} catch {
+			return null;
+		}
 	}
 
 	function render() {
@@ -73,7 +100,7 @@
 		sessionStorage.removeItem('rtmx.oauth.provider');
 		render();
 		const path = window.location.pathname;
-		if (path.startsWith('/checkout') || path.startsWith('/dashboard') || path.startsWith('/billing')) {
+		if (path.startsWith('/checkout') || path.startsWith('/dashboard') || path.startsWith('/billing') || path.startsWith('/account') || path.startsWith('/orgs')) {
 			window.location.assign('/');
 		}
 	});
@@ -103,6 +130,11 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		text-decoration: none;
+	}
+	.session-chrome-identity:hover {
+		color: var(--rtmx-emerald-light);
+		text-decoration: underline;
 	}
 	.session-chrome-link {
 		color: var(--rtmx-emerald-light);
