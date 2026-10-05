@@ -27,6 +27,14 @@ shell (identity + org context) as the front door to org-scoped rooms
 4. [ ] Playwright covers redirect and signed-in shell smoke.
 5. [ ] Does not block SITE-114 or MONO-021.
 
+## Decomposition
+
+1. Unauthenticated GET /dashboard redirects to login with safe next=/dashboard
+2. Authenticated visit renders a minimal signed-in dashboard shell
+3. Missing or expired session is treated as unauthenticated
+4. Playwright covers redirect and signed-in shell smoke
+5. Dashboard auth gate does not block SITE-114 or MONO-021
+
 ## Out of Scope
 
 - Live room WebSocket (SITE-103)
