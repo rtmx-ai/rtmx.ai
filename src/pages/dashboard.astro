@@ -9,9 +9,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     <section class="license-header">
       <h1>Dashboard</h1>
       <p class="license-subtitle">
-        Signed-in front door for org-scoped rooms on
-        <code class="server-fixed">{defaultServer}</code>.
-        Live room sync (SITE-103/104) follows this shell.
+        Org-scoped rooms on
+        <code class="server-fixed">{defaultServer}</code>
+        with a live sync connection (SITE-103 / SITE-104).
       </p>
     </section>
 
@@ -27,6 +27,26 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         <ul class="org-list" id="dashboard-org-list" data-testid="dashboard-org-list"></ul>
         <p class="field-help" id="dashboard-org-empty" hidden>
           No organizations yet. Create one on Checkout.
+        </p>
+      </div>
+
+      <div class="account-card" id="dashboard-rooms-card">
+        <div class="rooms-header">
+          <h2 class="account-section-title">Rooms</h2>
+          <p
+            class="sync-status"
+            id="dashboard-sync-status"
+            data-testid="dashboard-sync-status"
+            data-state="idle"
+            aria-live="polite"
+          >
+            Idle
+          </p>
+        </div>
+        <p class="field-help" id="dashboard-selected-org" data-testid="dashboard-selected-org"></p>
+        <ul class="org-list" id="dashboard-room-list" data-testid="dashboard-room-list"></ul>
+        <p class="field-help" id="dashboard-room-empty" data-testid="dashboard-room-empty" hidden>
+          No rooms in this org yet.
         </p>
       </div>
 
@@ -65,18 +85,44 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .org-list li {
     padding: 0.6rem 0; border-bottom: 1px solid var(--rtmx-border); color: var(--rtmx-text); font-size: 0.9rem;
   }
+  .org-list button.org-pick, .org-list button.room-pick {
+    background: none; border: none; color: inherit; font: inherit; padding: 0; cursor: pointer; text-align: left; width: 100%;
+  }
+  .org-list button.org-pick:hover, .org-list button.room-pick:hover { color: var(--rtmx-emerald-light); }
+  .org-list li.is-selected { color: var(--rtmx-emerald-light); font-weight: 600; }
+  .rooms-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
+  .rooms-header .account-section-title { margin: 0; }
+  .sync-status {
+    margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--rtmx-text-dim);
+  }
+  .sync-status[data-state="connecting"] { color: #fbbf24; }
+  .sync-status[data-state="connected"] { color: var(--rtmx-emerald-light); }
+  .sync-status[data-state="auth-failed"],
+  .sync-status[data-state="error"] { color: #f87171; }
   .form-message { color: var(--rtmx-text-muted); font-size: 0.9rem; }
   .form-message.is-error { color: #f87171; }
 </style>
 
 <script define:vars={{ defaultServer }}>
   const SESSION = 'rtmx.session';
+  const DEFAULT_ROOM = 'main';
   const server = defaultServer.replace(/\/+$/, '');
   const displayEl = document.getElementById('dashboard-display-name');
   const emailEl = document.getElementById('dashboard-email');
   const orgListEl = document.getElementById('dashboard-org-list');
   const orgEmptyEl = document.getElementById('dashboard-org-empty');
+  const roomListEl = document.getElementById('dashboard-room-list');
+  const roomEmptyEl = document.getElementById('dashboard-room-empty');
+  const selectedOrgEl = document.getElementById('dashboard-selected-org');
+  const syncStatusEl = document.getElementById('dashboard-sync-status');
   const message = document.getElementById('dashboard-message');
+
+  /** @type {WebSocket | null} */
+  let activeWs = null;
+  /** @type {{ id: string, name?: string, slug?: string }[]} */
+  let orgs = [];
+  /** @type {string | null} */
+  let selectedOrgSlug = null;
 
   function readSession() {
     try {
@@ -92,6 +138,74 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     if (!message) return;
     message.textContent = text;
     message.className = kind === 'error' ? 'form-message is-error' : 'form-message';
+  }
+
+  function setSyncStatus(state, label) {
+    if (!syncStatusEl) return;
+    syncStatusEl.dataset.state = state;
+    syncStatusEl.textContent = label;
+  }
+
+  function wsBase() {
+    return server.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:');
+  }
+
+  function closeWs() {
+    if (activeWs) {
+      try {
+        activeWs.close();
+      } catch {
+        /* ignore */
+      }
+      activeWs = null;
+    }
+  }
+
+  /**
+   * SITE-103: open /sync/{org}/{room}?token=… (browser cannot set Authorization).
+   */
+  function connectRoom(orgSlug, roomName, token) {
+    closeWs();
+    const url =
+      wsBase() +
+      '/sync/' +
+      encodeURIComponent(orgSlug) +
+      '/' +
+      encodeURIComponent(roomName) +
+      '?token=' +
+      encodeURIComponent(token);
+    setSyncStatus('connecting', 'Connecting…');
+    let ws;
+    try {
+      ws = new WebSocket(url);
+    } catch (err) {
+      setSyncStatus('error', 'WebSocket unavailable');
+      show('Could not open sync connection.', 'error');
+      return;
+    }
+    activeWs = ws;
+    ws.binaryType = 'arraybuffer';
+    ws.onopen = () => {
+      if (activeWs === ws) setSyncStatus('connected', 'Live · ' + orgSlug + '/' + roomName);
+    };
+    ws.onerror = () => {
+      if (activeWs === ws) setSyncStatus('error', 'Connection error');
+    };
+    ws.onclose = (ev) => {
+      if (activeWs !== ws) return;
+      activeWs = null;
+      const authCodes = new Set([4401, 4403, 4409, 4402]);
+      if (authCodes.has(ev.code)) {
+        setSyncStatus('auth-failed', ev.reason || 'Authentication failed (' + ev.code + ')');
+        show(ev.reason || 'Sync rejected the session (' + ev.code + ').', 'error');
+        return;
+      }
+      if (ev.code !== 1000) {
+        setSyncStatus('disconnected', 'Disconnected (' + ev.code + ')');
+      } else {
+        setSyncStatus('idle', 'Idle');
+      }
+    };
   }
 
   async function enrichSessionFromMe(session) {
@@ -119,6 +233,78 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
+  function renderOrgs(token) {
+    orgListEl.innerHTML = '';
+    orgEmptyEl.hidden = orgs.length > 0;
+    for (const org of orgs) {
+      const slug = org.slug || org.id;
+      const li = document.createElement('li');
+      if (slug === selectedOrgSlug) li.classList.add('is-selected');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'org-pick';
+      btn.textContent = (org.name || slug) + ' (' + slug + ')';
+      btn.addEventListener('click', () => selectOrg(org, token));
+      li.appendChild(btn);
+      orgListEl.appendChild(li);
+    }
+  }
+
+  /**
+   * SITE-104: rooms from GET /orgs/{slug}/rooms only — never mixed tenants.
+   */
+  async function loadRooms(org, token) {
+    const slug = org.slug || org.id;
+    selectedOrgEl.textContent = 'Showing rooms for ' + (org.name || slug);
+    roomListEl.innerHTML = '';
+    try {
+      const resp = await fetch(server + '/orgs/' + encodeURIComponent(slug) + '/rooms', {
+        headers: { Authorization: 'Bearer ' + token },
+      });
+      if (resp.status === 401 || resp.status === 403) {
+        sessionStorage.removeItem(SESSION);
+        window.location.replace('/login?next=' + encodeURIComponent('/dashboard'));
+        return;
+      }
+      if (!resp.ok) {
+        roomEmptyEl.hidden = false;
+        roomEmptyEl.textContent = 'Could not list rooms (' + resp.status + ').';
+        setSyncStatus('error', 'Rooms unavailable');
+        return;
+      }
+      const body = await resp.json();
+      // Trust only this response's rooms; ignore any foreign payload fields.
+      const rooms = Array.isArray(body.rooms) ? body.rooms : [];
+      const scoped = rooms.filter((r) => !r.org_slug || r.org_slug === slug);
+      roomEmptyEl.hidden = scoped.length > 0;
+      roomEmptyEl.textContent = 'No rooms in this org yet.';
+      for (const room of scoped) {
+        const name = room.name || room.room_key || 'room';
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'room-pick';
+        btn.dataset.room = name;
+        btn.textContent =
+          name + (typeof room.connections === 'number' ? ' · ' + room.connections + ' connected' : '');
+        btn.addEventListener('click', () => connectRoom(slug, name, token));
+        li.appendChild(btn);
+        roomListEl.appendChild(li);
+      }
+      const target = scoped.length ? scoped[0].name || DEFAULT_ROOM : DEFAULT_ROOM;
+      connectRoom(slug, target, token);
+    } catch {
+      show('Could not reach ' + server + '.', 'error');
+      setSyncStatus('error', 'Network error');
+    }
+  }
+
+  function selectOrg(org, token) {
+    selectedOrgSlug = org.slug || org.id;
+    renderOrgs(token);
+    loadRooms(org, token);
+  }
+
   async function loadOrgs(token) {
     try {
       const resp = await fetch(server + '/orgs', {
@@ -135,13 +321,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         return;
       }
       const body = await resp.json();
-      const orgs = body.organizations || [];
-      orgListEl.innerHTML = '';
-      orgEmptyEl.hidden = orgs.length > 0;
-      for (const org of orgs) {
-        const li = document.createElement('li');
-        li.textContent = (org.name || org.slug) + ' (' + (org.slug || org.id) + ')';
-        orgListEl.appendChild(li);
+      orgs = body.organizations || [];
+      renderOrgs(token);
+      if (orgs.length) {
+        selectOrg(orgs[0], token);
+      } else {
+        selectedOrgEl.textContent = '';
+        roomEmptyEl.hidden = false;
+        setSyncStatus('idle', 'No org selected');
       }
     } catch {
       show('Could not reach ' + server + '.', 'error');

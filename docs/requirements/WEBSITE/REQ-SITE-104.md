@@ -6,10 +6,10 @@ Authenticated dashboard shall display only rooms belonging to the user org
 
 ## Acceptance Criteria
 
-1. [ ] Room list is scoped to the authenticated org
-2. [ ] Rooms from other orgs never appear
-3. [ ] Empty org shows empty-state, not other tenants' data
-4. [ ] Playwright/integration covers tenant isolation of room list
+1. [x] Room list is scoped to the authenticated org
+2. [x] Rooms from other orgs never appear
+3. [x] Empty org shows empty-state, not other tenants' data
+4. [x] Playwright/integration covers tenant isolation of room list
 
 ## Decomposition
 
