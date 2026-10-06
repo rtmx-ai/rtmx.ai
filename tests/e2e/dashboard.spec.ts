@@ -4,6 +4,7 @@ import { test, expect } from '@playwright/test';
  * REQ-SITE-101: Authenticated /dashboard route (post-pay chrome).
  * REQ-SITE-103: WebSocket connect with session token.
  * REQ-SITE-104: Org-scoped room list isolation.
+ * REQ-WEB-005 / REQ-WEB-006: Status overview + backlog panels (sync APIs).
  */
 
 async function seedSession(page: import('@playwright/test').Page) {
@@ -18,6 +19,85 @@ async function seedSession(page: import('@playwright/test').Page) {
         login: 'ada',
       }),
     );
+  });
+}
+
+/** Stub WEB-005/006 APIs so room-focused tests stay hermetic. */
+async function stubOverviewBacklog(
+  page: import('@playwright/test').Page,
+  opts?: {
+    overview?: Record<string, unknown>;
+    backlog?: { total?: number; backlog?: unknown[] };
+  },
+) {
+  await page.route('**/api/overview', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(
+        opts?.overview ?? {
+          total: 0,
+          complete: 0,
+          partial: 0,
+          missing: 0,
+          completion_percent: 0,
+          phases: [],
+        },
+      ),
+    });
+  });
+  await page.route('**/api/backlog', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(
+        opts?.backlog ?? {
+          total: 0,
+          complete: 0,
+          missing: 0,
+          completion_percent: 0,
+          backlog: [],
+        },
+      ),
+    });
+  });
+}
+
+async function stubAuthOrgsRooms(
+  page: import('@playwright/test').Page,
+  rooms: unknown[] = [],
+) {
+  await page.route('**/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 'user-1',
+        email: 'ada@rtmx.ai',
+        display_name: 'Ada Lovelace',
+        login: 'ada',
+      }),
+    });
+  });
+  await page.route('**/orgs', async (route) => {
+    if (route.request().url().includes('/rooms')) {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
+      }),
+    });
+  });
+  await page.route('**/orgs/acme/rooms', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ org_id: 'org-1', org_slug: 'acme', rooms }),
+    });
   });
 }
 
@@ -42,38 +122,8 @@ test.describe('dashboard auth gate (SITE-101)', () => {
   });
 
   test('authenticated visit renders dashboard shell (SITE-101b)', async ({ page }) => {
-    await page.route('**/auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'user-1',
-          email: 'ada@rtmx.ai',
-          display_name: 'Ada Lovelace',
-          login: 'ada',
-        }),
-      });
-    });
-    await page.route('**/orgs', async (route) => {
-      if (route.request().method() !== 'GET' || route.request().url().includes('/rooms')) {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
-        }),
-      });
-    });
-    await page.route('**/orgs/acme/rooms', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ org_id: 'org-1', org_slug: 'acme', rooms: [] }),
-      });
-    });
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page);
     await page.routeWebSocket(/\/sync\//, (ws) => {
       ws.connectToServer();
     });
@@ -103,42 +153,8 @@ test.describe('dashboard WebSocket (SITE-103)', () => {
     page,
   }) => {
     const seen: string[] = [];
-    await page.route('**/auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'user-1',
-          email: 'ada@rtmx.ai',
-          display_name: 'Ada Lovelace',
-          login: 'ada',
-        }),
-      });
-    });
-    await page.route('**/orgs', async (route) => {
-      if (route.request().url().includes('/rooms')) {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
-        }),
-      });
-    });
-    await page.route('**/orgs/acme/rooms', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          org_id: 'org-1',
-          org_slug: 'acme',
-          rooms: [{ name: 'mvp', org_slug: 'acme', connections: 0 }],
-        }),
-      });
-    });
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await stubOverviewBacklog(page);
     await page.routeWebSocket(/\/sync\//, (ws) => {
       seen.push(ws.url());
       ws.onMessage(() => {});
@@ -157,45 +173,10 @@ test.describe('dashboard WebSocket (SITE-103)', () => {
   });
 
   test('auth failure is visible — no silent hang (SITE-103c)', async ({ page }) => {
-    await page.route('**/auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'user-1',
-          email: 'ada@rtmx.ai',
-          display_name: 'Ada Lovelace',
-        }),
-      });
-    });
-    await page.route('**/orgs', async (route) => {
-      if (route.request().url().includes('/rooms')) {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
-        }),
-      });
-    });
-    await page.route('**/orgs/acme/rooms', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          org_id: 'org-1',
-          org_slug: 'acme',
-          rooms: [{ name: 'mvp', org_slug: 'acme', connections: 0 }],
-        }),
-      });
-    });
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await stubOverviewBacklog(page);
     await page.routeWebSocket(/\/sync\//, (ws) => {
-      // Close with auth-required code after the page opens the socket.
       ws.onMessage(() => {});
-      // Playwright: close from server side
       void Promise.resolve().then(() => ws.close({ code: 4401, reason: 'Authentication required' }));
     });
 
@@ -212,45 +193,11 @@ test.describe('dashboard WebSocket (SITE-103)', () => {
 
 test.describe('dashboard rooms isolation (SITE-104)', () => {
   test('renders only rooms for the selected org (SITE-104a/b)', async ({ page }) => {
-    await page.route('**/auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'user-1',
-          email: 'ada@rtmx.ai',
-          display_name: 'Ada Lovelace',
-        }),
-      });
-    });
-    await page.route('**/orgs', async (route) => {
-      if (route.request().url().includes('/rooms')) {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
-        }),
-      });
-    });
-    await page.route('**/orgs/acme/rooms', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          org_id: 'org-1',
-          org_slug: 'acme',
-          rooms: [
-            { name: 'mvp', org_slug: 'acme', connections: 1 },
-            // Hostile/extra field — must be filtered if org_slug mismatches
-            { name: 'secret', org_slug: 'other-tenant', connections: 9 },
-          ],
-        }),
-      });
-    });
+    await stubAuthOrgsRooms(page, [
+      { name: 'mvp', org_slug: 'acme', connections: 1 },
+      { name: 'secret', org_slug: 'other-tenant', connections: 9 },
+    ]);
+    await stubOverviewBacklog(page);
     await page.routeWebSocket(/\/sync\//, (ws) => {
       ws.onMessage(() => {});
     });
@@ -264,37 +211,8 @@ test.describe('dashboard rooms isolation (SITE-104)', () => {
   });
 
   test('empty org shows empty-state, not foreign rooms (SITE-104c/d)', async ({ page }) => {
-    await page.route('**/auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'user-1',
-          email: 'ada@rtmx.ai',
-          display_name: 'Ada Lovelace',
-        }),
-      });
-    });
-    await page.route('**/orgs', async (route) => {
-      if (route.request().url().includes('/rooms')) {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          organizations: [{ id: 'org-1', name: 'Acme', slug: 'acme' }],
-        }),
-      });
-    });
-    await page.route('**/orgs/acme/rooms', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ org_id: 'org-1', org_slug: 'acme', rooms: [] }),
-      });
-    });
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page);
     await page.routeWebSocket(/\/sync\//, (ws) => {
       ws.onMessage(() => {});
     });
@@ -304,6 +222,127 @@ test.describe('dashboard rooms isolation (SITE-104)', () => {
     await expect(page.getByTestId('dashboard-room-empty')).toBeVisible();
     await expect(page.getByTestId('dashboard-room-empty')).toContainText(/No rooms/);
     await expect(page.getByTestId('dashboard-room-list')).toBeEmpty();
+  });
+});
+
+test.describe('dashboard status overview and backlog (WEB-005 / WEB-006)', () => {
+  test('renders overview counts and phase breakdown (WEB-005b/c/e)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page, {
+      overview: {
+        total: 3,
+        complete: 1,
+        partial: 1,
+        missing: 1,
+        completion_percent: 33.3,
+        phases: [
+          { phase: '1', total: 2, complete: 1, partial: 1, missing: 0 },
+          { phase: '2', total: 1, complete: 0, partial: 0, missing: 1 },
+        ],
+      },
+      backlog: { total: 3, backlog: [] },
+    });
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-overview')).toBeVisible();
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/1 of 3 complete/);
+    await expect(page.getByTestId('dashboard-overview-stats')).toBeVisible();
+    await expect(page.getByTestId('dashboard-phase-list')).toContainText(/Phase 1/);
+    await expect(page.getByTestId('dashboard-phase-list')).toContainText(/Phase 2/);
+  });
+
+  test('empty overview shows zeroed summary (WEB-005c)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page);
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/0 of 0 complete/);
+    await expect(page.getByTestId('dashboard-backlog-empty')).toBeVisible();
+  });
+
+  test('backlog distinguishes blocked items and exposes req_id on select (WEB-006b/c/e)', async ({
+    page,
+  }) => {
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page, {
+      overview: {
+        total: 2,
+        complete: 0,
+        partial: 0,
+        missing: 2,
+        completion_percent: 0,
+        phases: [],
+      },
+      backlog: {
+        total: 2,
+        backlog: [
+          {
+            req_id: 'REQ-OPEN',
+            priority: 'HIGH',
+            effort_weeks: '1',
+            status: 'MISSING',
+            blocked: false,
+          },
+          {
+            req_id: 'REQ-LEAF',
+            priority: 'HIGH',
+            effort_weeks: '0.5',
+            status: 'MISSING',
+            blocked: true,
+          },
+        ],
+      },
+    });
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    const list = page.getByTestId('dashboard-backlog-list');
+    await expect(list).toContainText('REQ-OPEN');
+    await expect(list).toContainText('REQ-LEAF');
+    const blocked = list.locator('li.is-blocked');
+    await expect(blocked).toContainText('REQ-LEAF');
+    await list.getByRole('button', { name: /REQ-OPEN/ }).click();
+    await expect(page.getByTestId('dashboard-backlog-selected')).toBeVisible();
+    await expect(page.getByTestId('dashboard-backlog-selected')).toHaveText(/Selected: REQ-OPEN/);
+    await expect(page.getByTestId('dashboard-backlog-selected')).toHaveAttribute(
+      'data-req-id',
+      'REQ-OPEN',
+    );
+  });
+
+  test('empty backlog renders idle state (WEB-006d)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page, {
+      overview: {
+        total: 1,
+        complete: 1,
+        partial: 0,
+        missing: 0,
+        completion_percent: 100,
+        phases: [],
+      },
+      backlog: { total: 1, backlog: [] },
+    });
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-backlog-empty')).toBeVisible();
+    await expect(page.getByTestId('dashboard-backlog-empty')).toContainText(/idle/i);
+    await expect(page.getByTestId('dashboard-backlog-list')).toBeEmpty();
   });
 });
 

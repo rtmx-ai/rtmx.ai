@@ -50,6 +50,29 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         </p>
       </div>
 
+      <div class="account-card" id="dashboard-overview-card" data-testid="dashboard-overview">
+        <h2 class="account-section-title">Status overview</h2>
+        <p class="field-help" id="dashboard-overview-summary" data-testid="dashboard-overview-summary">
+          Loading…
+        </p>
+        <div class="overview-stats" id="dashboard-overview-stats" data-testid="dashboard-overview-stats" hidden>
+          <div class="stat"><span class="stat-value" id="ov-complete">0</span><span class="stat-label">Complete</span></div>
+          <div class="stat"><span class="stat-value" id="ov-partial">0</span><span class="stat-label">Partial</span></div>
+          <div class="stat"><span class="stat-value" id="ov-missing">0</span><span class="stat-label">Missing</span></div>
+          <div class="stat"><span class="stat-value" id="ov-pct">0%</span><span class="stat-label">Done</span></div>
+        </div>
+        <ul class="phase-list" id="dashboard-phase-list" data-testid="dashboard-phase-list"></ul>
+      </div>
+
+      <div class="account-card" id="dashboard-backlog-card" data-testid="dashboard-backlog">
+        <h2 class="account-section-title">Backlog</h2>
+        <p class="field-help" id="dashboard-backlog-empty" data-testid="dashboard-backlog-empty" hidden>
+          Backlog is idle — nothing incomplete.
+        </p>
+        <ul class="org-list backlog-list" id="dashboard-backlog-list" data-testid="dashboard-backlog-list"></ul>
+        <p class="field-help" id="dashboard-backlog-selected" data-testid="dashboard-backlog-selected" hidden></p>
+      </div>
+
       <nav class="account-nav" aria-label="Dashboard links">
         <a href="/account">Account</a>
         <a href="/checkout">Checkout</a>
@@ -101,6 +124,29 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .sync-status[data-state="error"] { color: #f87171; }
   .form-message { color: var(--rtmx-text-muted); font-size: 0.9rem; }
   .form-message.is-error { color: #f87171; }
+  .overview-stats {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0.75rem 0;
+  }
+  .stat { text-align: center; }
+  .stat-value { display: block; font-size: 1.25rem; font-weight: 700; color: var(--rtmx-emerald-light); }
+  .stat-label { display: block; font-size: 0.7rem; color: var(--rtmx-text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .phase-list { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  .phase-list li {
+    display: flex; justify-content: space-between; gap: 0.75rem;
+    padding: 0.35rem 0; border-bottom: 1px solid var(--rtmx-border);
+    color: var(--rtmx-text); font-size: 0.85rem;
+  }
+  .backlog-list li { display: flex; flex-direction: column; gap: 0.15rem; }
+  .backlog-list button.backlog-pick {
+    background: none; border: none; color: inherit; font: inherit; padding: 0; cursor: pointer; text-align: left; width: 100%;
+  }
+  .backlog-list button.backlog-pick:hover { color: var(--rtmx-emerald-light); }
+  .backlog-list li.is-selected { color: var(--rtmx-emerald-light); }
+  .backlog-list li.is-blocked .backlog-id::after {
+    content: ' blocked'; font-size: 0.7rem; color: #f87171; font-weight: 600; text-transform: uppercase;
+  }
+  .backlog-meta { font-size: 0.75rem; color: var(--rtmx-text-dim); }
+  .backlog-id { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600; }
 </style>
 
 <script define:vars={{ defaultServer }}>
@@ -116,6 +162,16 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const selectedOrgEl = document.getElementById('dashboard-selected-org');
   const syncStatusEl = document.getElementById('dashboard-sync-status');
   const message = document.getElementById('dashboard-message');
+  const overviewSummaryEl = document.getElementById('dashboard-overview-summary');
+  const overviewStatsEl = document.getElementById('dashboard-overview-stats');
+  const phaseListEl = document.getElementById('dashboard-phase-list');
+  const backlogListEl = document.getElementById('dashboard-backlog-list');
+  const backlogEmptyEl = document.getElementById('dashboard-backlog-empty');
+  const backlogSelectedEl = document.getElementById('dashboard-backlog-selected');
+  const ovComplete = document.getElementById('ov-complete');
+  const ovPartial = document.getElementById('ov-partial');
+  const ovMissing = document.getElementById('ov-missing');
+  const ovPct = document.getElementById('ov-pct');
 
   /** @type {WebSocket | null} */
   let activeWs = null;
@@ -335,6 +391,121 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
+  /**
+   * WEB-005: status overview aggregates from GET /api/overview.
+   */
+  async function loadOverview(token) {
+    if (!overviewSummaryEl || !overviewStatsEl || !phaseListEl) return;
+    try {
+      const resp = await fetch(server + '/api/overview', {
+        headers: { Authorization: 'Bearer ' + token },
+      });
+      if (resp.status === 401 || resp.status === 403) {
+        overviewSummaryEl.textContent = 'Sign in required to load overview.';
+        overviewStatsEl.hidden = true;
+        return;
+      }
+      if (!resp.ok) {
+        overviewSummaryEl.textContent = 'Overview unavailable (' + resp.status + ').';
+        overviewStatsEl.hidden = true;
+        return;
+      }
+      const data = await resp.json();
+      const total = Number(data.total) || 0;
+      const complete = Number(data.complete) || 0;
+      const partial = Number(data.partial) || 0;
+      const missing = Number(data.missing) || 0;
+      const pct = data.completion_percent != null ? Number(data.completion_percent) : 0;
+      overviewSummaryEl.textContent =
+        complete + ' of ' + total + ' complete · ' + pct + '%';
+      ovComplete.textContent = String(complete);
+      ovPartial.textContent = String(partial);
+      ovMissing.textContent = String(missing);
+      ovPct.textContent = pct + '%';
+      overviewStatsEl.hidden = false;
+      phaseListEl.innerHTML = '';
+      const phases = Array.isArray(data.phases) ? data.phases : [];
+      for (const phase of phases) {
+        const li = document.createElement('li');
+        const label = document.createElement('span');
+        label.textContent = 'Phase ' + (phase.phase || '?');
+        const detail = document.createElement('span');
+        detail.textContent =
+          (phase.complete || 0) + '/' + (phase.total || 0) +
+          ' · ' + (phase.partial || 0) + ' partial · ' + (phase.missing || 0) + ' missing';
+        li.appendChild(label);
+        li.appendChild(detail);
+        phaseListEl.appendChild(li);
+      }
+    } catch {
+      overviewSummaryEl.textContent = 'Could not load overview.';
+      overviewStatsEl.hidden = true;
+    }
+  }
+
+  /**
+   * WEB-006: backlog with blocked flag from GET /api/backlog.
+   */
+  async function loadBacklog(token) {
+    if (!backlogListEl || !backlogEmptyEl || !backlogSelectedEl) return;
+    try {
+      const resp = await fetch(server + '/api/backlog', {
+        headers: { Authorization: 'Bearer ' + token },
+      });
+      if (resp.status === 401 || resp.status === 403) {
+        backlogEmptyEl.hidden = false;
+        backlogEmptyEl.textContent = 'Sign in required to load backlog.';
+        backlogListEl.innerHTML = '';
+        return;
+      }
+      if (!resp.ok) {
+        backlogEmptyEl.hidden = false;
+        backlogEmptyEl.textContent = 'Backlog unavailable (' + resp.status + ').';
+        backlogListEl.innerHTML = '';
+        return;
+      }
+      const data = await resp.json();
+      const items = Array.isArray(data.backlog) ? data.backlog : [];
+      backlogListEl.innerHTML = '';
+      backlogSelectedEl.hidden = true;
+      backlogSelectedEl.textContent = '';
+      backlogEmptyEl.hidden = items.length > 0;
+      backlogEmptyEl.textContent = 'Backlog is idle — nothing incomplete.';
+      for (const item of items) {
+        const li = document.createElement('li');
+        if (item.blocked) li.classList.add('is-blocked');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'backlog-pick';
+        btn.dataset.reqId = item.req_id || '';
+        const idSpan = document.createElement('span');
+        idSpan.className = 'backlog-id';
+        idSpan.textContent = item.req_id || '(unknown)';
+        const meta = document.createElement('span');
+        meta.className = 'backlog-meta';
+        meta.textContent =
+          (item.priority || '') +
+          (item.effort_weeks ? ' · ' + item.effort_weeks + 'w' : '') +
+          (item.status ? ' · ' + item.status : '');
+        btn.appendChild(idSpan);
+        btn.appendChild(meta);
+        btn.addEventListener('click', () => {
+          for (const row of backlogListEl.querySelectorAll('li')) row.classList.remove('is-selected');
+          li.classList.add('is-selected');
+          backlogSelectedEl.hidden = false;
+          backlogSelectedEl.textContent = 'Selected: ' + (item.req_id || '');
+          backlogSelectedEl.dataset.reqId = item.req_id || '';
+        });
+        li.appendChild(btn);
+        backlogListEl.appendChild(li);
+      }
+    } catch {
+      backlogEmptyEl.hidden = false;
+      backlogEmptyEl.textContent = 'Could not load backlog.';
+      backlogListEl.innerHTML = '';
+    }
+  }
+
   (async () => {
     let session = readSession();
     if (!session) {
@@ -348,6 +519,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
     displayEl.textContent = session.display_name || session.login || session.email || 'Signed in';
     emailEl.textContent = session.email || '';
-    await loadOrgs(session.token);
+    await Promise.all([
+      loadOrgs(session.token),
+      loadOverview(session.token),
+      loadBacklog(session.token),
+    ]);
   })();
 </script>
