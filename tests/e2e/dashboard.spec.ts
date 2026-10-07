@@ -346,6 +346,91 @@ test.describe('dashboard status overview and backlog (WEB-005 / WEB-006)', () =>
   });
 });
 
+test.describe('dashboard live updates (RT-004)', () => {
+  test('sync event refreshes overview DOM without reload (RT-004a/b/d)', async ({ page }) => {
+    let overviewHits = 0;
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await page.route('**/api/overview', async (route) => {
+      overviewHits += 1;
+      const body =
+        overviewHits === 1
+          ? {
+              total: 2,
+              complete: 1,
+              partial: 0,
+              missing: 1,
+              completion_percent: 50,
+              phases: [{ phase: '1', total: 2, complete: 1, partial: 0, missing: 1 }],
+            }
+          : {
+              total: 2,
+              complete: 2,
+              partial: 0,
+              missing: 0,
+              completion_percent: 100,
+              phases: [{ phase: '1', total: 2, complete: 2, partial: 0, missing: 0 }],
+            };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(body),
+      });
+    });
+    await page.route('**/api/backlog', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ total: 2, complete: overviewHits > 1 ? 2 : 1, backlog: [] }),
+      });
+    });
+
+    /** @type {import('@playwright/test').WebSocketRoute | null} */
+    let mockWs: import('@playwright/test').WebSocketRoute | null = null;
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      mockWs = ws;
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/1 of 2 complete/);
+    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute('data-state', 'connected', {
+      timeout: 10000,
+    });
+
+    const beforeUrl = page.url();
+    // Simulate CRDT/sync change notification (REQ-RT-004a).
+    mockWs!.send(JSON.stringify({ type: 'rtm_changed' }));
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/2 of 2 complete/, {
+      timeout: 5000,
+    });
+    await expect(page.getByTestId('dashboard-overview-summary')).toHaveAttribute(
+      'data-live-updated',
+      /.+/,
+    );
+    expect(page.url()).toBe(beforeUrl);
+    expect(overviewHits).toBeGreaterThanOrEqual(2);
+  });
+
+  test('unexpected socket drop shows reconnecting state (RT-004c)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await stubOverviewBacklog(page);
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.onMessage(() => {});
+      void Promise.resolve().then(() => ws.close({ code: 1006, reason: 'abnormal closure' }));
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
+      'data-state',
+      'reconnecting',
+      { timeout: 10000 },
+    );
+    await expect(page.getByTestId('dashboard-sync-status')).toContainText(/Reconnecting/i);
+  });
+});
+
 test.describe('dashboard does not block account chrome (SITE-101e)', () => {
   test('SITE-114 session chrome still renders on splash home', async ({ page }) => {
     await page.goto('/');

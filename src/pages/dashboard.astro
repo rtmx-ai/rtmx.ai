@@ -52,7 +52,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
       <div class="account-card" id="dashboard-overview-card" data-testid="dashboard-overview">
         <h2 class="account-section-title">Status overview</h2>
-        <p class="field-help" id="dashboard-overview-summary" data-testid="dashboard-overview-summary">
+        <p class="field-help overview-summary" id="dashboard-overview-summary" data-testid="dashboard-overview-summary">
           Loading…
         </p>
         <div class="overview-stats" id="dashboard-overview-stats" data-testid="dashboard-overview-stats" hidden>
@@ -118,10 +118,12 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .sync-status {
     margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--rtmx-text-dim);
   }
-  .sync-status[data-state="connecting"] { color: #fbbf24; }
+  .sync-status[data-state="connecting"],
+  .sync-status[data-state="reconnecting"] { color: #fbbf24; }
   .sync-status[data-state="connected"] { color: var(--rtmx-emerald-light); }
   .sync-status[data-state="auth-failed"],
   .sync-status[data-state="error"] { color: #f87171; }
+  .overview-summary[data-live-updated] { transition: color 0.2s ease; }
   .form-message { color: var(--rtmx-text-muted); font-size: 0.9rem; }
   .form-message.is-error { color: #f87171; }
   .overview-stats {
@@ -179,6 +181,16 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   let orgs = [];
   /** @type {string | null} */
   let selectedOrgSlug = null;
+  /** @type {string | null} */
+  let sessionToken = null;
+  /** @type {{ org: string, room: string } | null} */
+  let liveTarget = null;
+  let intentionalClose = false;
+  let reconnectAttempt = 0;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let reconnectTimer = null;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let refreshTimer = null;
 
   function readSession() {
     try {
@@ -206,10 +218,19 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     return server.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:');
   }
 
+  function clearReconnectTimer() {
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
+    }
+  }
+
   function closeWs() {
+    intentionalClose = true;
+    clearReconnectTimer();
     if (activeWs) {
       try {
-        activeWs.close();
+        activeWs.close(1000, 'client close');
       } catch {
         /* ignore */
       }
@@ -218,10 +239,58 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   }
 
   /**
+   * REQ-RT-004a/b: sync/CRDT traffic triggers overview+backlog DOM refresh (no reload).
+   */
+  function scheduleLiveRefresh(token) {
+    if (!token) return;
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => {
+      refreshTimer = null;
+      void Promise.all([loadOverview(token), loadBacklog(token)]).then(() => {
+        if (overviewSummaryEl) {
+          overviewSummaryEl.dataset.liveUpdated = String(Date.now());
+          overviewSummaryEl.classList.add('overview-summary');
+        }
+      });
+    }, 120);
+  }
+
+  function isRtmChangeMessage(data) {
+    if (typeof data === 'string') {
+      try {
+        const msg = JSON.parse(data);
+        return msg && (msg.type === 'rtm_changed' || msg.type === 'requirements_changed');
+      } catch {
+        return true; // non-JSON text still treated as a live signal
+      }
+    }
+    // Binary CRDT/sync frames also mean the room changed.
+    return data instanceof ArrayBuffer || (typeof Blob !== 'undefined' && data instanceof Blob);
+  }
+
+  /**
+   * REQ-RT-004c: unexpected closes surface reconnecting, then retry with backoff.
+   */
+  function scheduleReconnect(orgSlug, roomName, token) {
+    clearReconnectTimer();
+    setSyncStatus('reconnecting', 'Reconnecting…');
+    const delay = Math.min(1000 * Math.pow(2, reconnectAttempt), 8000);
+    reconnectAttempt += 1;
+    reconnectTimer = setTimeout(() => {
+      reconnectTimer = null;
+      connectRoom(orgSlug, roomName, token);
+    }, delay);
+  }
+
+  /**
    * SITE-103: open /sync/{org}/{room}?token=… (browser cannot set Authorization).
+   * REQ-RT-004: messages refresh overview; drops enter reconnecting state.
    */
   function connectRoom(orgSlug, roomName, token) {
     closeWs();
+    intentionalClose = false;
+    liveTarget = { org: orgSlug, room: roomName };
+    sessionToken = token;
     const url =
       wsBase() +
       '/sync/' +
@@ -230,19 +299,28 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       encodeURIComponent(roomName) +
       '?token=' +
       encodeURIComponent(token);
-    setSyncStatus('connecting', 'Connecting…');
+    setSyncStatus(reconnectAttempt > 0 ? 'reconnecting' : 'connecting', reconnectAttempt > 0 ? 'Reconnecting…' : 'Connecting…');
     let ws;
     try {
       ws = new WebSocket(url);
     } catch (err) {
       setSyncStatus('error', 'WebSocket unavailable');
       show('Could not open sync connection.', 'error');
+      scheduleReconnect(orgSlug, roomName, token);
       return;
     }
     activeWs = ws;
     ws.binaryType = 'arraybuffer';
     ws.onopen = () => {
-      if (activeWs === ws) setSyncStatus('connected', 'Live · ' + orgSlug + '/' + roomName);
+      if (activeWs !== ws) return;
+      reconnectAttempt = 0;
+      setSyncStatus('connected', 'Live · ' + orgSlug + '/' + roomName);
+    };
+    ws.onmessage = (ev) => {
+      if (activeWs !== ws) return;
+      if (isRtmChangeMessage(ev.data)) {
+        scheduleLiveRefresh(token);
+      }
     };
     ws.onerror = () => {
       if (activeWs === ws) setSyncStatus('error', 'Connection error');
@@ -252,15 +330,17 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       activeWs = null;
       const authCodes = new Set([4401, 4403, 4409, 4402]);
       if (authCodes.has(ev.code)) {
+        clearReconnectTimer();
         setSyncStatus('auth-failed', ev.reason || 'Authentication failed (' + ev.code + ')');
         show(ev.reason || 'Sync rejected the session (' + ev.code + ').', 'error');
         return;
       }
-      if (ev.code !== 1000) {
-        setSyncStatus('disconnected', 'Disconnected (' + ev.code + ')');
-      } else {
+      if (intentionalClose || ev.code === 1000) {
         setSyncStatus('idle', 'Idle');
+        return;
       }
+      // Unexpected drop — do not freeze on stale counts (REQ-RT-004c).
+      scheduleReconnect(orgSlug, roomName, token);
     };
   }
 
