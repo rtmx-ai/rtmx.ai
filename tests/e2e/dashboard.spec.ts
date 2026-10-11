@@ -429,6 +429,84 @@ test.describe('dashboard live updates (RT-004)', () => {
     );
     await expect(page.getByTestId('dashboard-sync-status')).toContainText(/Reconnecting/i);
   });
+
+  test('auto-reconnects within 5s and resyncs overview (RT-006a/b/c/d)', async ({ page }) => {
+    let overviewHits = 0;
+    let wsConnections = 0;
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await page.route('**/api/overview', async (route) => {
+      overviewHits += 1;
+      const body =
+        overviewHits <= 1
+          ? {
+              total: 2,
+              complete: 1,
+              partial: 0,
+              missing: 1,
+              completion_percent: 50,
+              phases: [],
+            }
+          : {
+              total: 2,
+              complete: 2,
+              partial: 0,
+              missing: 0,
+              completion_percent: 100,
+              phases: [],
+            };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(body),
+      });
+    });
+    await page.route('**/api/backlog', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ total: 2, backlog: [] }),
+      });
+    });
+
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      wsConnections += 1;
+      ws.onMessage(() => {});
+      // Drop only the first connection so the client can reconnect (REQ-RT-006).
+      if (wsConnections === 1) {
+        void Promise.resolve().then(() => ws.close({ code: 1006, reason: 'abnormal closure' }));
+      }
+    });
+
+    await seedSession(page);
+    const started = Date.now();
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/1 of 2 complete/);
+
+    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
+      'data-state',
+      'reconnecting',
+      { timeout: 5000 },
+    );
+
+    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
+      'data-state',
+      'connected',
+      { timeout: 5000 },
+    );
+    const elapsed = Date.now() - started;
+    expect(elapsed).toBeLessThan(15000);
+    expect(wsConnections).toBeGreaterThanOrEqual(2);
+
+    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
+      'data-resynced-at',
+      /.+/,
+      { timeout: 5000 },
+    );
+    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/2 of 2 complete/, {
+      timeout: 5000,
+    });
+    expect(overviewHits).toBeGreaterThanOrEqual(2);
+  });
 });
 
 test.describe('dashboard live backlog activity (RT-005)', () => {

@@ -160,6 +160,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 <script define:vars={{ defaultServer }}>
   const SESSION = 'rtmx.session';
   const DEFAULT_ROOM = 'main';
+  /** REQ-RT-006: first retry under 5s; backoff capped to avoid storms. */
+  const RECONNECT_BASE_MS = 500;
+  const RECONNECT_MAX_MS = 5000;
   const server = defaultServer.replace(/\/+$/, '');
   const displayEl = document.getElementById('dashboard-display-name');
   const emailEl = document.getElementById('dashboard-email');
@@ -368,12 +371,15 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   }
 
   /**
-   * REQ-RT-004c: unexpected closes surface reconnecting, then retry with backoff.
+   * REQ-RT-004c / REQ-RT-006a/b: reconnect within 5s with bounded exponential backoff.
    */
   function scheduleReconnect(orgSlug, roomName, token) {
     clearReconnectTimer();
     setSyncStatus('reconnecting', 'Reconnecting…');
-    const delay = Math.min(1000 * Math.pow(2, reconnectAttempt), 8000);
+    if (syncStatusEl) {
+      syncStatusEl.dataset.reconnectAttempt = String(reconnectAttempt + 1);
+    }
+    const delay = Math.min(RECONNECT_BASE_MS * Math.pow(2, reconnectAttempt), RECONNECT_MAX_MS);
     reconnectAttempt += 1;
     reconnectTimer = setTimeout(() => {
       reconnectTimer = null;
@@ -383,13 +389,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
   /**
    * SITE-103: open /sync/{org}/{room}?token=… (browser cannot set Authorization).
-   * REQ-RT-004: messages refresh overview; drops enter reconnecting state.
+   * REQ-RT-004/006: messages refresh overview; drops reconnect with state resync.
    */
   function connectRoom(orgSlug, roomName, token) {
     closeWs();
     intentionalClose = false;
     liveTarget = { org: orgSlug, room: roomName };
     sessionToken = token;
+    const isReconnect = reconnectAttempt > 0;
     const url =
       wsBase() +
       '/sync/' +
@@ -398,7 +405,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       encodeURIComponent(roomName) +
       '?token=' +
       encodeURIComponent(token);
-    setSyncStatus(reconnectAttempt > 0 ? 'reconnecting' : 'connecting', reconnectAttempt > 0 ? 'Reconnecting…' : 'Connecting…');
+    setSyncStatus(isReconnect ? 'reconnecting' : 'connecting', isReconnect ? 'Reconnecting…' : 'Connecting…');
     let ws;
     try {
       ws = new WebSocket(url);
@@ -412,8 +419,17 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     ws.binaryType = 'arraybuffer';
     ws.onopen = () => {
       if (activeWs !== ws) return;
+      const shouldResync = isReconnect;
       reconnectAttempt = 0;
       setSyncStatus('connected', 'Live · ' + orgSlug + '/' + roomName);
+      if (syncStatusEl) {
+        delete syncStatusEl.dataset.reconnectAttempt;
+      }
+      // REQ-RT-006c: after reconnect, pull overview/backlog so UI is not stale/blank.
+      if (shouldResync) {
+        scheduleLiveRefresh(token);
+        if (syncStatusEl) syncStatusEl.dataset.resyncedAt = String(Date.now());
+      }
     };
     ws.onmessage = (ev) => {
       if (activeWs !== ws) return;
