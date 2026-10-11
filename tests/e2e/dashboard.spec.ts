@@ -431,6 +431,136 @@ test.describe('dashboard live updates (RT-004)', () => {
   });
 });
 
+test.describe('dashboard live backlog activity (RT-005)', () => {
+  test('claim_event shows agent identity on backlog row (RT-005a/c/d)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await page.route('**/api/overview', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          total: 1,
+          complete: 0,
+          partial: 0,
+          missing: 1,
+          completion_percent: 0,
+          phases: [],
+        }),
+      });
+    });
+    await page.route('**/api/backlog', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          total: 1,
+          backlog: [
+            {
+              req_id: 'REQ-OPEN',
+              priority: 'HIGH',
+              effort_weeks: '1',
+              status: 'MISSING',
+              blocked: false,
+              claimed: false,
+            },
+          ],
+        }),
+      });
+    });
+
+    let mockWs: import('@playwright/test').WebSocketRoute | null = null;
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      mockWs = ws;
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    const list = page.getByTestId('dashboard-backlog-list');
+    await expect(list).toContainText('REQ-OPEN');
+    await expect(list.locator('[data-testid="backlog-agent"]')).toHaveCount(0);
+
+    mockWs!.send(
+      JSON.stringify({
+        type: 'claim_event',
+        action: 'claim',
+        req_id: 'REQ-OPEN',
+        agent_id: 'bot-1',
+        agent_name: 'Bot One',
+      }),
+    );
+
+    await expect(list.locator('[data-testid="backlog-agent"]')).toHaveCount(1);
+    await expect(list.locator('[data-testid="backlog-agent"]')).toHaveText(/Bot One/);
+    await expect(list.locator('li.is-claimed')).toContainText('REQ-OPEN');
+    await expect(list).toHaveAttribute('data-live-claim-at', /.+/);
+  });
+
+  test('rtm_changed updates backlog status live without reload (RT-005b/d)', async ({ page }) => {
+    let backlogHits = 0;
+    await stubAuthOrgsRooms(page, [{ name: 'mvp', org_slug: 'acme', connections: 0 }]);
+    await page.route('**/api/overview', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          total: 1,
+          complete: backlogHits > 1 ? 0 : 0,
+          partial: backlogHits > 1 ? 1 : 0,
+          missing: backlogHits > 1 ? 0 : 1,
+          completion_percent: 0,
+          phases: [],
+        }),
+      });
+    });
+    await page.route('**/api/backlog', async (route) => {
+      backlogHits += 1;
+      const status = backlogHits === 1 ? 'MISSING' : 'PARTIAL';
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          total: 1,
+          backlog: [
+            {
+              req_id: 'REQ-OPEN',
+              priority: 'HIGH',
+              effort_weeks: '1',
+              status,
+              blocked: false,
+              claimed: true,
+              agent_id: 'bot-1',
+              agent_name: 'Bot One',
+              claimed_by: 'Bot One',
+            },
+          ],
+        }),
+      });
+    });
+
+    let mockWs: import('@playwright/test').WebSocketRoute | null = null;
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      mockWs = ws;
+      ws.onMessage(() => {});
+    });
+
+    await seedSession(page);
+    await page.goto('/dashboard');
+    const list = page.getByTestId('dashboard-backlog-list');
+    await expect(list.locator('.backlog-meta')).toHaveAttribute('data-status', 'MISSING');
+    await expect(list.locator('[data-testid="backlog-agent"]')).toHaveText(/Bot One/);
+
+    const beforeUrl = page.url();
+    mockWs!.send(JSON.stringify({ type: 'rtm_changed' }));
+    await expect(list.locator('.backlog-meta')).toHaveAttribute('data-status', 'PARTIAL', {
+      timeout: 5000,
+    });
+    await expect(list).toContainText(/PARTIAL/);
+    expect(page.url()).toBe(beforeUrl);
+    expect(backlogHits).toBeGreaterThanOrEqual(2);
+  });
+});
+
 test.describe('dashboard does not block account chrome (SITE-101e)', () => {
   test('SITE-114 session chrome still renders on splash home', async ({ page }) => {
     await page.goto('/');
