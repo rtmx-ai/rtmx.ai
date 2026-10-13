@@ -25,12 +25,12 @@ versioned alongside the source.
 3. rtmx-health.png -- health check output
 
 ## Acceptance Criteria
-- [ ] All four Mermaid .mmd files exist in docs/diagrams/
-- [ ] Mermaid diagrams render correctly via mmdc or GitHub native rendering
-- [ ] All vhs .tape files exist in docs/tapes/
-- [ ] Generated GIFs exist in docs/assets/
-- [ ] Terminal screenshots regenerated against real database (not 12-req demo)
-- [ ] All assets use rtmx.ai color palette (emerald on dark)
+- [x] All four Mermaid .mmd files exist in docs/diagrams/
+- [x] Mermaid diagrams render correctly via mmdc or GitHub native rendering
+- [x] All vhs .tape files exist in docs/tapes/
+- [x] Generated GIFs exist in docs/assets/
+- [x] Terminal screenshots regenerated against real database (not 12-req demo)
+- [x] All assets use rtmx.ai color palette (emerald on dark)
 
 ## Test Cases
 - `tests/e2e/media.spec.ts::test_launch_media_assets`
