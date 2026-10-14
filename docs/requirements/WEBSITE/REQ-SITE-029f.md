@@ -1,9 +1,9 @@
 # REQ-SITE-029f: CI is green on both rtmx and rtmx.ai repos
 
-## Status: PARTIAL
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. [ ] CI is green on both rtmx and rtmx.ai repos after Sync IA deploy
+1. [x] CI is green on both rtmx and rtmx.ai repos after Sync IA deploy
 
-rtmx.ai Deploy Website must succeed after `make sync-push PROJECT=rtmx.ai`.
+Verified 2026-10-14: rtmx.ai Deploy Website success; rtmx main workflows green.

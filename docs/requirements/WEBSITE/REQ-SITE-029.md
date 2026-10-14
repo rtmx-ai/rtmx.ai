@@ -1,6 +1,6 @@
 # REQ-SITE-029: Show HN launch checklist executed
 
-## Status: PARTIAL
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 2
 
@@ -18,7 +18,7 @@ state. The README now leads with Sync (CLI as open source client).
 - [x] README links to blog post ("Read the backstory")
 - [x] brew install rtmx-ai/tap/rtmx works on a clean machine
 - [x] A tagged release exists matching the post version
-- [ ] CI is green on both rtmx and rtmx.ai repos
+- [x] CI is green on both rtmx and rtmx.ai repos
 - [x] Blog post published and accessible
 - [x] All media assets committed and rendering
 
