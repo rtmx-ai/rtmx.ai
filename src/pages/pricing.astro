@@ -74,21 +74,23 @@ const tiers = [
 ];
 ---
 
-<StarlightPage frontmatter={{ title: 'RTMX Sync', template: 'splash', hero: { tagline: '' } }}>
-  <div class="pricing-page">
+<StarlightPage frontmatter={{ title: 'Pricing', template: 'splash', hero: { tagline: '' } }}>
+  <div class="pricing-page" data-testid="pricing-page">
     <section class="oss-clarification">
       <div class="oss-inner">
-        <h2>RTMX CLI is free and open source</h2>
+        <h2>Plans for RTMX Sync</h2>
         <p>
-          The RTMX CLI is and always will be free under the Apache 2.0 license.
-          Requirements traceability, test linking, dependency analysis, and MCP integration — all free, forever.
+          <a href="/sync">RTMX Sync</a> is the multiplayer intent room —
+          what comes after Git for humans and agents. The open source
+          <code>rtmx</code> CLI is free forever (Apache 2.0); it is how you
+          access Sync.
         </p>
         <p class="oss-note">
-          The pricing below is for <strong>RTMX Sync</strong> — multiplayer
-          collaboration for developers and their agents.
+          Pricing below is for hosted and licensed Sync rooms.
           {monetizationMvp
-            ? ' Hosted Team Checkout and self-managed licensing are available today.'
+            ? ' Team Checkout is live in private beta.'
             : ' Coming soon.'}
+          {' '}Read the thesis on <a href="/sync">the Sync page</a>.
         </p>
       </div>
     </section>
@@ -97,11 +99,11 @@ const tiers = [
       <span class="coming-soon-badge">
         {monetizationMvp ? 'Team Sync Available' : 'Coming Soon'}
       </span>
-      <h1>RTMX Sync</h1>
+      <h1>Sync pricing</h1>
       <p class="pricing-subtitle">
-        Multiplayer requirements for humans and agents — one shared matrix
-        across projects, without living in Jira or Asana or paying tokens to
-        keep an MCP connector glued to a SaaS board.
+        Multiplayer Sync rooms for humans and agents —
+        choose a plan here, or read the thesis on
+        <a href="/sync">/sync</a>.
       </p>
     </section>
 
@@ -291,6 +293,18 @@ const tiers = [
     font-size: 1rem;
     line-height: 1.6;
     margin: 0 0 0.5rem 0;
+  }
+
+  .oss-inner a,
+  .pricing-subtitle a {
+    color: var(--rtmx-emerald-light, #6ee7b7);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .oss-inner code {
+    color: var(--rtmx-emerald, #10b981);
+    font-size: 0.9em;
   }
 
   .oss-note {

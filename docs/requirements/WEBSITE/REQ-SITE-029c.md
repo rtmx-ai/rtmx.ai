@@ -1,6 +1,7 @@
-# REQ-SITE-029c: README links to blog post ("Read the backstory")
+# REQ-SITE-029c
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. README links to blog post ("Read the backstory")
-
+- [x] Done (verified 2026-10-13)

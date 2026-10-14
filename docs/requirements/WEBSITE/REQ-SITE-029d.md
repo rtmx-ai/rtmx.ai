@@ -1,6 +1,7 @@
-# REQ-SITE-029d: brew install rtmx-ai/tap/rtmx works on a clean machine
+# REQ-SITE-029d
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. brew install rtmx-ai/tap/rtmx works on a clean machine
-
+- [x] Done (verified 2026-10-13)

@@ -1,6 +1,7 @@
-# REQ-SITE-029g: Blog post published and accessible
+# REQ-SITE-029g
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. Blog post published and accessible
-
+- [x] Done (verified 2026-10-13)

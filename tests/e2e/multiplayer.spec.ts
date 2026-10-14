@@ -18,12 +18,13 @@ test.describe('multiplayer Sync marketing', () => {
     await expect(page.locator('.faq-section')).not.toContainText(/What is CRDT/i);
   });
 
-  test('landing Team Sync card is multiplayer, not CRDT', async ({ page }) => {
+  test('landing Sync card is multiplayer, not CRDT', async ({ page }) => {
     await page.goto('/');
 
-    const teamSync = page.locator('.feature-card', { hasText: 'Team Sync' }).first();
-    await expect(teamSync).toContainText(/Multiplayer/i);
-    await expect(teamSync).not.toContainText(/CRDT/i);
+    const syncCard = page.getByTestId('hero-sync-card');
+    await expect(syncCard).toContainText(/Sync/i);
+    await expect(syncCard).toContainText(/multiplayer|live room|agents/i);
+    await expect(syncCard).not.toContainText(/CRDT/i);
 
     await expect(page.locator('.comparison-table')).toContainText(/Multiplayer Sync/);
     await expect(page.locator('.comparison-table')).not.toContainText(/CRDT sync/);

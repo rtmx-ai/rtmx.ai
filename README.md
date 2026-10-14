@@ -1,8 +1,10 @@
 # rtmx.ai
 
-The marketing website and documentation for [RTMX](https://github.com/rtmx-ai/rtmx) — the intent layer for agentic engineering.
+The marketing website and documentation for [RTMX Sync](https://rtmx.ai/sync) —
+what comes after Git for humans and agents. The open source
+[`rtmx`](https://github.com/rtmx-ai/rtmx) CLI is how you access Sync.
 
-**Live site**: [https://rtmx.ai](https://rtmx.ai)
+**Live site**: [https://rtmx.ai](https://rtmx.ai) · **Sync**: [https://rtmx.ai/sync](https://rtmx.ai/sync)
 
 ## Quick Start
 

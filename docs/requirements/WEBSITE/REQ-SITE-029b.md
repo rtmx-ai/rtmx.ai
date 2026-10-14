@@ -1,6 +1,7 @@
-# REQ-SITE-029b: README embeds workflow GIF and Mermaid diagrams (or rendered images)
+# REQ-SITE-029b
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. README embeds workflow GIF and Mermaid diagrams (or rendered images)
-
+- [x] Done (verified 2026-10-13)

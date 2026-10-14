@@ -1,6 +1,7 @@
-# REQ-SITE-029h: All media assets committed and rendering
+# REQ-SITE-029h
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. All media assets committed and rendering
-
+- [x] Done (verified 2026-10-13)

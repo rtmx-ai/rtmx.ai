@@ -1,6 +1,7 @@
-# REQ-SITE-029e: A tagged release exists matching the post version
+# REQ-SITE-029e
+
+## Status: COMPLETE
 
 ## Acceptance Criteria
 
-1. A tagged release exists matching the post version
-
+- [x] Done (verified 2026-10-13)

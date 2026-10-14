@@ -1,6 +1,6 @@
 # REQ-SITE-029: Show HN launch checklist executed
 
-## Status: MISSING
+## Status: PARTIAL
 ## Priority: HIGH
 ## Phase: 2
 
@@ -10,20 +10,20 @@ published, and the repo in a star-worthy state.
 
 This is the integration requirement that coordinates the rtmx.ai blog post,
 the media assets, and the rtmx repo README rewrite into a single launch-ready
-state.
+state. The README now leads with Sync (CLI as open source client).
 
 ## Acceptance Criteria
-- [ ] rtmx repo README rewritten as a landing page (hero GIF, pitch, install, features)
-- [ ] README embeds workflow GIF and Mermaid diagrams (or rendered images)
-- [ ] README links to blog post ("Read the backstory")
-- [ ] brew install rtmx-ai/tap/rtmx works on a clean machine
-- [ ] A tagged release exists matching the post version
+- [x] rtmx repo README rewritten as a landing page (hero GIF, pitch, install, features)
+- [x] README embeds workflow GIF and Mermaid diagrams (or rendered images)
+- [x] README links to blog post ("Read the backstory")
+- [x] brew install rtmx-ai/tap/rtmx works on a clean machine
+- [x] A tagged release exists matching the post version
 - [ ] CI is green on both rtmx and rtmx.ai repos
-- [ ] Blog post published and accessible
-- [ ] All media assets committed and rendering
+- [x] Blog post published and accessible
+- [x] All media assets committed and rendering
 
 ## Test Cases
-- `tests/e2e/launch.spec.ts::test_show_hn_readiness`
+- `tests/e2e/launch.spec.ts` — Show HN launch readiness (SITE-029)
 
 ## Dependencies
 - REQ-SITE-026 (blog article)
