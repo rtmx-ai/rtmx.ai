@@ -1,0 +1,41 @@
+---
+/**
+ * Compact product footer for demoted top-nav links (SITE-117 IA).
+ * About, Roadmap, aegis, Contact, GitHub.
+ */
+---
+
+<footer class="product-footer" data-testid="product-footer">
+	<nav class="product-footer-nav" aria-label="Site">
+		<a href="/about">About</a>
+		<a href="/roadmap">Roadmap</a>
+		<a href="/aegis">aegis</a>
+		<a href="/contact">Contact</a>
+		<a href="https://github.com/rtmx-ai/rtmx" target="_blank" rel="noopener noreferrer">GitHub</a>
+	</nav>
+</footer>
+
+<style>
+	.product-footer {
+		margin-top: 3rem;
+		padding: 1.5rem 1.25rem 2.5rem;
+		border-top: 1px solid rgba(110, 231, 183, 0.12);
+		background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.04));
+	}
+	.product-footer-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.5rem;
+		justify-content: center;
+		max-width: 40rem;
+		margin: 0 auto;
+	}
+	.product-footer-nav a {
+		color: var(--rtmx-text-muted, #a8a29e);
+		font-size: 0.9rem;
+		text-decoration: none;
+	}
+	.product-footer-nav a:hover {
+		color: var(--rtmx-emerald-light, #6ee7b7);
+	}
+</style>

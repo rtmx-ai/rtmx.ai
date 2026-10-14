@@ -3,19 +3,28 @@ import { test, expect } from '@playwright/test';
 /**
  * REQ-SITE-117: Sync explainer is the product thesis; Pricing is plans only.
  * Open source CLI is positioned as how you access Sync.
+ * Header is product-led: Sync · Docs · Pricing.
  */
 
 test.describe('Sync explainer (SITE-117)', () => {
-  test('header leads with Sync ahead of Pricing', async ({ page }) => {
+  test('header is Sync, Docs, Pricing — Sync ahead of Pricing', async ({ page }) => {
     await page.goto('/');
-    const nav = page.locator('.header-nav');
+    const nav = page.getByTestId('header-nav');
     await expect(nav.getByTestId('nav-sync')).toBeVisible();
     await expect(nav.getByTestId('nav-sync')).toHaveAttribute('href', '/sync');
+    await expect(nav.getByTestId('nav-docs')).toHaveAttribute('href', '/quickstart');
+    await expect(nav.getByTestId('nav-pricing')).toHaveAttribute('href', '/pricing');
 
     const links = nav.locator('a.header-nav-link');
     const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute('href')));
-    expect(hrefs.indexOf('/sync')).toBeGreaterThanOrEqual(0);
+    expect(hrefs).toEqual(['/sync', '/quickstart', '/pricing']);
     expect(hrefs.indexOf('/sync')).toBeLessThan(hrefs.indexOf('/pricing'));
+
+    // Demoted links live in the product footer, not the header.
+    await expect(nav.getByRole('link', { name: 'aegis' })).toHaveCount(0);
+    await expect(nav.getByRole('link', { name: 'About' })).toHaveCount(0);
+    await expect(page.getByTestId('product-footer').getByRole('link', { name: 'About' })).toBeVisible();
+    await expect(page.getByTestId('product-footer').getByRole('link', { name: 'aegis' })).toBeVisible();
   });
 
   test('Sync page leads after-Git thesis without pricing-only framing', async ({ page }) => {

@@ -142,7 +142,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       const label = document.createElement('span');
       label.textContent = (org.name || org.slug) + ' (' + (org.slug || org.id) + ')';
       const admin = document.createElement('a');
-      admin.href = '/orgs/' + encodeURIComponent(org.slug || org.id) + '/admin';
+      admin.href = '/orgs/admin?slug=' + encodeURIComponent(org.slug || org.id);
       admin.textContent = 'Admin';
       li.appendChild(label);
       li.appendChild(admin);

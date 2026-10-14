@@ -14,6 +14,8 @@ export default defineConfig({
 			components: {
 				// REQ-SITE-024: Use proper Astro component for header navigation
 				Header: './src/components/Header.astro',
+				// SITE-117 IA: demoted product links (About, Roadmap, aegis, …)
+				Footer: './src/components/StarlightFooter.astro',
 			},
 			description: 'The intent layer for agentic engineering. Requirements, tests, and traceability — integrated directly into the agentic engineering lifecycle.',
 			expressiveCode: {
@@ -108,6 +110,13 @@ export default defineConfig({
 				},
 			],
 			sidebar: [
+				{
+					label: 'Product',
+					items: [
+						{ label: 'RTMX Sync', link: '/sync' },
+						{ label: 'Pricing', link: '/pricing' },
+					],
+				},
 				{
 					label: 'Getting Started',
 					items: [

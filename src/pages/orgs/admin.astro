@@ -1,0 +1,195 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
+---
+
+<StarlightPage frontmatter={{ title: 'Organization admin', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page rtmx-splash">
+    <section class="license-header">
+      <h1>Organization admin</h1>
+      <p class="license-subtitle">
+        Members and roles for <code class="server-fixed" id="org-slug">…</code>.
+      </p>
+    </section>
+
+    <section class="license-form-section not-content">
+      <div class="admin-panel" id="admin-panel">
+        <p class="field-help" id="admin-status">Loading…</p>
+        <table class="member-table" id="member-table" hidden>
+          <thead>
+            <tr><th>User</th><th>Role</th><th></th></tr>
+          </thead>
+          <tbody id="member-body"></tbody>
+        </table>
+        <p class="field-help">
+          <a href="/billing/manage">Manage billing</a>
+          ·
+          <a href="/account">Back to account</a>
+        </p>
+      </div>
+      <div class="form-message" id="admin-message" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .license-page { background: var(--rtmx-bg); min-height: 100vh; width: 100%; }
+  .license-header { text-align: center; padding: 2rem 1.5rem 0.5rem; }
+  .license-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 700; margin: 0 0 0.75rem;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .license-subtitle { color: var(--rtmx-text-muted); max-width: 34rem; margin: 0 auto; }
+  .server-fixed { color: var(--rtmx-emerald-light); font-family: ui-monospace, Menlo, monospace; }
+  .license-form-section { max-width: 36rem; margin: 0 auto; padding: 1.25rem; }
+  .admin-panel {
+    background: var(--rtmx-bg-card); border: 1px solid var(--rtmx-border); border-radius: 0.75rem; padding: 1.25rem;
+  }
+  .field-help { color: var(--rtmx-text-dim); font-size: 0.85rem; }
+  .field-help a { color: var(--rtmx-emerald-light); }
+  .member-table { width: 100%; border-collapse: collapse; margin: 1rem 0; color: var(--rtmx-text); font-size: 0.9rem; }
+  .member-table th, .member-table td { text-align: left; padding: 0.5rem 0.35rem; border-bottom: 1px solid var(--rtmx-border); }
+  .member-table select {
+    background: var(--rtmx-bg-elevated); color: var(--rtmx-text); border: 1px solid var(--rtmx-border-hover);
+    border-radius: 0.35rem; padding: 0.25rem 0.4rem; font: inherit;
+  }
+  .form-message { margin-top: 0.75rem; }
+  .form-message.is-error { color: #fecaca; }
+  .form-message.is-success { color: var(--rtmx-emerald-light); }
+  .form-message:empty { display: none; }
+</style>
+
+<script define:vars={{ defaultServer }}>
+  const SESSION = 'rtmx.session';
+  const server = defaultServer.replace(/\/+$/, '');
+  const statusEl = document.getElementById('admin-status');
+  const table = document.getElementById('member-table');
+  const body = document.getElementById('member-body');
+  const message = document.getElementById('admin-message');
+  const slugEl = document.getElementById('org-slug');
+
+  function resolveSlug() {
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = (params.get('slug') || '').trim();
+    if (fromQuery) return fromQuery;
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    // /orgs/:slug/admin
+    if (parts[0] === 'orgs' && parts[2] === 'admin' && parts[1]) return parts[1];
+    return '';
+  }
+
+  const slug = resolveSlug();
+  if (slugEl) slugEl.textContent = slug || 'unknown';
+
+  function adminPath() {
+    return slug ? '/orgs/admin?slug=' + encodeURIComponent(slug) : '/orgs/admin';
+  }
+
+  function readSession() {
+    try {
+      const parsed = JSON.parse(sessionStorage.getItem(SESSION) || '');
+      return parsed?.token ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function show(text, kind) {
+    message.textContent = text;
+    message.className = 'form-message is-' + kind;
+  }
+
+  async function resolveOrg(token) {
+    const resp = await fetch(server + '/orgs', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) throw new Error('orgs ' + resp.status);
+    const data = await resp.json();
+    const orgs = data.organizations || [];
+    return orgs.find((o) => o.slug === slug || o.id === slug) || null;
+  }
+
+  async function loadMembers(token, orgId) {
+    const resp = await fetch(server + '/orgs/' + orgId + '/members', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (resp.status === 403) {
+      statusEl.textContent = 'Access denied. You must be a member of this organization.';
+      return;
+    }
+    if (!resp.ok) {
+      statusEl.textContent = 'Could not list members (' + resp.status + ').';
+      return;
+    }
+    const data = await resp.json();
+    const session = readSession();
+    const me = (data.members || []).find((m) => m.user_id === session.user_id);
+    if (me && me.role !== 'owner' && me.role !== 'admin') {
+      statusEl.textContent = 'Access denied. Organization admin role required.';
+      table.hidden = true;
+      return;
+    }
+    statusEl.textContent = 'Members';
+    table.hidden = false;
+    body.innerHTML = '';
+    for (const m of data.members || []) {
+      const tr = document.createElement('tr');
+      const userTd = document.createElement('td');
+      userTd.textContent = m.user_id;
+      const roleTd = document.createElement('td');
+      const select = document.createElement('select');
+      for (const role of ['owner', 'admin', 'member', 'viewer']) {
+        const opt = document.createElement('option');
+        opt.value = role;
+        opt.textContent = role;
+        if (role === m.role) opt.selected = true;
+        select.appendChild(opt);
+      }
+      select.addEventListener('change', async () => {
+        const patch = await fetch(server + '/orgs/' + orgId + '/members/' + m.user_id, {
+          method: 'PATCH',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ role: select.value }),
+        });
+        if (!patch.ok) {
+          show('Could not update role (' + patch.status + ').', 'error');
+          return;
+        }
+        show('Updated role for ' + m.user_id + '.', 'success');
+      });
+      roleTd.appendChild(select);
+      tr.appendChild(userTd);
+      tr.appendChild(roleTd);
+      tr.appendChild(document.createElement('td'));
+      body.appendChild(tr);
+    }
+  }
+
+  (async () => {
+    if (!slug) {
+      statusEl.textContent = 'Missing organization slug. Open Admin from your account page.';
+      return;
+    }
+    const session = readSession();
+    if (!session) {
+      window.location.replace('/login?next=' + encodeURIComponent(adminPath()));
+      return;
+    }
+    try {
+      const org = await resolveOrg(session.token);
+      if (!org) {
+        statusEl.textContent = 'Organization not found or you are not a member.';
+        return;
+      }
+      await loadMembers(session.token, org.id);
+    } catch (err) {
+      statusEl.textContent = 'Could not load organization admin.';
+      show(String(err), 'error');
+    }
+  })();
+</script>

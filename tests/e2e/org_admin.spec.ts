@@ -2,13 +2,16 @@ import { test, expect } from '@playwright/test';
 
 /**
  * REQ-SITE-116 / REQ-MONO-025: organization admin panel.
+ * Static shell at /orgs/admin?slug= (GitHub Pages cannot host dynamic segments).
  */
+
+const adminURL = '/orgs/admin?slug=acme';
 
 test.describe('org admin panel', () => {
   test('unauthenticated visitors redirect to login', async ({ page }) => {
-    await page.goto('/orgs/acme/admin');
+    await page.goto(adminURL);
     await page.waitForURL(/\/login\?next=/);
-    expect(page.url()).toMatch(/orgs%2Facme%2Fadmin|orgs\/acme\/admin/);
+    expect(page.url()).toMatch(/orgs(%2F|\/)admin|slug=acme/);
   });
 
   test('admin can list members and change roles', async ({ page }) => {
@@ -53,7 +56,7 @@ test.describe('org admin panel', () => {
       });
     });
 
-    await page.goto('/orgs/acme/admin');
+    await page.goto(adminURL);
     await page.evaluate(() => {
       sessionStorage.setItem(
         'rtmx.session',
@@ -99,7 +102,7 @@ test.describe('org admin panel', () => {
       });
     });
 
-    await page.goto('/orgs/acme/admin');
+    await page.goto(adminURL);
     await page.evaluate(() => {
       sessionStorage.setItem(
         'rtmx.session',

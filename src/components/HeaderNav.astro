@@ -1,13 +1,10 @@
 ---
-// REQ-SITE-024: Header navigation as a proper Astro component
-// Replaces the inline DOMContentLoaded script that used innerHTML
+// REQ-SITE-024 / SITE-117: product-led header — Sync, Docs, Pricing.
+// aegis / Roadmap / About live in ProductFooter + docs sidebar.
 ---
 
-<nav class="header-nav">
+<nav class="header-nav" data-testid="header-nav">
 	<a href="/sync" class="header-nav-link" data-testid="nav-sync">Sync</a>
-	<a href="/quickstart" class="header-nav-link">Docs</a>
-	<a href="/aegis" class="header-nav-link">aegis</a>
-	<a href="/roadmap" class="header-nav-link">Roadmap</a>
-	<a href="/pricing" class="header-nav-link">Pricing</a>
-	<a href="/about" class="header-nav-link">About</a>
+	<a href="/quickstart" class="header-nav-link" data-testid="nav-docs">Docs</a>
+	<a href="/pricing" class="header-nav-link" data-testid="nav-pricing">Pricing</a>
 </nav>

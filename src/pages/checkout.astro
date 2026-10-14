@@ -496,7 +496,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       orgAdminLink.hidden = true;
       return;
     }
-    orgAdminAnchor.href = `/orgs/${encodeURIComponent(slug)}/admin`;
+    orgAdminAnchor.href = `/orgs/admin?slug=${encodeURIComponent(slug)}`;
     orgAdminLink.hidden = false;
   }
 

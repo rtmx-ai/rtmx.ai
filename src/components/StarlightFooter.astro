@@ -1,0 +1,9 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+import ProductFooter from './ProductFooter.astro';
+---
+
+<ProductFooter />
+<Default {...Astro.props}>
+	<slot />
+</Default>

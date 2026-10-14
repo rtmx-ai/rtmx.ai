@@ -15,10 +15,11 @@ you access Sync — not as the product itself.
 ## Acceptance Criteria
 
 - [x] `/sync` splash page exists with after-Git thesis and CLI-as-client framing
-- [x] Header nav includes Sync before Pricing
+- [x] Header nav is Sync · Docs · Pricing (Sync first); aegis/Roadmap/About in product footer
+- [x] Docs sidebar Product group links to `/sync` and `/pricing`
 - [x] Hero primary CTA and Sync feature card link to `/sync` (not `/pricing`)
 - [x] Pricing page links to `/sync` for the product story
-- [x] Playwright covers nav order, page copy, hero/pricing links
+- [x] Playwright covers nav order, page copy, hero/pricing links, footer demotion
 
 ## Test Cases
 
