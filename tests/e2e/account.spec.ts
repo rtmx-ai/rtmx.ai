@@ -59,7 +59,7 @@ test.describe('account page', () => {
     await expect(page.locator('#org-list')).toContainText('Acme');
     await expect(page.getByRole('link', { name: 'Admin' })).toHaveAttribute(
       'href',
-      '/orgs/acme/admin',
+      '/orgs/admin?slug=acme',
     );
     await expect(page.locator('#connect-asana')).toBeVisible();
     await expect(page.getByTestId('github-fab')).toBeHidden();

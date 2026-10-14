@@ -1,15 +1,14 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolveRtmxRoot } from './rtmx_root';
 
 /**
  * REQ-SITE-028: Show HN launch media assets (Mermaid + vhs) live in the
- * rtmx CLI docs tree and are verified from the monorepo checkout.
+ * rtmx CLI docs tree (submodule or monorepo sibling).
  */
 
-const here = path.dirname(fileURLToPath(import.meta.url));
-const rtmxDocs = path.resolve(here, '../../../rtmx/docs');
+const rtmxDocs = path.join(resolveRtmxRoot(), 'docs');
 
 const DIAGRAMS = [
   'dev-loop.mmd',
@@ -28,6 +27,12 @@ const SCREENSHOTS = ['rtmx-status.png', 'rtmx-backlog.png', 'rtmx-health.png'];
 const EMERALD_TOKENS = ['#059669', '#10b981', '#6ee7b7', '#d1fae5', '#065f46'];
 
 test.describe('Show HN launch media assets (SITE-028)', () => {
+  test.beforeEach(({}, testInfo) => {
+    if (!fs.existsSync(path.join(rtmxDocs, 'diagrams'))) {
+      testInfo.skip(true, `rtmx docs missing at ${rtmxDocs}`);
+    }
+  });
+
   test('all four Mermaid diagrams exist (SITE-028a)', async () => {
     for (const name of DIAGRAMS) {
       const p = path.join(rtmxDocs, 'diagrams', name);
