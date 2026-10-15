@@ -482,12 +482,11 @@ test.describe('dashboard live updates (RT-004)', () => {
     await page.goto('/dashboard');
     await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/1 of 2 complete/);
 
-    await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
-      'data-state',
-      'reconnecting',
-      { timeout: 5000 },
-    );
-
+    // Reconnect can finish before the first poll; require a second socket and
+    // a final connected state within the SLA (reconnecting may be skipped).
+    await expect
+      .poll(async () => wsConnections, { timeout: 5000 })
+      .toBeGreaterThanOrEqual(2);
     await expect(page.getByTestId('dashboard-sync-status')).toHaveAttribute(
       'data-state',
       'connected',
