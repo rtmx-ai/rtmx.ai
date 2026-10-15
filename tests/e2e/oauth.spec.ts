@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * REQ-SITE-102 / REQ-MONO-020a: OAuth login chrome and checkout gate.
+ * REQ-SITE-118 / REQ-MONO-029a: Official OIDC marks; no OpenAI Sync IdP.
  */
 
 test.describe('OAuth login chrome', () => {
@@ -9,6 +10,14 @@ test.describe('OAuth login chrome', () => {
     await page.goto('/login');
     await expect(page.getByRole('button', { name: /Continue with GitHub/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Continue with Google/i })).toBeVisible();
+  });
+
+  test('shows official provider marks and no OpenAI (SITE-118)', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('[data-provider="github"] [data-mark="github"]')).toBeVisible();
+    await expect(page.locator('[data-provider="google"] [data-mark="google"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: /OpenAI|ChatGPT|SIWC/i })).toHaveCount(0);
+    await expect(page.locator('[data-provider="openai"]')).toHaveCount(0);
   });
 
   test('starts GitHub OAuth against the managed sync host (AC2)', async ({ page }) => {
