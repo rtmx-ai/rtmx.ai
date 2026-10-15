@@ -37,6 +37,15 @@ test.describe('OAuth login chrome', () => {
     await page.goto('/login');
     await expect(page.getByRole('button', { name: /Continue with GitHub/i })).toBeVisible();
     await expect(page.locator('[data-provider="google"]')).toBeHidden();
+    await expect(page.locator('[data-provider="microsoft"]')).toBeHidden();
+  });
+
+  test('shows Microsoft control when configured (SITE-120)', async ({ page }) => {
+    await mockProviders(page, ['github', 'microsoft']);
+    await page.goto('/login');
+    await expect(page.locator('[data-provider="microsoft"] [data-mark="microsoft"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue with Microsoft/i })).toBeVisible();
+    await expect(page.locator('[data-provider="google"]')).toBeHidden();
   });
 
   test('starts GitHub OAuth against the managed sync host (AC2)', async ({ page }) => {

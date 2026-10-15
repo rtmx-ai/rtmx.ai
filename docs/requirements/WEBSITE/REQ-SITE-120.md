@@ -1,13 +1,13 @@
 # REQ-SITE-120: Microsoft Entra Sign-In Control
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: AUTH
 - **Priority**: P1
 - **Phase**: 8
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-119
 - **Blocks**: (none)
 - **External ID**: rtmx-ai/REQ-MONO-029d
@@ -20,10 +20,10 @@ official-style Microsoft sign-in control that starts
 
 ## Acceptance Criteria
 
-1. [ ] Microsoft control uses official-style mark + "Continue with Microsoft" (or brand-approved label).
-2. [ ] Control is absent when `microsoft` is not in the providers list.
-3. [ ] Click starts OAuth via existing startOAuth(`microsoft`) path.
-4. [ ] Playwright covers presence when providers mock includes `microsoft`.
+1. [x] Microsoft control uses official-style mark + "Continue with Microsoft" (or brand-approved label).
+2. [x] Control is absent when `microsoft` is not in the providers list.
+3. [x] Click starts OAuth via existing startOAuth(`microsoft`) path.
+4. [x] Playwright covers presence when providers mock includes `microsoft`.
 
 ## Out of Scope
 
