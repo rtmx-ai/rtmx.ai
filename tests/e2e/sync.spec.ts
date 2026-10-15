@@ -38,6 +38,17 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(root).not.toContainText(/\$9/);
     await expect(page.getByTestId('sync-cta-checkout')).toBeVisible();
     await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/installation');
+
+    // Primary emerald CTA must use white label (Starlight link styles otherwise wash it out).
+    const primaryColor = await page.getByTestId('sync-cta-checkout').evaluate((el) => getComputedStyle(el).color);
+    expect(primaryColor.replace(/\s/g, '')).toMatch(/^rgb\(255,255,255\)$|^rgba\(255,255,255/);
+
+    // Feature points are cards inside the shared shell border.
+    const cards = page.locator('.sync-point');
+    await expect(cards).toHaveCount(4);
+    const cardBorder = await cards.first().evaluate((el) => getComputedStyle(el).borderTopWidth);
+    expect(parseFloat(cardBorder)).toBeGreaterThan(0);
+    await expect(page.locator('.sync-shell')).toBeVisible();
   });
 
   test('hero Sync card and CTA point at /sync, not /pricing', async ({ page }) => {

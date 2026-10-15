@@ -4,93 +4,95 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 <StarlightPage frontmatter={{ title: 'RTMX Sync', template: 'splash', hero: { tagline: '' } }}>
   <div class="sync-page rtmx-splash" data-testid="sync-explainer">
-    <section class="sync-hero">
-      <p class="sync-kicker">What comes after Git</p>
-      <h1>RTMX Sync</h1>
-      <p class="sync-lede">
-        Git versioned the file. Sync lives the room — one multiplayer matrix of
-        intent where humans and agents claim, converge, and ship without a
-        ticket board in the middle.
-      </p>
-      <div class="sync-cta-row">
-        <a href="/checkout" class="sync-cta primary" data-testid="sync-cta-checkout">Start hosted Sync</a>
-        <a href="/installation" class="sync-cta secondary" data-testid="sync-cta-cli">Install the open source client</a>
-      </div>
-      <p class="sync-client-note">
-        The open source <code>rtmx</code> CLI is how you enter the room.
-        Sync is the product.
-      </p>
-    </section>
+    <div class="sync-shell">
+      <section class="sync-hero">
+        <p class="sync-kicker">What comes after Git</p>
+        <h1>RTMX Sync</h1>
+        <p class="sync-lede">
+          Git versioned the file. Sync lives the room — one multiplayer matrix of
+          intent where humans and agents claim, converge, and ship without a
+          ticket board in the middle.
+        </p>
+        <div class="sync-cta-row">
+          <a href="/checkout" class="sync-cta primary" data-testid="sync-cta-checkout">Start hosted Sync</a>
+          <a href="/installation" class="sync-cta secondary" data-testid="sync-cta-cli">Install the open source client</a>
+        </div>
+        <p class="sync-client-note">
+          The open source <code>rtmx</code> CLI is how you enter the room.
+          Sync is the product.
+        </p>
+      </section>
 
-    <section class="sync-section">
-      <h2>Git stopped at the commit</h2>
-      <p>
-        Version control won because the artifact was the coordination surface.
-        Agentic engineering broke that bargain: agents move faster than PRs,
-        status lives in chat, and Jira becomes the second source of truth you
-        keep in sync by hand.
-      </p>
-      <p>
-        RTMX Sync is the next surface — a tenant-isolated room of requirements
-        that converges live. Claims, status, and dependencies update while you
-        work. No merge fight for “who owns REQ-042.”
-      </p>
-    </section>
+      <section class="sync-section">
+        <h2>Git stopped at the commit</h2>
+        <p>
+          Version control won because the artifact was the coordination surface.
+          Agentic engineering broke that bargain: agents move faster than PRs,
+          status lives in chat, and Jira becomes the second source of truth you
+          keep in sync by hand.
+        </p>
+        <p>
+          RTMX Sync is the next surface — a tenant-isolated room of requirements
+          that converges live. Claims, status, and dependencies update while you
+          work. No merge fight for “who owns REQ-042.”
+        </p>
+      </section>
 
-    <section class="sync-section sync-grid-section">
-      <h2>One room. Humans and agents.</h2>
-      <div class="sync-grid not-content">
-        <article class="sync-point">
-          <h3>Live matrix</h3>
-          <p>Status, priority, and blockers update without refresh — the same view for the operator and the agent.</p>
-        </article>
-        <article class="sync-point">
-          <h3>Claimed work</h3>
-          <p>Agents claim requirements with identity. Conflicts resolve in the room, not in Slack.</p>
-        </article>
-        <article class="sync-point">
-          <h3>Tenant isolation</h3>
-          <p>Org-scoped rooms on managed Sync, self-managed, or air-gapped. Same protocol everywhere.</p>
-        </article>
-        <article class="sync-point">
-          <h3>No board tax</h3>
-          <p>Skip the SaaS kanban and the token-burning MCP glue that keeps a ticket system “synced.”</p>
-        </article>
-      </div>
-    </section>
+      <section class="sync-section">
+        <h2>One room. Humans and agents.</h2>
+        <div class="sync-grid not-content">
+          <article class="sync-point">
+            <h3>Live matrix</h3>
+            <p>Status, priority, and blockers update without refresh — the same view for the operator and the agent.</p>
+          </article>
+          <article class="sync-point">
+            <h3>Claimed work</h3>
+            <p>Agents claim requirements with identity. Conflicts resolve in the room, not in Slack.</p>
+          </article>
+          <article class="sync-point">
+            <h3>Tenant isolation</h3>
+            <p>Org-scoped rooms on managed Sync, self-managed, or air-gapped. Same protocol everywhere.</p>
+          </article>
+          <article class="sync-point">
+            <h3>No board tax</h3>
+            <p>Skip the SaaS kanban and the token-burning MCP glue that keeps a ticket system “synced.”</p>
+          </article>
+        </div>
+      </section>
 
-    <section class="sync-section sync-client">
-      <h2>The client is open source</h2>
-      <p>
-        <code>brew install rtmx-ai/tap/rtmx</code> — then
-        <code>rtmx login</code>, <code>rtmx sync</code>, <code>rtmx serve</code>.
-        The CLI is the workspace and the MCP surface. Sync is the shared room
-        those tools join.
-      </p>
-      <pre class="sync-code" data-testid="sync-install"><code>brew install rtmx-ai/tap/rtmx
+      <section class="sync-section sync-client">
+        <h2>The client is open source</h2>
+        <p>
+          <code>brew install rtmx-ai/tap/rtmx</code> — then
+          <code>rtmx login</code>, <code>rtmx sync</code>, <code>rtmx serve</code>.
+          The CLI is the workspace and the MCP surface. Sync is the shared room
+          those tools join.
+        </p>
+        <pre class="sync-code" data-testid="sync-install"><code>brew install rtmx-ai/tap/rtmx
 rtmx login
 rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
-      <p class="sync-client-links">
-        <a href="/installation">Installation docs</a>
-        ·
-        <a href="https://github.com/rtmx-ai/rtmx">GitHub</a>
-        ·
-        <a href="/pricing">Plans &amp; pricing</a>
-      </p>
-    </section>
+        <p class="sync-client-links">
+          <a href="/installation">Installation docs</a>
+          ·
+          <a href="https://github.com/rtmx-ai/rtmx">GitHub</a>
+          ·
+          <a href="/pricing">Plans &amp; pricing</a>
+        </p>
+      </section>
 
-    <section class="sync-section sync-close">
-      <h2>Start in the room</h2>
-      <p>
-        Hosted Team Sync is in private beta. Enterprise and On-Prem stay
-        sales-assisted. The thesis does not wait on a price card.
-      </p>
-      <div class="sync-cta-row">
-        <a href="/checkout" class="sync-cta primary">Hosted Checkout</a>
-        <a href="/pricing" class="sync-cta secondary">See plans</a>
-        <a href="/contact?intent=enterprise" class="sync-cta tertiary">Talk to sales</a>
-      </div>
-    </section>
+      <section class="sync-section sync-close">
+        <h2>Start in the room</h2>
+        <p>
+          Hosted Team Sync is in private beta. Enterprise and On-Prem stay
+          sales-assisted. The thesis does not wait on a price card.
+        </p>
+        <div class="sync-cta-row">
+          <a href="/checkout" class="sync-cta primary">Hosted Checkout</a>
+          <a href="/pricing" class="sync-cta secondary">See plans</a>
+          <a href="/contact?intent=enterprise" class="sync-cta tertiary">Talk to sales</a>
+        </div>
+      </section>
+    </div>
   </div>
 </StarlightPage>
 
@@ -102,11 +104,25 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     min-height: 100vh;
     width: 100%;
     color: var(--rtmx-text, #e7e5e4);
+    box-sizing: border-box;
+  }
+  .sync-page *,
+  .sync-page *::before,
+  .sync-page *::after {
+    box-sizing: border-box;
+  }
+  /* Single content column — equal horizontal inset for every section */
+  .sync-shell {
+    --sync-pad-x: clamp(1.25rem, 4vw, 2rem);
+    --sync-pad-y: clamp(2rem, 5vw, 3rem);
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: var(--sync-pad-y) var(--sync-pad-x) 4rem;
   }
   .sync-hero {
     text-align: center;
-    padding: clamp(2.5rem, 8vw, 5rem) 1.5rem 2rem;
-    max-width: 42rem;
+    padding: 0 0 var(--sync-pad-y);
+    max-width: 36rem;
     margin: 0 auto;
   }
   .sync-kicker {
@@ -132,7 +148,6 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     font-size: clamp(1.05rem, 2.2vw, 1.25rem);
     line-height: 1.55;
     color: var(--rtmx-text-muted, #a8a29e);
-    max-width: 36rem;
   }
   .sync-cta-row {
     display: flex;
@@ -153,18 +168,28 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
   }
   .sync-cta:hover { transform: translateY(-1px); }
-  .sync-cta.primary {
+  /* White label on emerald — beat Starlight link color overrides */
+  .sync-page a.sync-cta.primary,
+  .sync-page a.sync-cta.primary:visited,
+  .sync-page a.sync-cta.primary:hover {
     background: linear-gradient(135deg, #059669, #10b981);
-    color: #042f2e;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+    border: 1px solid transparent;
   }
-  .sync-cta.secondary {
+  .sync-page a.sync-cta.secondary,
+  .sync-page a.sync-cta.secondary:visited {
     border: 1px solid rgba(110, 231, 183, 0.35);
     color: #6ee7b7;
+    -webkit-text-fill-color: #6ee7b7;
     background: rgba(16, 185, 129, 0.06);
   }
-  .sync-cta.tertiary {
+  .sync-page a.sync-cta.tertiary,
+  .sync-page a.sync-cta.tertiary:visited {
     color: var(--rtmx-text-muted, #a8a29e);
+    -webkit-text-fill-color: var(--rtmx-text-muted, #a8a29e);
     border: 1px solid transparent;
+    background: transparent;
   }
   .sync-client-note {
     margin: 0.5rem 0 0;
@@ -176,9 +201,10 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     color: #6ee7b7;
   }
   .sync-section {
-    max-width: 40rem;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem;
+    max-width: none;
+    margin: 0;
+    padding: var(--sync-pad-y) 0;
+    border-top: 1px solid rgba(110, 231, 183, 0.1);
   }
   .sync-section h2 {
     margin: 0 0 1rem;
@@ -187,29 +213,40 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     letter-spacing: -0.02em;
     color: var(--rtmx-text, #f5f5f4);
   }
-  .sync-section p {
+  .sync-section > p {
     margin: 0 0 1rem;
     line-height: 1.6;
     color: var(--rtmx-text-muted, #a8a29e);
     font-size: 1.05rem;
+    max-width: 40rem;
   }
-  .sync-grid-section { max-width: 48rem; }
   .sync-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
     margin-top: 1.25rem;
   }
+  @media (max-width: 40rem) {
+    .sync-grid { grid-template-columns: 1fr; }
+  }
+  .sync-point {
+    margin: 0;
+    padding: 1.15rem 1.2rem;
+    border-radius: 0.65rem;
+    background: rgba(20, 18, 16, 0.85);
+    border: 1px solid rgba(110, 231, 183, 0.22);
+  }
   .sync-point h3 {
-    margin: 0 0 0.4rem;
+    margin: 0 0 0.45rem;
     font-size: 1rem;
-    color: #6ee7b7;
+    color: #f5f5f4;
     font-weight: 650;
   }
   .sync-point p {
     margin: 0;
     font-size: 0.92rem;
     line-height: 1.5;
+    color: var(--rtmx-text-muted, #a8a29e);
   }
   .sync-code {
     margin: 1.25rem 0;
@@ -228,7 +265,11 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
   .sync-client-links a { color: #6ee7b7; }
   .sync-close {
     text-align: center;
-    padding-bottom: 4rem;
+  }
+  .sync-close > p {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
   }
   .sync-close .sync-cta-row { margin-top: 1.25rem; }
 
