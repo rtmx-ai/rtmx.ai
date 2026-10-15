@@ -1,13 +1,13 @@
 # REQ-SITE-119: Login Shows Only Configured OIDC Providers
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: AUTH
 - **Priority**: P0
 - **Phase**: 8
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-118
 - **Blocks**: REQ-SITE-120
 - **External ID**: rtmx-ai/REQ-MONO-029b
@@ -20,10 +20,10 @@ configured.
 
 ## Acceptance Criteria
 
-1. [ ] On load, `/login` fetches `/auth/providers` from the managed sync HTTP URL.
-2. [ ] Unlisted providers are hidden or disabled (no click-through to 503).
-3. [ ] If the providers request fails, show a clear error (do not assume all IdPs work).
-4. [ ] Playwright covers a mocked providers payload (e.g. github-only).
+1. [x] On load, `/login` fetches `/auth/providers` from the managed sync HTTP URL.
+2. [x] Unlisted providers are hidden or disabled (no click-through to 503).
+3. [x] If the providers request fails, show a clear error (do not assume all IdPs work).
+4. [x] Playwright covers a mocked providers payload (e.g. github-only).
 
 ## Out of Scope
 
