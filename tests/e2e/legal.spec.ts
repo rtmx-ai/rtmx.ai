@@ -13,10 +13,33 @@ test.describe('Legal pages', () => {
     await page.goto('/privacy');
     await expect(page.getByTestId('privacy-page').locator('.legal-header h1')).toHaveText('Privacy Policy');
     await expect(page.getByTestId('privacy-page').getByRole('link', { name: 'Terms of Service' })).toBeVisible();
+    const privacy = await page.getByTestId('privacy-page').innerText();
+    for (const phrase of [
+      'Limited Liability Company (LLC)',
+      'Requirements Traceability Matrix',
+      'command-line interface (CLI)',
+      'Open Authorization (OAuth)',
+      'identity providers (IdPs)',
+      'Application Programming Interface (API)',
+      'Software as a Service (SaaS)',
+      'Transport Layer Security (TLS)',
+    ]) {
+      expect(privacy, `privacy expands ${phrase}`).toContain(phrase);
+    }
 
     await page.goto('/terms');
     await expect(page.getByTestId('terms-page').locator('.legal-header h1')).toHaveText('Terms of Service');
     await expect(page.getByTestId('terms-page').getByRole('link', { name: 'Privacy Policy' })).toBeVisible();
+    const terms = await page.getByTestId('terms-page').innerText();
+    for (const phrase of [
+      'Limited Liability Company (LLC)',
+      'Requirements Traceability Matrix',
+      'command-line interface (CLI)',
+      'Application Programming Interface (API)',
+      'identity providers (IdPs)',
+    ]) {
+      expect(terms, `terms expands ${phrase}`).toContain(phrase);
+    }
   });
 });
 

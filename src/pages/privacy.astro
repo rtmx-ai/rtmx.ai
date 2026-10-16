@@ -6,34 +6,35 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
   <div class="legal-page" data-testid="privacy-page">
     <header class="legal-header">
       <h1>Privacy Policy</h1>
-      <p class="legal-meta">Effective date: October 15, 2026 · ioTACTICAL LLC (“RTMX”, “we”, “us”)</p>
+      <p class="legal-meta">Effective date: October 15, 2026 · ioTACTICAL Limited Liability Company (LLC), operating the Requirements Traceability Matrix service (“RTMX”, “we”, “us”)</p>
     </header>
 
     <section class="legal-section">
       <h2>1. Scope</h2>
       <p>
         This policy covers rtmx.ai, managed Sync (<code>sync.rtmx.ai</code>), billing and
-        checkout flows, CLI login against the managed host, and related support channels.
-        Self-managed or air-gapped deployments you operate are governed by your own policies;
-        we do not process that customer data unless you send it to us for support.
+        checkout flows, command-line interface (CLI) login against the managed host, and related
+        support channels. Self-managed or air-gapped deployments you operate are governed by your
+        own policies; we do not process that customer data unless you send it to us for support.
       </p>
     </section>
 
     <section class="legal-section">
       <h2>2. Information we collect</h2>
       <ul>
-        <li><strong>Account identity.</strong> Email, display name, and provider id from OAuth
-          IdPs you choose (e.g. GitHub, Google, Microsoft Entra).</li>
-        <li><strong>Organization and billing.</strong> Org names, membership roles, Stripe
+        <li><strong>Account identity.</strong> Email, display name, and provider id from Open
+          Authorization (OAuth) identity providers (IdPs) you choose (e.g. GitHub, Google,
+          Microsoft Entra).</li>
+        <li><strong>Organization and billing.</strong> Organization names, membership roles, Stripe
           customer/subscription identifiers, and entitlement state. We do not store full card
           numbers; Stripe processes payments.</li>
-        <li><strong>Usage and diagnostics.</strong> API and WebSocket metadata (timestamps,
-          org/room identifiers, error codes), login and key events needed for security and
-          abuse prevention.</li>
+        <li><strong>Usage and diagnostics.</strong> Application Programming Interface (API) and
+          WebSocket metadata (timestamps, organization/room identifiers, error codes), login and
+          key events needed for security and abuse prevention.</li>
         <li><strong>Website.</strong> Standard server logs, optional newsletter email if you
-          subscribe, and reCAPTCHA tokens on form submits.</li>
+          subscribe, and Google reCAPTCHA (automated challenge–response) tokens on form submits.</li>
         <li><strong>Sync content.</strong> Requirements and collaboration data you place in
-          managed Sync rooms. Treat that data as confidential to your org.</li>
+          managed Sync rooms. Treat that data as confidential to your organization.</li>
       </ul>
     </section>
 
@@ -53,16 +54,17 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
     <section class="legal-section">
       <h2>5. Retention</h2>
-      <p>Account and org records are retained while your account is active and for a reasonable
-        period afterward for billing, audit, and legal obligations. You may request deletion of
-        account data subject to retention required for security or compliance.</p>
+      <p>Account and organization records are retained while your account is active and for a
+        reasonable period afterward for billing, audit, and legal obligations. You may request
+        deletion of account data subject to retention required for security or compliance.</p>
     </section>
 
     <section class="legal-section">
       <h2>6. Security</h2>
-      <p>We use industry-standard controls appropriate to a managed SaaS control plane (TLS,
-        access controls, secret management). No method of transmission or storage is perfectly
-        secure; report issues to <a href="mailto:security@rtmx.ai">security@rtmx.ai</a>.</p>
+      <p>We use industry-standard controls appropriate to a managed Software as a Service (SaaS)
+        control plane (Transport Layer Security (TLS), access controls, secret management). No
+        method of transmission or storage is perfectly secure; report issues to
+        <a href="mailto:security@rtmx.ai">security@rtmx.ai</a>.</p>
     </section>
 
     <section class="legal-section">
