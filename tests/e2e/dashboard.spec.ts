@@ -105,9 +105,19 @@ test.describe('dashboard auth gate (SITE-101)', () => {
   test('unauthenticated visitors redirect to login with next=/dashboard (SITE-101a)', async ({
     page,
   }) => {
+    // Provider buttons are gated on GET /auth/providers; stub so CI does not
+    // depend on live sync OIDC config (SITE-118 / ONBOARD-006).
+    await page.route('**/auth/providers**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ providers: ['github'] }),
+      });
+    });
     await page.goto('/dashboard');
     await page.waitForURL(/\/login\?next=/);
     expect(decodeURIComponent(page.url())).toMatch(/next=.*\/dashboard/);
+    await expect(page.getByRole('heading', { name: /Sign in to RTMX/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Continue with GitHub/i })).toBeVisible();
   });
 
