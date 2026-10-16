@@ -243,7 +243,7 @@ Now that you understand the basics:
   Run `rtmx verify` on every pull request
 
 + *Install Agent Prompts*\
-  Run `rtmx install` to inject RTMX guidance into CLAUDE.md
+  Run `rtmx install` to inject RTMX guidance into agent configs (AGENTS.md)
 
 = Summary
 

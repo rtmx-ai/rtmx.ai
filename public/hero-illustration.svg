@@ -54,7 +54,7 @@
       <rect x="60" y="130" width="160" height="160" rx="12" fill="#171717" stroke="#10b981" stroke-width="2"/>
       <circle cx="140" cy="180" r="32" fill="#1e1e1e" stroke="#10b981" stroke-width="2"/>
       <text x="140" y="190" fill="#6ee7b7" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="600">AI</text>
-      <text x="140" y="235" fill="#e5e7eb" font-size="16" text-anchor="middle" font-family="system-ui" font-weight="600">Claude / MCP</text>
+      <text x="140" y="235" fill="#e5e7eb" font-size="16" text-anchor="middle" font-family="system-ui" font-weight="600">Agent / MCP</text>
       <text x="140" y="258" fill="#6b7280" font-size="12" text-anchor="middle" font-family="monospace">Creates specs</text>
       <text x="140" y="275" fill="#6b7280" font-size="12" text-anchor="middle" font-family="monospace">Queries status</text>
     </g>

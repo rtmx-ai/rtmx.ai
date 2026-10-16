@@ -46,10 +46,10 @@ test.describe('Legal pages', () => {
 test.describe('Homepage CTAs', () => {
   test('primary hero buttons have readable (non-emerald) label color', async ({ page }) => {
     await page.goto('/');
-    const sync = page.getByTestId('hero-cta-sync');
-    await expect(sync).toBeVisible();
-    await expect(sync).toHaveText(/Explore Sync/i);
-    const color = await sync.evaluate((el) => getComputedStyle(el).color);
+    const install = page.getByTestId('hero-cta-install');
+    await expect(install).toBeVisible();
+    await expect(install).toHaveText(/Install the client/i);
+    const color = await install.evaluate((el) => getComputedStyle(el).color);
     expect(color).toMatch(/rgb\(\s*(\d+)/);
     const m = color.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
     expect(m).toBeTruthy();

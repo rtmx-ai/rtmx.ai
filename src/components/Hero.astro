@@ -13,11 +13,11 @@ import TerminalCarousel from './TerminalCarousel.astro';
   </p>
   <p class="hero-ucp">The only tool that gives AI agents a queryable, verifiable, dependency-aware requirements model that lives in git.</p>
   <div class="hero-buttons">
-    <a href="/sync" class="hero-button primary" data-testid="hero-cta-sync">
-      Explore Sync
-    </a>
-    <a href="/installation" class="hero-button secondary">
+    <a href="/installation" class="hero-button primary" data-testid="hero-cta-install">
       Install the client
+    </a>
+    <a href="/sync" class="hero-button secondary" data-testid="hero-cta-sync">
+      Try Sync free — 14 days
     </a>
     <a href="https://github.com/rtmx-ai/rtmx" class="github-button" target="_blank" rel="noopener">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -26,6 +26,9 @@ import TerminalCarousel from './TerminalCarousel.astro';
       Star on GitHub
     </a>
   </div>
+  <p class="hero-funnel-note" data-testid="hero-funnel-note">
+    Free forever client → sign in → 14-day hosted Sync trial. Card required; cancel anytime before day 14.
+  </p>
 </div>
 
 <!-- Full-width Hero Illustration -->
@@ -83,7 +86,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
         </svg>
       </div>
       <h3>Zero-Trust by Design</h3>
-      <p>Work across corporate lines without muddying network security policies. E2E encrypted, offline-first, air-gap ready. Your context stays yours.</p>
+      <p>Work across corporate lines without muddying network security policies. TLS in transit, org-isolated rooms, offline-first, air-gap ready. Your context stays yours.</p>
     </div>
 
     <div class="shift-card">
@@ -167,11 +170,11 @@ import TerminalCarousel from './TerminalCarousel.astro';
   </a>
 
   <a href="/sync" class="feature-card" data-testid="hero-sync-card">
-    <span class="badge">Private Beta</span>
+    <span class="badge">14-day free trial</span>
     <h3>RTMX Sync — After Git</h3>
     <p>
-      The live room for humans and agents. The open source CLI is how you
-      join — Sync is the multiplayer intent layer.
+      The live room for humans and agents. Install the open source client,
+      then try hosted Sync free for 14 days.
     </p>
   </a>
 </section>
@@ -187,7 +190,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   <div class="social-proof-metrics">
     <span class="social-proof-item">Used to build RTMX itself</span>
     <span class="social-proof-divider">/</span>
-    <span class="social-proof-item">230 requirements tracked</span>
+    <span class="social-proof-item">328 requirements tracked</span>
     <span class="social-proof-divider">/</span>
     <span class="social-proof-item">Apache 2.0 Licensed</span>
   </div>
@@ -285,7 +288,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
 
   <div class="dogfood-grid not-content">
     <div class="dogfood-card">
-      <span class="dogfood-stat">230</span>
+      <span class="dogfood-stat">328</span>
       <span class="dogfood-label">requirements tracked</span>
       <p>Every feature, from CLI commands to schema plugins, is a formal requirement with an ID, spec, and linked tests.</p>
     </div>
@@ -293,13 +296,13 @@ import TerminalCarousel from './TerminalCarousel.astro';
     <div class="dogfood-card">
       <span class="dogfood-stat">100%</span>
       <span class="dogfood-label">complete and verified</span>
-      <p>Status is derived from test results, not opinions. When tests pass, requirements are complete. 230 of 230 requirements verified.</p>
+      <p>Status is derived from test results, not opinions. When tests pass, requirements are complete. 328 of 328 requirements verified.</p>
     </div>
 
     <div class="dogfood-card">
-      <span class="dogfood-stat">25</span>
+      <span class="dogfood-stat">31</span>
       <span class="dogfood-label">development phases</span>
-      <p>From foundation through schema plugins and multi-agent orchestration -- the full roadmap is a dependency graph, not a wish list.</p>
+      <p>From foundation through Sync, TUI, and multi-agent orchestration — the full roadmap is a dependency graph, not a wish list.</p>
     </div>
 
     <div class="dogfood-card">
@@ -316,8 +319,8 @@ import TerminalCarousel from './TerminalCarousel.astro';
   </p>
 
   <div class="still-reading">
-    <a href="/roadmap" class="hero-button secondary">See the Roadmap</a>
-    <a href="/quickstart" class="hero-button primary">Get Started</a>
+    <a href="/installation" class="hero-button primary" data-testid="dogfood-cta-install">Install the client</a>
+    <a href="/sync" class="hero-button secondary" data-testid="dogfood-cta-sync">Try Sync free — 14 days</a>
   </div>
 </section>
 
@@ -501,6 +504,14 @@ import TerminalCarousel from './TerminalCarousel.astro';
     line-height: 1.6;
   }
 
+  .hero-funnel-note {
+    margin: 1.25rem auto 0;
+    max-width: 640px;
+    font-size: 0.9rem;
+    color: var(--rtmx-text-muted);
+    line-height: 1.5;
+  }
+
   .hero-buttons {
     display: flex;
     gap: 1rem;
@@ -589,6 +600,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
   }
 
   .feature-card {
+    position: relative;
     background: var(--rtmx-bg-card);
     border: 1px solid var(--rtmx-border);
     border-radius: 0.75rem;

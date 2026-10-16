@@ -60,7 +60,7 @@ Creates:
 - `docs/rtm_database.csv` requirements database
 - `docs/requirements/` specification directory
 - Makefile targets
-- AI agent configs (CLAUDE.md, .cursorrules)
+- AI agent configs (AGENTS.md, .cursorrules)
 
 ### rtmx status
 

@@ -17,7 +17,7 @@ This guide defines recommended patterns and anti-patterns for working with RTMX.
 Whether you're a developer integrating RTMX into your workflow, a team lead establishing processes, or an AI agent working in an RTMX-enabled project, these patterns will help you get the most value from requirements traceability.
 
 #callout(type: "info", title: "Canonical Source")[
-  This whitepaper expands on the patterns defined in `docs/patterns.md` in the RTMX repository. That file serves as the single source of truth and is designed for insertion into project CLAUDE.md files.
+  This whitepaper expands on the patterns defined in `docs/patterns.md` in the RTMX repository. That file serves as the single source of truth and is designed for insertion into project agent config files.
 ]
 
 = Core Principle: Closed-Loop Verification

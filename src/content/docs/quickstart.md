@@ -14,7 +14,7 @@ This creates everything you need:
 - `docs/rtm_database.csv` — Requirements database
 - `docs/requirements/` — Requirement specification files
 - Makefile targets (`make rtm`, `make backlog`)
-- AI agent configs (CLAUDE.md, .cursorrules)
+- AI agent configs (AGENTS.md, .cursorrules)
 
 For existing projects, use `--branch` to review changes before merging:
 

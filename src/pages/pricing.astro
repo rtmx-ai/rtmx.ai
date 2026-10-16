@@ -9,7 +9,7 @@ const monetizationMvp = import.meta.env.PUBLIC_RTMX_MONETIZATION_MVP !== 'false'
 
 const teamCta = monetizationMvp
   ? {
-      cta: 'Start hosted Team',
+      cta: 'Start 14-day free trial',
       ctaHref: '/checkout',
       secondaryCta: 'Self-managed license',
       secondaryCtaHref: '/license',
@@ -21,8 +21,9 @@ const tiers = [
     name: 'Team',
     price: '$9',
     period: '/user/month',
-    description: 'Multiplayer Sync for developers and their agents.',
+    description: 'Multiplayer Sync for developers and their agents. 14-day free trial.',
     features: [
+      '14-day free trial (card required; cancel anytime)',
       'Live multiplayer matrix across projects',
       'Humans and agents in the same room',
       'No Jira/Asana board required',
@@ -88,7 +89,7 @@ const tiers = [
         <p class="oss-note">
           Pricing below is for hosted and licensed Sync rooms.
           {monetizationMvp
-            ? ' Team Checkout is live in private beta.'
+            ? ' Team Checkout includes a 14-day free trial.'
             : ' Coming soon.'}
           {' '}Read the thesis on <a href="/sync">the Sync page</a>.
         </p>
@@ -127,9 +128,9 @@ const tiers = [
     <section class="waitlist-section" id="waitlist">
       <h2>Enterprise interest list</h2>
       <p>
-        Team Sync Checkout is live for private beta. Leave your email if you
-        want Enterprise SSO, residency, and SLA — we will reach out when that
-        tier opens.
+        Team Sync includes a 14-day free trial at Checkout. Leave your email if
+        you want Enterprise SSO, residency, and custom availability terms —
+        we will reach out when that tier opens.
       </p>
       <form
         id="waitlist-form"
@@ -181,9 +182,18 @@ const tiers = [
         <div class="faq-item">
           <h3>Is Team Sync available now?</h3>
           <p>
-            Yes for private beta. Start hosted Team Checkout above, or download
+            Yes. Start a 14-day free trial via hosted Checkout above, or download
             a self-managed license. Enterprise and On-Prem are
             <a href="/contact">sales-assisted</a>.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>How does the free trial work?</h3>
+          <p>
+            Install the open source <code>rtmx</code> client, sign in, and start
+            Team Checkout. Hosted Sync stays free for 14 days; cancel before the
+            trial ends and you are not charged. After day 14 the subscription
+            converts to paid Team at the listed rate.
           </p>
         </div>
         <div class="faq-item">

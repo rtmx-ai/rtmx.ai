@@ -19,7 +19,7 @@ RTMX is a CLI tool that manages a requirements traceability matrix (RTM) as a CS
 - `rtmx verify` -- cross-language test verification (auto-detects Go, Python, Rust, Node.js, Java, Elixir, Swift, Dart, Ruby -- 10+ frameworks)
 - `rtmx health` -- validate your RTM for orphaned tests, missing specs, circular dependencies
 - `rtmx next` -- dependency graph analysis that finds independent work webs and picks the highest-priority unblocked requirement
-- MCP server with 7+ tools -- AI agents (Claude, Cursor) can query and update your requirements in real-time, with atomic claim/release for multi-agent coordination
+- MCP server with 7+ tools -- AI agents (Cursor, Copilot) can query and update your requirements in real-time, with atomic claim/release for multi-agent coordination
 
 **Why CSV in git?**
 
@@ -89,7 +89,7 @@ and link from the HN post URL. This is the single most important asset.
 **File:** `docs/assets/rtmx-agent-loop.gif`
 **Duration:** 15-20 seconds
 **Sequence:**
-1. Show an AI agent (Claude Code or Cursor) calling `rtmx next --one`
+1. Show an AI agent (Cursor or Copilot) calling `rtmx next --one`
 2. Agent receives requirement spec as structured output
 3. Agent writes a test file
 4. `rtmx verify` passes
@@ -119,7 +119,7 @@ defense audience.
 ### Screenshot: MCP server tools
 
 **File:** `docs/assets/rtmx-mcp-tools.png`
-**Description:** The MCP tool list as seen from Claude Code or Cursor --
+**Description:** The MCP tool list as seen from Cursor or Copilot --
 showing the 7+ available tools with their descriptions. Alternatively,
 a screenshot of an AI agent mid-conversation querying `rtmx status` via MCP.
 **Purpose:** Makes MCP integration tangible for developers already using
@@ -188,7 +188,7 @@ multi-agent coordination tangible.
 ```mermaid
 flowchart LR
     subgraph agents["AI Agents"]
-        A1["Claude Code"]
+        A1["AI Agent"]
         A2["Cursor"]
         A3["Custom Agent"]
     end

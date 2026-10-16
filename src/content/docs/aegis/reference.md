@@ -34,6 +34,6 @@ capability winner within the enclave's constraints. Serving is llama.cpp `llama-
 (from source, no telemetry), Ollama for the spike.
 
 :::note[Canonical docs]
-[CLAUDE.md](https://github.com/rtmx-ai/aegis-cli/blob/main/CLAUDE.md) · [model corpus](https://github.com/rtmx-ai/aegis-cli/blob/main/docs/models.md) · [bake-off](https://github.com/rtmx-ai/aegis-cli/blob/main/docs/serve-016-bakeoff.md) ·
+[Project docs](https://github.com/rtmx-ai/aegis-cli) · [model corpus](https://github.com/rtmx-ai/aegis-cli/blob/main/docs/models.md) · [bake-off](https://github.com/rtmx-ai/aegis-cli/blob/main/docs/serve-016-bakeoff.md) ·
 [metrics-eval skill](https://github.com/rtmx-ai/aegis-cli/blob/main/skills/metrics-eval/SKILL.md).
 :::

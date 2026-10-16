@@ -11,7 +11,7 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
     await page.goto('/pricing');
 
     const teamCard = page.locator('.pricing-card', { hasText: 'Team' }).first();
-    await expect(teamCard.getByRole('link', { name: 'Start hosted Team' })).toHaveAttribute(
+    await expect(teamCard.getByRole('link', { name: /14-day free trial/i })).toHaveAttribute(
       'href',
       '/checkout',
     );

@@ -12,7 +12,7 @@ test.describe('pricing entitlement CTA', () => {
     await page.goto('/pricing');
 
     const teamCard = page.locator('.pricing-card', { hasText: 'Team' }).first();
-    await expect(teamCard.getByRole('link', { name: 'Start hosted Team' })).toHaveAttribute(
+    await expect(teamCard.getByRole('link', { name: /14-day free trial/i })).toHaveAttribute(
       'href',
       '/checkout',
     );
@@ -20,7 +20,7 @@ test.describe('pricing entitlement CTA', () => {
       'href',
       '/license',
     );
-    await expect(teamCard.getByRole('link', { name: 'Start hosted Team' })).not.toHaveText(/waitlist/i);
+    await expect(teamCard.getByRole('link', { name: /14-day free trial/i })).not.toHaveText(/waitlist/i);
     await expect(teamCard.getByRole('link', { name: 'Self-managed license' })).not.toHaveText(/waitlist/i);
   });
 

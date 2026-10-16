@@ -37,7 +37,10 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(root).toContainText(/client is open source|no URL pasting/i);
     await expect(root).not.toContainText(/\$9/);
     await expect(page.getByTestId('sync-cta-checkout')).toBeVisible();
+    await expect(page.getByTestId('sync-cta-checkout')).toHaveText(/14-day free trial/i);
+    await expect(page.getByTestId('sync-trial-note')).toContainText(/14 days/i);
     await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/installation');
+    await expect(page.locator('body')).not.toContainText(/Claude/i);
 
     const install = page.getByTestId('sync-install');
     await expect(install).toContainText('rtmx login');
@@ -69,8 +72,13 @@ test.describe('Sync explainer (SITE-117)', () => {
     const card = page.getByTestId('hero-sync-card');
     await expect(card).toHaveAttribute('href', '/sync');
     await expect(card).toContainText(/After Git|Sync/i);
+    await expect(card).toContainText(/14-day free trial/i);
     await expect(card).not.toContainText(/CRDT/i);
+    await expect(page.getByTestId('hero-cta-install')).toHaveAttribute('href', '/installation');
     await expect(page.getByTestId('hero-cta-sync')).toHaveAttribute('href', '/sync');
+    await expect(page.getByTestId('hero-cta-sync')).toHaveText(/Try Sync free/i);
+    await expect(page.getByTestId('hero-funnel-note')).toContainText(/14-day/i);
+    await expect(page.locator('body')).not.toContainText(/Claude/i);
   });
 
   test('pricing defers product thesis to /sync', async ({ page }) => {
