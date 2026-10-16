@@ -27,7 +27,7 @@ const tiers = [
       'Humans and agents in the same room',
       'No Jira/Asana board required',
       'No SaaS MCP connector tax',
-      'End-to-end encryption',
+      'TLS in transit; org-isolated rooms',
       'Up to 10 team members',
       'Community support',
     ],
@@ -48,7 +48,7 @@ const tiers = [
       'Role-based access control',
       'Immutable audit logs',
       'US or EU data residency',
-      '99.9% SLA guarantee',
+      'Custom availability terms via MSA',
     ],
     cta: 'Talk to sales',
     ctaHref: '/contact?intent=enterprise',
@@ -212,9 +212,11 @@ const tiers = [
         <div class="faq-item">
           <h3>How is my data secured?</h3>
           <p>
-            All data is end-to-end encrypted using AES-256-GCM. The server only sees
-            ciphertext. TLS 1.3 protects data in transit. Enterprise adds SSO, RBAC,
-            and immutable audit logs.
+            Managed Sync protects data in transit with TLS and isolates rooms by
+            organization. Optional client-side end-to-end encryption is available
+            when you enable it; it is not the managed default. See our
+            <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a>.
+            Enterprise adds SSO, RBAC, and immutable audit logs via sales.
           </p>
         </div>
         <div class="faq-item">
