@@ -1,0 +1,114 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Privacy Policy', template: 'splash', hero: { tagline: '' } }}>
+  <div class="legal-page" data-testid="privacy-page">
+    <header class="legal-header">
+      <h1>Privacy Policy</h1>
+      <p class="legal-meta">Effective date: October 15, 2026 · ioTACTICAL LLC (“RTMX”, “we”, “us”)</p>
+    </header>
+
+    <section class="legal-section">
+      <h2>1. Scope</h2>
+      <p>
+        This policy covers rtmx.ai, managed Sync (<code>sync.rtmx.ai</code>), billing and
+        checkout flows, CLI login against the managed host, and related support channels.
+        Self-managed or air-gapped deployments you operate are governed by your own policies;
+        we do not process that customer data unless you send it to us for support.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>2. Information we collect</h2>
+      <ul>
+        <li><strong>Account identity.</strong> Email, display name, and provider id from OAuth
+          IdPs you choose (e.g. GitHub, Google, Microsoft Entra).</li>
+        <li><strong>Organization and billing.</strong> Org names, membership roles, Stripe
+          customer/subscription identifiers, and entitlement state. We do not store full card
+          numbers; Stripe processes payments.</li>
+        <li><strong>Usage and diagnostics.</strong> API and WebSocket metadata (timestamps,
+          org/room identifiers, error codes), login and key events needed for security and
+          abuse prevention.</li>
+        <li><strong>Website.</strong> Standard server logs, optional newsletter email if you
+          subscribe, and reCAPTCHA tokens on form submits.</li>
+        <li><strong>Sync content.</strong> Requirements and collaboration data you place in
+          managed Sync rooms. Treat that data as confidential to your org.</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h2>3. How we use information</h2>
+      <p>We use data to provide and secure the service, authenticate you, bill for paid tiers,
+        prevent abuse, improve reliability, and communicate service-related notices. We do not
+        sell personal information.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>4. Sharing</h2>
+      <p>We share data with processors that help run the product (for example cloud hosting,
+        Stripe for payments, and identity providers during OAuth). We may disclose information
+        if required by law or to protect the service and users from fraud or security threats.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>5. Retention</h2>
+      <p>Account and org records are retained while your account is active and for a reasonable
+        period afterward for billing, audit, and legal obligations. You may request deletion of
+        account data subject to retention required for security or compliance.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>6. Security</h2>
+      <p>We use industry-standard controls appropriate to a managed SaaS control plane (TLS,
+        access controls, secret management). No method of transmission or storage is perfectly
+        secure; report issues to <a href="mailto:security@rtmx.ai">security@rtmx.ai</a>.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>7. Your choices</h2>
+      <p>You can disconnect OAuth by signing out and revoking the RTMX app in your IdP.
+        Newsletter unsubscribe is available on those emails. Contact
+        <a href="mailto:privacy@rtmx.ai">privacy@rtmx.ai</a> for access or deletion requests.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>8. Children</h2>
+      <p>The service is not directed to children under 16. We do not knowingly collect their
+        personal information.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>9. Changes</h2>
+      <p>We may update this policy; the effective date above will change. Material changes will
+        be noted on this page.</p>
+    </section>
+
+    <section class="legal-section">
+      <h2>10. Contact</h2>
+      <p>
+        ioTACTICAL LLC<br />
+        Privacy: <a href="mailto:privacy@rtmx.ai">privacy@rtmx.ai</a><br />
+        General: <a href="/contact">Contact</a>
+      </p>
+      <p class="legal-related">Also see our <a href="/terms">Terms of Service</a>.</p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .legal-page { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; color: var(--rtmx-text); }
+  .legal-header { text-align: center; margin-bottom: 2rem; }
+  .legal-header h1 {
+    font-size: 2.25rem; font-weight: 700; margin: 0 0 0.75rem;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .legal-meta { color: var(--rtmx-text-muted); font-size: 0.95rem; line-height: 1.5; }
+  .legal-section { margin-bottom: 1.75rem; }
+  .legal-section h2 { font-size: 1.15rem; color: var(--rtmx-emerald-light); margin: 0 0 0.5rem; }
+  .legal-section p, .legal-section li { color: var(--rtmx-text-muted); line-height: 1.65; }
+  .legal-section ul { padding-left: 1.25rem; margin: 0.5rem 0 0; }
+  .legal-section li { margin-bottom: 0.4rem; }
+  .legal-related { margin-top: 1rem; }
+</style>

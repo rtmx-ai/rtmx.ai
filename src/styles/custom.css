@@ -393,35 +393,70 @@ textarea:focus-visible,
   background: var(--rtmx-border);
 }
 
-/* Content links: theme emerald, not Starlight purple visited */
-.sl-markdown-content a:not(.cta-button):not(.header-nav-link),
-.not-content a:not(.cta-button):not(.submit-button),
-.license-page a:not(.submit-button),
+/*
+ * Content links: theme emerald, not Starlight purple visited.
+ * Exclude filled CTAs (hero/github/oauth/submit) — emerald link color on
+ * emerald fills makes labels invisible (homepage primary buttons).
+ */
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link):not(.hero-button):not(.github-button):not(.oauth-button):not(.submit-button):not(.sync-cta),
+.not-content a:not(.cta-button):not(.submit-button):not(.hero-button):not(.github-button):not(.oauth-button):not(.sync-cta),
+.license-page a:not(.submit-button):not(.oauth-button),
 .contact-page a:not(.submit-button),
 .pricing-page a:not(.cta-button),
-.about-page a {
+.about-page a:not(.hero-button) {
   color: var(--rtmx-emerald-light);
   text-decoration-color: color-mix(in srgb, var(--rtmx-emerald-light) 45%, transparent);
 }
 
-.sl-markdown-content a:not(.cta-button):not(.header-nav-link):visited,
-.not-content a:not(.cta-button):not(.submit-button):visited,
-.license-page a:not(.submit-button):visited,
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link):not(.hero-button):not(.github-button):not(.oauth-button):not(.submit-button):not(.sync-cta):visited,
+.not-content a:not(.cta-button):not(.submit-button):not(.hero-button):not(.github-button):not(.oauth-button):not(.sync-cta):visited,
+.license-page a:not(.submit-button):not(.oauth-button):visited,
 .contact-page a:not(.submit-button):visited,
 .pricing-page a:not(.cta-button):visited,
-.about-page a:visited {
+.about-page a:not(.hero-button):visited {
   color: var(--rtmx-emerald);
   text-decoration-color: color-mix(in srgb, var(--rtmx-emerald) 40%, transparent);
 }
 
-.sl-markdown-content a:not(.cta-button):not(.header-nav-link):hover,
-.not-content a:not(.cta-button):not(.submit-button):hover,
-.license-page a:not(.submit-button):hover,
+.sl-markdown-content a:not(.cta-button):not(.header-nav-link):not(.hero-button):not(.github-button):not(.oauth-button):not(.submit-button):not(.sync-cta):hover,
+.not-content a:not(.cta-button):not(.submit-button):not(.hero-button):not(.github-button):not(.oauth-button):not(.sync-cta):hover,
+.license-page a:not(.submit-button):not(.oauth-button):hover,
 .contact-page a:not(.submit-button):hover,
 .pricing-page a:not(.cta-button):hover,
-.about-page a:hover {
+.about-page a:not(.hero-button):hover {
   color: var(--rtmx-text);
   text-decoration-color: var(--rtmx-emerald-light);
+}
+
+/* Filled emerald CTAs: force dark/white labels (beats Starlight markdown link color) */
+.sl-markdown-content a.hero-button.primary,
+.sl-markdown-content a.github-button,
+.not-content a.hero-button.primary,
+a.hero-button.primary,
+a.github-button {
+  color: var(--rtmx-bg) !important;
+  text-decoration: none;
+}
+
+.sl-markdown-content a.hero-button.secondary,
+.not-content a.hero-button.secondary,
+a.hero-button.secondary {
+  color: var(--rtmx-emerald) !important;
+  text-decoration: none;
+}
+
+.sl-markdown-content a.hero-button.secondary:hover,
+.not-content a.hero-button.secondary:hover,
+a.hero-button.secondary:hover {
+  color: var(--rtmx-bg) !important;
+}
+
+a.sync-cta.primary,
+a.sync-cta.primary:visited,
+a.sync-cta.primary:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-decoration: none;
 }
 
 /*

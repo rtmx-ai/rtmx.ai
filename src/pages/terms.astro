@@ -1,0 +1,151 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Terms of Service', template: 'splash', hero: { tagline: '' } }}>
+  <div class="legal-page" data-testid="terms-page">
+    <header class="legal-header">
+      <h1>Terms of Service</h1>
+      <p class="legal-meta">Effective date: October 15, 2026 · ioTACTICAL LLC (“RTMX”, “we”, “us”)</p>
+    </header>
+
+    <section class="legal-section">
+      <h2>1. Agreement</h2>
+      <p>
+        By accessing rtmx.ai, creating an account, using managed Sync, CLI login against the
+        managed host, or purchasing a paid plan, you agree to these Terms. If you use the
+        service on behalf of an organization, you represent that you can bind that organization.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>2. The service</h2>
+      <p>
+        RTMX provides requirements-traceability tooling and optional hosted Sync for humans and
+        agents. Features, limits, and pricing may change; paid entitlements are described at
+        checkout and in your account. Self-managed and air-gapped deployments remain your
+        responsibility to operate and secure.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>3. Accounts and acceptable use</h2>
+      <ul>
+        <li>Keep credentials confidential; you are responsible for activity under your account and API keys.</li>
+        <li>Do not probe, disrupt, or abuse the service; do not circumvent billing or entitlement controls.</li>
+        <li>Do not upload unlawful content or content you lack rights to process.</li>
+        <li>Agent automation is permitted within your org’s entitlements and these Terms.</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h2>4. Your content</h2>
+      <p>
+        You retain ownership of requirements and collaboration data you submit. You grant us a
+        limited license to host, process, and transmit that data solely to operate managed Sync
+        and related features. You are responsible for the legality of your content and for
+        configuring access (org membership, keys, IdPs) appropriately.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>5. Open-source software</h2>
+      <p>
+        The RTMX CLI and related open-source components are licensed under their respective
+        open-source licenses on GitHub. These Terms govern the managed website and Sync service,
+        not the open-source license grants for the CLI itself.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>6. Fees and billing</h2>
+      <p>
+        Paid plans are billed through Stripe. Fees are due as stated at purchase. Taxes may
+        apply. Unless required by law or stated otherwise, fees are non-refundable. We may
+        suspend access for non-payment. Enterprise and on-prem agreements may supersede this
+        section where separately executed.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>7. Beta and preview features</h2>
+      <p>
+        Private beta and preview features are provided as-is, may change or end without notice,
+        and may have reduced availability or support.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>8. Disclaimers</h2>
+      <p>
+        THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE” WITHOUT WARRANTIES OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+        NON-INFRINGEMENT. We do not warrant uninterrupted or error-free operation.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>9. Limitation of liability</h2>
+      <p>
+        TO THE MAXIMUM EXTENT PERMITTED BY LAW, IOTACTICAL LLC AND ITS SUPPLIERS ARE NOT LIABLE
+        FOR INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR LOST PROFITS,
+        DATA, OR GOODWILL. OUR AGGREGATE LIABILITY FOR CLAIMS ARISING OUT OF THE SERVICE IS
+        LIMITED TO THE AMOUNTS YOU PAID US FOR THE SERVICE IN THE TWELVE (12) MONTHS BEFORE THE
+        CLAIM.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>10. Termination</h2>
+      <p>
+        You may stop using the service at any time. We may suspend or terminate access for
+        breach, risk, or non-payment. Upon termination, your right to use managed Sync ends;
+        sections that by nature should survive (including ownership, disclaimers, and liability
+        limits) survive.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>11. Governing law</h2>
+      <p>
+        These Terms are governed by the laws of the United States and the State of Virginia,
+        excluding conflict-of-law rules, unless a separately signed agreement says otherwise.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>12. Changes</h2>
+      <p>
+        We may update these Terms by posting a revised version on this page. Continued use after
+        the effective date constitutes acceptance of the updated Terms.
+      </p>
+    </section>
+
+    <section class="legal-section">
+      <h2>13. Contact</h2>
+      <p>
+        ioTACTICAL LLC<br />
+        Legal: <a href="mailto:legal@rtmx.ai">legal@rtmx.ai</a><br />
+        General: <a href="/contact">Contact</a>
+      </p>
+      <p class="legal-related">Also see our <a href="/privacy">Privacy Policy</a>.</p>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .legal-page { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; color: var(--rtmx-text); }
+  .legal-header { text-align: center; margin-bottom: 2rem; }
+  .legal-header h1 {
+    font-size: 2.25rem; font-weight: 700; margin: 0 0 0.75rem;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .legal-meta { color: var(--rtmx-text-muted); font-size: 0.95rem; line-height: 1.5; }
+  .legal-section { margin-bottom: 1.75rem; }
+  .legal-section h2 { font-size: 1.15rem; color: var(--rtmx-emerald-light); margin: 0 0 0.5rem; }
+  .legal-section p, .legal-section li { color: var(--rtmx-text-muted); line-height: 1.65; }
+  .legal-section ul { padding-left: 1.25rem; margin: 0.5rem 0 0; }
+  .legal-section li { margin-bottom: 0.4rem; }
+  .legal-related { margin-top: 1rem; }
+</style>

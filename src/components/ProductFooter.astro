@@ -13,6 +13,10 @@
 		<a href="/contact">Contact</a>
 		<a href="https://github.com/rtmx-ai/rtmx" target="_blank" rel="noopener noreferrer">GitHub</a>
 	</nav>
+	<nav class="product-footer-legal" aria-label="Legal" data-testid="product-footer-legal">
+		<a href="/privacy">Privacy</a>
+		<a href="/terms">Terms</a>
+	</nav>
 </footer>
 
 <style>
@@ -36,6 +40,22 @@
 		text-decoration: none;
 	}
 	.product-footer-nav a:hover {
+		color: var(--rtmx-emerald-light, #6ee7b7);
+	}
+	.product-footer-legal {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.25rem;
+		justify-content: center;
+		margin: 1rem auto 0;
+		max-width: 40rem;
+	}
+	.product-footer-legal a {
+		color: var(--rtmx-text-dim, #6b7280);
+		font-size: 0.8rem;
+		text-decoration: none;
+	}
+	.product-footer-legal a:hover {
 		color: var(--rtmx-emerald-light, #6ee7b7);
 	}
 </style>

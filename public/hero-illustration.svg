@@ -1,38 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 550" fill="none">
   <defs>
     <!-- Stage connection gradients -->
-    <linearGradient id="purpleToYellowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#8b5cf6"/>
-      <stop offset="100%" stop-color="#f59e0b"/>
+    <linearGradient id="emeraldToEmeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
     </linearGradient>
 
     <linearGradient id="yellowToGreenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="0%" stop-color="#34d399"/>
       <stop offset="100%" stop-color="#10b981"/>
     </linearGradient>
 
-    <linearGradient id="greenToCyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="greenToEmeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#059669"/>
     </linearGradient>
 
-    <!-- Feedback loop gradient: cyan (Status) to purple (Agent) -->
+    <!-- Feedback loop gradient: emerald Status to Agent -->
     <linearGradient id="feedbackGrad" x1="100%" y1="0%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#06b6d4"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#10b981"/>
     </linearGradient>
 
     <!-- Arrow markers for each transition (with visible stems) -->
-    <marker id="arrowYellow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0,6 L7,6 M4,2 L10,6 L4,10" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <marker id="arrowEmerald" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,6 L7,6 M4,2 L10,6 L4,10" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </marker>
 
-    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+    <marker id="arrowEmeraldTest" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0,6 L7,6 M4,2 L10,6 L4,10" stroke="#10b981" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </marker>
 
-    <marker id="arrowCyan" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0,6 L7,6 M4,2 L10,6 L4,10" stroke="#06b6d4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <marker id="arrowEmeraldStatus" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,6 L7,6 M4,2 L10,6 L4,10" stroke="#059669" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </marker>
 
     <!-- Card shadow -->
@@ -47,51 +47,51 @@
   </pattern>
   <rect width="1200" height="550" fill="url(#grid)" opacity="0.6"/>
 
-  <!-- ============ STAGE 1: AGENT (purple) - center at 140 ============ -->
+  <!-- ============ STAGE 1: AGENT (emerald) - center at 140 ============ -->
   <g class="stage-1" opacity="0">
-    <text x="140" y="70" fill="#8b5cf6" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Agent</text>
+    <text x="140" y="70" fill="#10b981" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Agent</text>
     <g filter="url(#shadow)">
-      <rect x="60" y="130" width="160" height="160" rx="12" fill="#171717" stroke="#8b5cf6" stroke-width="2"/>
-      <circle cx="140" cy="180" r="32" fill="#1e1e1e" stroke="#8b5cf6" stroke-width="2"/>
-      <text x="140" y="190" fill="#c4b5fd" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="600">AI</text>
+      <rect x="60" y="130" width="160" height="160" rx="12" fill="#171717" stroke="#10b981" stroke-width="2"/>
+      <circle cx="140" cy="180" r="32" fill="#1e1e1e" stroke="#10b981" stroke-width="2"/>
+      <text x="140" y="190" fill="#6ee7b7" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="600">AI</text>
       <text x="140" y="235" fill="#e5e7eb" font-size="16" text-anchor="middle" font-family="system-ui" font-weight="600">Claude / MCP</text>
       <text x="140" y="258" fill="#6b7280" font-size="12" text-anchor="middle" font-family="monospace">Creates specs</text>
       <text x="140" y="275" fill="#6b7280" font-size="12" text-anchor="middle" font-family="monospace">Queries status</text>
     </g>
   </g>
 
-  <!-- ============ STAGE 2: CONNECTIONS TO REQUIREMENTS (purple→yellow with arrows) ============ -->
+  <!-- ============ STAGE 2: CONNECTIONS TO REQUIREMENTS (emerald→yellow with arrows) ============ -->
   <g class="stage-2" opacity="0">
-    <path d="M 220 175 C 260 155, 300 143, 340 143" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowYellow)"/>
-    <path d="M 220 210 L 340 210" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowYellow)"/>
-    <path d="M 220 245 C 260 265, 300 277, 340 277" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowYellow)"/>
+    <path d="M 220 175 C 260 155, 300 143, 340 143" stroke="#34d399" stroke-width="2.5" fill="none" marker-end="url(#arrowEmerald)"/>
+    <path d="M 220 210 L 340 210" stroke="#34d399" stroke-width="2.5" fill="none" marker-end="url(#arrowEmerald)"/>
+    <path d="M 220 245 C 260 265, 300 277, 340 277" stroke="#34d399" stroke-width="2.5" fill="none" marker-end="url(#arrowEmerald)"/>
   </g>
 
   <!-- ============ STAGE 3: REQUIREMENTS (yellow) - center at 420 ============ -->
   <g class="stage-3" opacity="0">
-    <text x="420" y="70" fill="#f59e0b" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Requirements</text>
+    <text x="420" y="70" fill="#34d399" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Requirements</text>
     <g filter="url(#shadow)">
-      <rect x="340" y="115" width="160" height="55" rx="8" fill="#171717" stroke="#f59e0b" stroke-width="2"/>
-      <text x="420" y="140" fill="#fbbf24" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-AUTH-001</text>
-      <text x="420" y="160" fill="#f59e0b" font-size="12" text-anchor="middle" font-family="system-ui">OAuth Login</text>
+      <rect x="340" y="115" width="160" height="55" rx="8" fill="#171717" stroke="#34d399" stroke-width="2"/>
+      <text x="420" y="140" fill="#6ee7b7" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-AUTH-001</text>
+      <text x="420" y="160" fill="#34d399" font-size="12" text-anchor="middle" font-family="system-ui">OAuth Login</text>
     </g>
     <g filter="url(#shadow)">
-      <rect x="340" y="182" width="160" height="55" rx="8" fill="#171717" stroke="#f59e0b" stroke-width="2"/>
-      <text x="420" y="207" fill="#fbbf24" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-API-001</text>
-      <text x="420" y="227" fill="#f59e0b" font-size="12" text-anchor="middle" font-family="system-ui">REST API</text>
+      <rect x="340" y="182" width="160" height="55" rx="8" fill="#171717" stroke="#34d399" stroke-width="2"/>
+      <text x="420" y="207" fill="#6ee7b7" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-API-001</text>
+      <text x="420" y="227" fill="#34d399" font-size="12" text-anchor="middle" font-family="system-ui">REST API</text>
     </g>
     <g filter="url(#shadow)">
-      <rect x="340" y="249" width="160" height="55" rx="8" fill="#171717" stroke="#f59e0b" stroke-width="2"/>
-      <text x="420" y="274" fill="#fbbf24" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-DATA-001</text>
-      <text x="420" y="294" fill="#f59e0b" font-size="12" text-anchor="middle" font-family="system-ui">Database</text>
+      <rect x="340" y="249" width="160" height="55" rx="8" fill="#171717" stroke="#34d399" stroke-width="2"/>
+      <text x="420" y="274" fill="#6ee7b7" font-size="14" text-anchor="middle" font-family="monospace" font-weight="600">REQ-DATA-001</text>
+      <text x="420" y="294" fill="#34d399" font-size="12" text-anchor="middle" font-family="system-ui">Database</text>
     </g>
   </g>
 
   <!-- ============ STAGE 4: CONNECTIONS TO TESTS (yellow→green with arrows) ============ -->
   <g class="stage-4" opacity="0">
-    <path d="M 500 143 C 540 143, 575 165, 610 180" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
-    <path d="M 500 210 L 610 210" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
-    <path d="M 500 277 C 540 277, 575 255, 610 240" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+    <path d="M 500 143 C 540 143, 575 165, 610 180" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowEmeraldTest)"/>
+    <path d="M 500 210 L 610 210" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowEmeraldTest)"/>
+    <path d="M 500 277 C 540 277, 575 255, 610 240" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowEmeraldTest)"/>
   </g>
 
   <!-- ============ STAGE 5: TESTS (green) - center at 700 ============ -->
@@ -110,21 +110,21 @@
     </g>
   </g>
 
-  <!-- ============ STAGE 6: CONNECTIONS TO STATUS (green→cyan with arrow) - single line ============ -->
+  <!-- ============ STAGE 6: CONNECTIONS TO STATUS (green→emerald with arrow) - single line ============ -->
   <g class="stage-6" opacity="0">
-    <path d="M 790 210 L 890 210" stroke="#06b6d4" stroke-width="2.5" fill="none" marker-end="url(#arrowCyan)"/>
+    <path d="M 790 210 L 890 210" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#arrowEmeraldStatus)"/>
   </g>
 
-  <!-- ============ STAGE 7: STATUS (cyan) - center at 990 ============ -->
+  <!-- ============ STAGE 7: STATUS (emerald) - center at 990 ============ -->
   <g class="stage-7" opacity="0">
-    <text x="990" y="70" fill="#06b6d4" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Status</text>
+    <text x="990" y="70" fill="#059669" font-size="28" text-anchor="middle" font-family="system-ui" font-weight="700">Status</text>
     <g filter="url(#shadow)">
-      <rect x="890" y="105" width="200" height="260" rx="12" fill="#171717" stroke="#06b6d4" stroke-width="2"/>
+      <rect x="890" y="105" width="200" height="260" rx="12" fill="#171717" stroke="#059669" stroke-width="2"/>
       <rect x="890" y="105" width="200" height="32" rx="12" fill="#2d2d2d"/>
       <circle cx="910" cy="121" r="6" fill="#ff5f56"/>
       <circle cx="928" cy="121" r="6" fill="#ffbd2e"/>
       <circle cx="946" cy="121" r="6" fill="#27ca40"/>
-      <text x="1000" y="126" fill="#67e8f9" font-size="12" text-anchor="middle" font-family="system-ui" font-weight="600">rtmx status</text>
+      <text x="1000" y="126" fill="#6ee7b7" font-size="12" text-anchor="middle" font-family="system-ui" font-weight="600">rtmx status</text>
       <!-- Requirements label and percentage on same line -->
       <text x="905" y="160" fill="#9ca3af" font-size="11" font-family="monospace">Requirements: 54%</text>
       <!-- Progress bar: 120px wide, segmented green/yellow/red -->
@@ -148,7 +148,7 @@
 
   <!-- ============ STAGE 8: RECTANGULAR FEEDBACK LOOP (bottom) ============ -->
   <g class="stage-8" opacity="0">
-    <!-- Rectangular loop path along the bottom, gradient from cyan (Status) to purple (Agent) -->
+    <!-- Rectangular loop path along the bottom, gradient from emerald Status to Agent -->
     <path d="M 990 370
              Q 990 400, 960 400
              L 170 400
@@ -169,18 +169,18 @@
   <!-- Workflow steps -->
   <g class="step step-1" opacity="0.3">
     <g transform="translate(120, 495)">
-      <circle cx="0" cy="12" r="20" fill="#8b5cf6" opacity="0.2"/>
-      <text x="0" y="18" fill="#8b5cf6" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">1</text>
-      <text x="50" y="8" fill="#c4b5fd" font-size="15" font-family="system-ui" font-weight="600">WRITE</text>
+      <circle cx="0" cy="12" r="20" fill="#10b981" opacity="0.2"/>
+      <text x="0" y="18" fill="#10b981" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">1</text>
+      <text x="50" y="8" fill="#6ee7b7" font-size="15" font-family="system-ui" font-weight="600">WRITE</text>
       <text x="50" y="28" fill="#6b7280" font-size="13" font-family="system-ui">Agent creates specs</text>
     </g>
   </g>
 
   <g class="step step-2" opacity="0.3">
     <g transform="translate(370, 495)">
-      <circle cx="0" cy="12" r="20" fill="#f59e0b" opacity="0.2"/>
-      <text x="0" y="18" fill="#f59e0b" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">2</text>
-      <text x="50" y="8" fill="#fbbf24" font-size="15" font-family="system-ui" font-weight="600">LINK</text>
+      <circle cx="0" cy="12" r="20" fill="#34d399" opacity="0.2"/>
+      <text x="0" y="18" fill="#34d399" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">2</text>
+      <text x="50" y="8" fill="#6ee7b7" font-size="15" font-family="system-ui" font-weight="600">LINK</text>
       <text x="50" y="28" fill="#6b7280" font-size="13" font-family="system-ui">Tests trace to requirements</text>
     </g>
   </g>
@@ -196,9 +196,9 @@
 
   <g class="step step-4" opacity="0.3">
     <g transform="translate(870, 495)">
-      <circle cx="0" cy="12" r="20" fill="#06b6d4" opacity="0.2"/>
-      <text x="0" y="18" fill="#06b6d4" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">4</text>
-      <text x="50" y="8" fill="#67e8f9" font-size="15" font-family="system-ui" font-weight="600">VERIFY</text>
+      <circle cx="0" cy="12" r="20" fill="#059669" opacity="0.2"/>
+      <text x="0" y="18" fill="#059669" font-size="18" text-anchor="middle" font-family="system-ui" font-weight="700">4</text>
+      <text x="50" y="8" fill="#6ee7b7" font-size="15" font-family="system-ui" font-weight="600">VERIFY</text>
       <text x="50" y="28" fill="#6b7280" font-size="13" font-family="system-ui">Agent queries via MCP</text>
     </g>
   </g>
