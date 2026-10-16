@@ -394,6 +394,11 @@ import TerminalCarousel from './TerminalCarousel.astro';
     <span class="footer-sep" aria-hidden="true">/</span>
     <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
   </nav>
+  <nav class="footer-legal" aria-label="Legal" data-testid="hero-footer-legal">
+    <a href="/privacy">Privacy</a>
+    <span class="footer-sep" aria-hidden="true">/</span>
+    <a href="/terms">Terms</a>
+  </nav>
 </footer>
 
 <style is:global>
@@ -811,6 +816,25 @@ import TerminalCarousel from './TerminalCarousel.astro';
   .site-footer .footer-sep {
     color: var(--rtmx-text-dim);
     font-size: 0.9rem;
+  }
+
+  .site-footer .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.75rem;
+  }
+
+  .site-footer .footer-legal a {
+    color: var(--rtmx-text-dim);
+    font-size: 0.8rem;
+  }
+
+  .site-footer .footer-legal a:hover {
+    color: var(--rtmx-emerald-light);
+    text-decoration: none;
   }
 
   /* "I Built RTMX Using RTMX" Section */

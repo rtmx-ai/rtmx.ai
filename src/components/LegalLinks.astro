@@ -1,0 +1,34 @@
+---
+/**
+ * Privacy + Terms — include in every page bottom (SITE legal chrome).
+ */
+---
+
+<nav class="legal-links" aria-label="Legal" data-testid="legal-links">
+	<a href="/privacy">Privacy</a>
+	<span class="legal-links-sep" aria-hidden="true">·</span>
+	<a href="/terms">Terms</a>
+</nav>
+
+<style>
+	.legal-links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem 0.5rem;
+		margin-top: 0.75rem;
+		font-size: 0.8rem;
+	}
+	.legal-links a {
+		color: var(--rtmx-text-dim, #6b7280);
+		text-decoration: none;
+	}
+	.legal-links a:hover {
+		color: var(--rtmx-emerald-light, #6ee7b7);
+	}
+	.legal-links-sep {
+		color: var(--rtmx-border-hover, #404040);
+		user-select: none;
+	}
+</style>

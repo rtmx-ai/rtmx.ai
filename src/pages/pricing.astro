@@ -235,6 +235,11 @@ const tiers = [
         <span class="footer-sep" aria-hidden="true">/</span>
         <a href="mailto:dev@rtmx.ai">dev@rtmx.ai</a>
       </nav>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="/privacy">Privacy</a>
+        <span class="footer-sep" aria-hidden="true">/</span>
+        <a href="/terms">Terms</a>
+      </nav>
     </footer>
   </div>
 </StarlightPage>
@@ -642,6 +647,22 @@ const tiers = [
     .email-input {
       min-width: 100%;
     }
+  }
+
+  .pricing-footer .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.75rem;
+  }
+  .pricing-footer .footer-legal a {
+    color: var(--rtmx-text-dim, #6b7280);
+    font-size: 0.8rem;
+  }
+  .pricing-footer .footer-legal a:hover {
+    color: var(--rtmx-emerald-light, #6ee7b7);
   }
 </style>
 
