@@ -1,0 +1,473 @@
+---
+/**
+ * Animated dual-pane demo: human + agent collaborating in one Sync room.
+ * Visual language matches AnimatedTerminal on the homepage.
+ */
+---
+
+<section class="sync-demo" data-testid="sync-collab-demo" aria-label="Animated demo of Sync collaboration">
+  <div class="sync-demo-header">
+    <p class="sync-demo-kicker">How it works</p>
+    <h2>Watch the room converge</h2>
+    <p class="sync-demo-lede">
+      You and an agent join the same room. Claims and status land live — no ticket
+      board, no paste of who owns what.
+    </p>
+  </div>
+
+  <div class="sync-demo-stage" data-demo-stage>
+    <div class="sync-demo-roombar" data-demo-roombar>
+      <span class="sync-demo-live" aria-hidden="true"></span>
+      <span class="sync-demo-room-label">acme / main</span>
+      <div class="sync-demo-presence" aria-label="People in the room">
+        <span class="sync-demo-avatar you" data-presence="you" title="You">Y</span>
+        <span class="sync-demo-avatar agent" data-presence="agent" title="Agent">A</span>
+      </div>
+    </div>
+
+    <div class="sync-demo-panes">
+      <div class="sync-demo-pane" data-pane="you">
+        <div class="sync-demo-pane-header">
+          <div class="sync-demo-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="sync-demo-pane-title">You</span>
+        </div>
+        <div class="sync-demo-pane-body">
+          <div class="sync-demo-line prompt" data-step="1">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx sync"></span>
+            <span class="cursor">▋</span>
+          </div>
+          <div class="sync-demo-line ok" data-step="2">✓ joined room acme/main</div>
+          <div class="sync-demo-line dim" data-step="3">Listening for updates…</div>
+          <div class="sync-demo-line live" data-step="5">
+            <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Agent
+          </div>
+          <div class="sync-demo-line ok" data-step="6">
+            Status → IN_PROGRESS · blocked-by cleared
+          </div>
+          <div class="sync-demo-line prompt" data-step="7">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx next"></span>
+            <span class="cursor late">▋</span>
+          </div>
+          <div class="sync-demo-line accent" data-step="8">
+            → REQ-API-003 ready (unblocked)
+          </div>
+        </div>
+      </div>
+
+      <div class="sync-demo-pane" data-pane="agent">
+        <div class="sync-demo-pane-header">
+          <div class="sync-demo-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="sync-demo-pane-title">Agent</span>
+        </div>
+        <div class="sync-demo-pane-body">
+          <div class="sync-demo-line prompt" data-step="1">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx sync"></span>
+            <span class="cursor">▋</span>
+          </div>
+          <div class="sync-demo-line ok" data-step="2">✓ joined room acme/main</div>
+          <div class="sync-demo-line dim" data-step="3">Next unblocked: REQ-AUTH-012</div>
+          <div class="sync-demo-line prompt" data-step="4">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx claim REQ-AUTH-012"></span>
+            <span class="cursor mid">▋</span>
+          </div>
+          <div class="sync-demo-line ok" data-step="5">✓ claimed · publishing to room</div>
+          <div class="sync-demo-line accent" data-step="6">
+            Working… tests green · status COMPLETE
+          </div>
+          <div class="sync-demo-line dim" data-step="8">
+            Room updated · 2 peers online
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="sync-demo-captions" data-demo-captions aria-live="polite">
+      <li data-caption="1" class="active">Both clients join the same Sync room.</li>
+      <li data-caption="2">Presence shows who is live.</li>
+      <li data-caption="3">The agent claims the next unblocked requirement.</li>
+      <li data-caption="4">Your view updates instantly — no refresh, no Slack ping.</li>
+      <li data-caption="5">The matrix converges; the next item unlocks.</li>
+    </ol>
+  </div>
+</section>
+
+<style is:global>
+  .sync-demo {
+    margin: 0;
+    padding: var(--sync-pad-y, 2.5rem) 0;
+    border-top: 1px solid rgba(110, 231, 183, 0.1);
+  }
+  .sync-demo-header {
+    text-align: center;
+    max-width: 36rem;
+    margin: 0 auto 1.75rem;
+  }
+  .sync-demo-kicker {
+    margin: 0 0 0.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rtmx-emerald-light, #6ee7b7);
+    font-weight: 600;
+  }
+  .sync-demo-header h2 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--rtmx-text, #f5f5f4);
+  }
+  .sync-demo-lede {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--rtmx-text-muted, #a8a29e);
+  }
+
+  .sync-demo-stage {
+    border-radius: 0.85rem;
+    border: 1px solid rgba(110, 231, 183, 0.22);
+    background: rgba(14, 12, 10, 0.92);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+
+  .sync-demo-roombar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 1rem;
+    background: #141210;
+    border-bottom: 1px solid rgba(110, 231, 183, 0.14);
+    font-size: 0.85rem;
+    color: #a8a29e;
+  }
+  .sync-demo-live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    opacity: 0.35;
+    transition: opacity 0.3s ease;
+  }
+  .sync-demo-stage[data-phase="2"] .sync-demo-live,
+  .sync-demo-stage[data-phase="3"] .sync-demo-live,
+  .sync-demo-stage[data-phase="4"] .sync-demo-live,
+  .sync-demo-stage[data-phase="5"] .sync-demo-live {
+    opacity: 1;
+    animation: sync-pulse 1.6s ease-out infinite;
+  }
+  @keyframes sync-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+  .sync-demo-room-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: #6ee7b7;
+    font-weight: 600;
+  }
+  .sync-demo-presence {
+    margin-left: auto;
+    display: flex;
+    gap: 0.35rem;
+  }
+  .sync-demo-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    opacity: 0.25;
+    transform: scale(0.85);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .sync-demo-avatar.you {
+    background: #1e3a2f;
+    color: #6ee7b7;
+    border: 1px solid rgba(110, 231, 183, 0.4);
+  }
+  .sync-demo-avatar.agent {
+    background: #1c2433;
+    color: #93c5fd;
+    border: 1px solid rgba(147, 197, 253, 0.4);
+  }
+  .sync-demo-stage[data-phase="2"] .sync-demo-avatar.you,
+  .sync-demo-stage[data-phase="3"] .sync-demo-avatar.you,
+  .sync-demo-stage[data-phase="4"] .sync-demo-avatar.you,
+  .sync-demo-stage[data-phase="5"] .sync-demo-avatar.you,
+  .sync-demo-stage[data-phase="2"] .sync-demo-avatar.agent,
+  .sync-demo-stage[data-phase="3"] .sync-demo-avatar.agent,
+  .sync-demo-stage[data-phase="4"] .sync-demo-avatar.agent,
+  .sync-demo-stage[data-phase="5"] .sync-demo-avatar.agent {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .sync-demo-panes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 40rem) {
+    .sync-demo-panes { grid-template-columns: 1fr; }
+  }
+
+  .sync-demo-pane {
+    min-width: 0;
+    border-right: 1px solid rgba(110, 231, 183, 0.12);
+  }
+  .sync-demo-pane:last-child { border-right: none; }
+  @media (max-width: 40rem) {
+    .sync-demo-pane { border-right: none; border-bottom: 1px solid rgba(110, 231, 183, 0.12); }
+    .sync-demo-pane:last-child { border-bottom: none; }
+  }
+
+  .sync-demo-pane-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    background: #1a1714;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .sync-demo-dots {
+    display: flex;
+    gap: 5px;
+  }
+  .sync-demo-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4b5563;
+  }
+  .sync-demo-dots span:nth-child(1) { background: #ef4444; }
+  .sync-demo-dots span:nth-child(2) { background: #eab308; }
+  .sync-demo-dots span:nth-child(3) { background: #22c55e; }
+  .sync-demo-pane-title {
+    font-size: 0.8rem;
+    color: #a8a29e;
+    font-weight: 600;
+  }
+  .sync-demo-pane[data-pane="agent"] .sync-demo-pane-title { color: #93c5fd; }
+  .sync-demo-pane[data-pane="you"] .sync-demo-pane-title { color: #6ee7b7; }
+
+  .sync-demo-pane-body {
+    padding: 0.85rem 1rem 1.1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    min-height: 13.5rem;
+    color: #d6d3d1;
+  }
+
+  .sync-demo-line {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    margin-bottom: 0.35rem;
+  }
+  .sync-demo-line.visible {
+    opacity: 1;
+    transform: none;
+  }
+  .sync-demo-line.prompt { display: flex; align-items: center; gap: 0.4rem; }
+  .prompt-sym { color: #6ee7b7; font-weight: 700; }
+  .sync-demo-line .cursor {
+    color: #6ee7b7;
+    animation: sync-blink 1s step-end infinite;
+  }
+  .sync-demo-line .cursor.hidden { visibility: hidden; }
+  @keyframes sync-blink {
+    50% { opacity: 0; }
+  }
+  .sync-demo-line.ok { color: #86efac; }
+  .sync-demo-line.dim { color: #78716c; }
+  .sync-demo-line.accent { color: #6ee7b7; }
+  .sync-demo-line.live {
+    color: #e7e5e4;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.35rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(110, 231, 183, 0.25);
+  }
+  .sync-demo-line .tag {
+    display: inline-block;
+    margin-right: 0.4rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: #059669;
+    color: #fff;
+  }
+
+  .sync-demo-captions {
+    list-style: none;
+    margin: 0;
+    padding: 0.85rem 1rem 1rem;
+    border-top: 1px solid rgba(110, 231, 183, 0.12);
+    display: grid;
+    gap: 0.35rem;
+    background: #120f0d;
+  }
+  .sync-demo-captions li {
+    font-size: 0.9rem;
+    color: #57534e;
+    transition: color 0.3s ease;
+  }
+  .sync-demo-captions li.active {
+    color: #e7e5e4;
+  }
+  .sync-demo-captions li.active::before {
+    content: '→ ';
+    color: #6ee7b7;
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sync-demo-live { animation: none !important; }
+    .sync-demo-line .cursor { animation: none !important; }
+    .sync-demo-line {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .sync-demo-avatar {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .sync-demo-captions li { color: #a8a29e; }
+    .sync-demo-captions li:last-child {
+      color: #e7e5e4;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const root = document.querySelector('[data-testid="sync-collab-demo"]');
+    if (!root) return;
+    const stage = root.querySelector('[data-demo-stage]');
+    const captions = root.querySelectorAll('[data-demo-captions] li');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) {
+      stage.setAttribute('data-phase', '5');
+      root.querySelectorAll('.sync-demo-line').forEach((el) => el.classList.add('visible'));
+      root.querySelectorAll('.typed').forEach((el) => {
+        el.textContent = el.getAttribute('data-type') || '';
+      });
+      root.querySelectorAll('.cursor').forEach((el) => el.classList.add('hidden'));
+      return;
+    }
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    async function typeEl(el, text) {
+      el.textContent = '';
+      for (let i = 0; i <= text.length; i++) {
+        el.textContent = text.slice(0, i);
+        await sleep(28 + Math.random() * 22);
+      }
+    }
+
+    function showStep(n) {
+      root.querySelectorAll(`.sync-demo-line[data-step="${n}"]`).forEach((el) => {
+        el.classList.add('visible');
+      });
+    }
+
+    function setCaption(index) {
+      captions.forEach((li, i) => li.classList.toggle('active', i === index));
+    }
+
+    function setPhase(n) {
+      stage.setAttribute('data-phase', String(n));
+    }
+
+    async function run() {
+      // reset
+      root.querySelectorAll('.sync-demo-line').forEach((el) => el.classList.remove('visible'));
+      root.querySelectorAll('.typed').forEach((el) => { el.textContent = ''; });
+      root.querySelectorAll('.cursor').forEach((el) => el.classList.remove('hidden'));
+      setPhase(1);
+      setCaption(0);
+
+      // Step 1: both type rtmx sync
+      const prompts1 = root.querySelectorAll('.sync-demo-line[data-step="1"]');
+      prompts1.forEach((el) => el.classList.add('visible'));
+      await Promise.all(
+        [...prompts1].map((line) => typeEl(line.querySelector('.typed'), 'rtmx sync'))
+      );
+      prompts1.forEach((line) => line.querySelector('.cursor')?.classList.add('hidden'));
+      await sleep(250);
+
+      // Step 2: joined
+      showStep(2);
+      setPhase(2);
+      setCaption(1);
+      await sleep(550);
+
+      // Step 3: listening / next
+      showStep(3);
+      await sleep(700);
+
+      // Step 4: agent claims
+      const claimLine = root.querySelector('[data-pane="agent"] .sync-demo-line[data-step="4"]');
+      claimLine?.classList.add('visible');
+      setCaption(2);
+      setPhase(3);
+      await typeEl(claimLine.querySelector('.typed'), 'rtmx claim REQ-AUTH-012');
+      claimLine?.querySelector('.cursor')?.classList.add('hidden');
+      await sleep(200);
+
+      // Step 5: live update on both
+      showStep(5);
+      setCaption(3);
+      setPhase(4);
+      await sleep(800);
+
+      // Step 6: status / working
+      showStep(6);
+      await sleep(700);
+
+      // Step 7–8: next unlocked
+      const nextLine = root.querySelector('[data-pane="you"] .sync-demo-line[data-step="7"]');
+      nextLine?.classList.add('visible');
+      await typeEl(nextLine.querySelector('.typed'), 'rtmx next');
+      nextLine?.querySelector('.cursor')?.classList.add('hidden');
+      showStep(8);
+      setCaption(4);
+      setPhase(5);
+      await sleep(4200);
+      run();
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            observer.disconnect();
+            run();
+          }
+        });
+      },
+      { threshold: 0.35 }
+    );
+    observer.observe(root);
+  });
+</script>

@@ -45,6 +45,13 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(install).not.toContainText('wss://');
     await expect(install).not.toContainText('--sync-url');
 
+    const demo = page.getByTestId('sync-collab-demo');
+    await expect(demo).toBeVisible();
+    await expect(demo.getByRole('heading', { name: /Watch the room converge/i })).toBeVisible();
+    await expect(demo.locator('[data-pane="you"]')).toBeVisible();
+    await expect(demo.locator('[data-pane="agent"]')).toBeVisible();
+    await expect(demo).toContainText(/acme \/ main/);
+
     // Primary emerald CTA must use white label (Starlight link styles otherwise wash it out).
     const primaryColor = await page.getByTestId('sync-cta-checkout').evaluate((el) => getComputedStyle(el).color);
     expect(primaryColor.replace(/\s/g, '')).toMatch(/^rgb\(255,255,255\)$|^rgba\(255,255,255/);
