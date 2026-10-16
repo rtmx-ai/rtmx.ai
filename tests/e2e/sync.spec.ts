@@ -34,10 +34,16 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(root.locator('h1')).toHaveText('RTMX Sync');
     await expect(root).toContainText(/after Git/i);
     await expect(root).toContainText(/open source/i);
-    await expect(root).toContainText(/how you enter the room|how you access Sync|client is open source/i);
+    await expect(root).toContainText(/client is open source|no URL pasting/i);
     await expect(root).not.toContainText(/\$9/);
     await expect(page.getByTestId('sync-cta-checkout')).toBeVisible();
     await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/installation');
+
+    const install = page.getByTestId('sync-install');
+    await expect(install).toContainText('rtmx login');
+    await expect(install).toContainText('rtmx sync');
+    await expect(install).not.toContainText('wss://');
+    await expect(install).not.toContainText('--sync-url');
 
     // Primary emerald CTA must use white label (Starlight link styles otherwise wash it out).
     const primaryColor = await page.getByTestId('sync-cta-checkout').evaluate((el) => getComputedStyle(el).color);

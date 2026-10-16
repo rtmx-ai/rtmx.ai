@@ -63,14 +63,17 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
       <section class="sync-section sync-client">
         <h2>The client is open source</h2>
         <p>
-          <code>brew install rtmx-ai/tap/rtmx</code> — then
-          <code>rtmx login</code>, <code>rtmx sync</code>, <code>rtmx serve</code>.
-          The CLI is the workspace and the MCP surface. Sync is the shared room
-          those tools join.
+          Install once, sign in, then join the room. Hosted Sync defaults to
+          <code>sync.rtmx.ai</code> — no URL pasting. Self-hosted operators pass
+          their host (the client adds <code>wss://</code> for you).
         </p>
         <pre class="sync-code" data-testid="sync-install"><code>brew install rtmx-ai/tap/rtmx
 rtmx login
-rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
+rtmx sync</code></pre>
+        <p class="sync-selfhost-note">
+          Self-hosted example:
+          <code>rtmx sync --sync-url sync.example.com/sync/acme/main</code>
+        </p>
         <p class="sync-client-links">
           <a href="/installation">Installation docs</a>
           ·
@@ -258,6 +261,16 @@ rtmx sync --sync-url wss://sync.rtmx.ai/sync/your-org/main</code></pre>
     font-size: 0.85rem;
     line-height: 1.55;
     color: #d6d3d1;
+  }
+  .sync-selfhost-note {
+    margin: 0 0 1rem;
+    font-size: 0.88rem;
+    color: var(--rtmx-text-dim, #78716c);
+    line-height: 1.5;
+  }
+  .sync-selfhost-note code {
+    font-size: 0.85em;
+    color: #a8a29e;
   }
   .sync-client-links {
     font-size: 0.9rem;
