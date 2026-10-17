@@ -1,13 +1,13 @@
 # REQ-SITE-127: Public/Private Visibility on Org Create
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P1
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-124|REQ-ONBOARD-008
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-031g

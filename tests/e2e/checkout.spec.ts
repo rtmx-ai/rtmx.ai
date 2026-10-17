@@ -58,6 +58,67 @@ test.describe('hosted checkout page', () => {
     await expect(page.getByText('RTMX Sync server')).toHaveCount(0);
   });
 
+  test('SITE-127: org create defaults to Private and posts visibility', async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session-token', email: 'buyer@example.com' }),
+      );
+    });
+
+    let postedVisibility: string | undefined;
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ organizations: [] }),
+        });
+        return;
+      }
+      if (route.request().method() === 'POST') {
+        const body = route.request().postDataJSON() as { name?: string; visibility?: string };
+        postedVisibility = body.visibility;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'n1',
+            name: body.name || 'New Org',
+            slug: 'new-org',
+            visibility: body.visibility || 'private',
+          }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+    await page.route('**/auth/login/**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ authorization_url: 'https://example.com/oauth', state: 'x' }),
+      });
+    });
+
+    await page.goto('/checkout');
+    await expect(page.getByTestId('org-create-wrap')).toBeVisible();
+    await expect(page.getByTestId('org-visibility')).toBeVisible();
+    await expect(page.getByTestId('org-visibility-private')).toBeChecked();
+    await expect(page.getByTestId('org-visibility')).toContainText(/open-source/i);
+    await expect(page.getByTestId('org-visibility')).toContainText(/Team trial/i);
+    await expect(page.getByTestId('org-visibility')).toContainText(/subscription/i);
+
+    await page.getByTestId('org-create-name').fill('Acme Lab');
+    await page.getByTestId('org-create').click();
+    await expect.poll(() => postedVisibility).toBe('private');
+
+    await page.getByTestId('org-visibility-public').check();
+    await page.getByTestId('org-create-name').fill('OSS Lab');
+    await page.getByTestId('org-create').click();
+    await expect.poll(() => postedVisibility).toBe('public');
+  });
+
   test('SITE-124: zero orgs shows create-only; memberships show select+create option', async ({
     page,
   }) => {

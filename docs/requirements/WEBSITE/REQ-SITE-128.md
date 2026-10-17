@@ -1,13 +1,13 @@
 # REQ-SITE-128: Pricing Copy for Public Free vs Private Paid
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: MARKETING
 - **Priority**: P1
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-127|REQ-SITE-121
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-031g

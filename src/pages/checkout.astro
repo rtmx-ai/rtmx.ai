@@ -94,6 +94,34 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
                   data-testid="org-create-name"
                 />
               </label>
+              <fieldset class="visibility-fieldset" data-testid="org-visibility">
+                <legend class="field-label">Visibility</legend>
+                <label class="visibility-option">
+                  <input
+                    type="radio"
+                    name="org-visibility"
+                    value="private"
+                    checked
+                    data-testid="org-visibility-private"
+                  />
+                  <span>
+                    <strong>Private</strong> — hosted Sync needs a Team trial or
+                    subscription after the free trial.
+                  </span>
+                </label>
+                <label class="visibility-option">
+                  <input
+                    type="radio"
+                    name="org-visibility"
+                    value="public"
+                    data-testid="org-visibility-public"
+                  />
+                  <span>
+                    <strong>Public</strong> — free for open-source collaboration on
+                    managed Sync (no subscription required).
+                  </span>
+                </label>
+              </fieldset>
               <button type="button" class="secondary-button" id="org-create" data-testid="org-create">
                 Create organization
               </button>
@@ -476,6 +504,30 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+  }
+
+  .visibility-fieldset {
+    margin: 0;
+    padding: 0.75rem 0 0;
+    border: none;
+  }
+
+  .visibility-option {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    margin: 0.45rem 0 0;
+    font-size: 0.88rem;
+    color: var(--rtmx-text-muted);
+    cursor: pointer;
+  }
+
+  .visibility-option input {
+    margin-top: 0.2rem;
+  }
+
+  .visibility-option strong {
+    color: var(--rtmx-text);
   }
 
   .org-create-block .secondary-button {
@@ -978,6 +1030,13 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   });
 
+  function selectedVisibility(): 'public' | 'private' {
+    const checked = document.querySelector(
+      'input[name="org-visibility"]:checked',
+    ) as HTMLInputElement | null;
+    return checked?.value === 'public' ? 'public' : 'private';
+  }
+
   orgCreateBtn.addEventListener('click', async () => {
     const session = readSession();
     const name = orgCreateName.value.trim();
@@ -994,7 +1053,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           Authorization: `Bearer ${session.token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, visibility: selectedVisibility() }),
       });
       if (!resp.ok) {
         show(`Could not create organization (${resp.status}).`, 'error');

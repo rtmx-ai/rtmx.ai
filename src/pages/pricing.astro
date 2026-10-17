@@ -87,9 +87,10 @@ const tiers = [
           access Sync.
         </p>
         <p class="oss-note">
-          Pricing below is for hosted and licensed Sync rooms.
+          Public organizations for open-source collaboration on managed Sync are
+          free. Private hosted Sync requires a Team trial or subscription.
           {monetizationMvp
-            ? ' Team Checkout includes a 14-day free trial.'
+            ? ' Team Checkout includes a 14-day free trial for private orgs.'
             : ' Coming soon.'}
           {' '}Read the thesis on <a href="/sync">the Sync page</a>.
         </p>
@@ -194,6 +195,14 @@ const tiers = [
             Team Checkout. Hosted Sync stays free for 14 days; cancel before the
             trial ends and you are not charged. After day 14 the subscription
             converts to paid Team at the listed rate.
+          </p>
+        </div>
+        <div class="faq-item" data-testid="pricing-public-org-faq">
+          <h3>Are public orgs free on managed Sync?</h3>
+          <p>
+            Yes. A public organization for open-source collaboration can write on
+            managed Sync without a subscription. Private hosted Sync still needs
+            a Team trial or paid plan after the trial window.
           </p>
         </div>
         <div class="faq-item">
