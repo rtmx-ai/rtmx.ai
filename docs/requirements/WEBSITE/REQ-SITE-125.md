@@ -1,13 +1,13 @@
 # REQ-SITE-125: Individual Tab Personal Org Path
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-124
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-031c
@@ -20,10 +20,10 @@ requiring the Team org picker flow.
 
 ## Acceptance Criteria
 
-1. [ ] Individual tab path creates or reuses a personal org.
-2. [ ] Stripe Checkout quantity is 1; offering remains managed Team.
-3. [ ] User is not forced through Team multi-seat UI.
-4. [ ] Playwright or mocked Checkout request asserts quantity=1.
+1. [x] Individual tab path creates or reuses a personal org.
+2. [x] Stripe Checkout quantity is 1; offering remains managed Team.
+3. [x] User is not forced through Team multi-seat UI.
+4. [x] Playwright or mocked Checkout request asserts quantity=1.
 
 ## Effort Estimate
 

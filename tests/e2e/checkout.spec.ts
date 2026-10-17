@@ -118,6 +118,75 @@ test.describe('hosted checkout page', () => {
     await expect(page.getByTestId('org-create-wrap')).toBeVisible();
   });
 
+  test('SITE-125: Individual creates/reuses personal org and posts quantity 1', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session-token', email: 'buyer@example.com' }),
+      );
+    });
+
+    let created = false;
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ organizations: [] }),
+        });
+        return;
+      }
+      if (route.request().method() === 'POST') {
+        created = true;
+        const body = route.request().postDataJSON() as { name?: string };
+        expect(body.name).toMatch(/Personal/i);
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'po1',
+            name: body.name || 'Buyer Personal',
+            slug: 'buyer-personal',
+          }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+
+    let checkoutQty: number | undefined;
+    await page.route('**/billing/checkout', async (route) => {
+      const body = route.request().postDataJSON() as {
+        quantity?: number;
+        org_id?: string;
+        offering?: string;
+      };
+      checkoutQty = body.quantity;
+      expect(body.offering).toBe('managed_sync');
+      expect(body.org_id).toBe('buyer-personal');
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          url: 'https://checkout.stripe.com/c/pay/cs_test_individual',
+          session_id: 'cs_test_individual',
+        }),
+      });
+    });
+
+    await page.goto('/checkout?tab=individual');
+    await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
+    await expect(page.getByTestId('org-session-panel')).toBeHidden();
+    await expect(page.getByTestId('personal-org-status')).toContainText(/buyer-personal|Personal/i);
+    expect(created).toBe(true);
+
+    await page.getByTestId('checkout-cta').click();
+    await page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }).catch(() => undefined);
+    expect(checkoutQty).toBe(1);
+  });
+
   test('SITE-123: three tabs and one CTA that follows the active tab', async ({ page }) => {
     await page.goto('/checkout');
     await expect(page.getByTestId('checkout-hub')).toBeVisible();

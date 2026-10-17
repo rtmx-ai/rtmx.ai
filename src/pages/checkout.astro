@@ -162,10 +162,16 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           hidden
         >
           <p class="tab-lede">
-            One seat on a personal hosted org. Stripe Team offering at quantity 1
-            (personal-org auto-create lands in SITE-125).
+            One seat on your personal hosted organization. Uses the Team plan at
+            quantity 1 — no org picker or multi-seat UI.
           </p>
-          <p class="field-help seats-locked-note">Seats locked to 1 for Individual.</p>
+          <p class="field-help seats-locked-note">Seats locked to 1 · $9/mo after trial</p>
+          <p
+            class="field-help"
+            id="personal-org-status"
+            data-testid="personal-org-status"
+            hidden
+          ></p>
         </div>
 
         <div
@@ -698,6 +704,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const licenseOrg = document.getElementById('license-org-ref') as HTMLInputElement;
   const licenseKey = document.getElementById('license-api-key') as HTMLInputElement;
   const licenseTier = document.getElementById('license-tier') as HTMLSelectElement;
+  const personalOrgStatus = document.getElementById('personal-org-status') as HTMLParagraphElement;
+  let cachedOrgs: Array<{ id: string; name: string; slug: string }> = [];
 
   function currentTab(): TabId {
     const v = activeTabInput.value;
@@ -705,7 +713,70 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     return 'team';
   }
 
-  function setTab(tab: TabId) {
+  function isPersonalOrg(org: { name: string; slug: string }): boolean {
+    const slug = (org.slug || '').toLowerCase();
+    const name = (org.name || '').toLowerCase();
+    return slug === 'personal' || slug.endsWith('-personal') || name === 'personal';
+  }
+
+  function personalOrgName(email?: string): string {
+    const local = (email || 'user').split('@')[0] || 'user';
+    const clean = local.replace(/[^a-zA-Z0-9]+/g, ' ').trim() || 'User';
+    return `${clean} Personal`;
+  }
+
+  async function ensurePersonalOrg(
+    server: string,
+    token: string,
+    email?: string,
+  ): Promise<{ id: string; name: string; slug: string } | null> {
+    const existing = cachedOrgs.find(isPersonalOrg);
+    if (existing) return existing;
+    const resp = await fetch(`${server}/orgs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: personalOrgName(email) }),
+    });
+    if (!resp.ok) {
+      show(`Could not create personal organization (${resp.status}).`, 'error');
+      return null;
+    }
+    const org = await resp.json();
+    cachedOrgs = [...cachedOrgs, org];
+    return org;
+  }
+
+  async function applyIndividualPath() {
+    const session = readSession();
+    const server = serverInput.value.trim().replace(/\/+$/, '');
+    // Individual hides Team org picker; uses session + personal org only.
+    orgSessionPanel.hidden = true;
+    orgManualField.hidden = true;
+    apiKeyField.hidden = true;
+    keyInput.removeAttribute('required');
+    orgInput.removeAttribute('required');
+    quantityInput.value = '1';
+    quantityInput.readOnly = true;
+    if (!session?.token) {
+      personalOrgStatus.hidden = false;
+      personalOrgStatus.textContent = 'Sign in to continue with an Individual plan.';
+      return;
+    }
+    personalOrgStatus.hidden = false;
+    personalOrgStatus.textContent = 'Preparing personal organization…';
+    if (cachedOrgs.length === 0) {
+      await loadOrgs(server, session.token);
+    }
+    const org = await ensurePersonalOrg(server, session.token, session.email);
+    if (!org) return;
+    orgInput.value = org.slug || org.id;
+    personalOrgStatus.textContent = `Personal org: ${org.name} (${org.slug || org.id})`;
+  }
+
+  async function setTab(tab: TabId) {
     activeTabInput.value = tab;
     document.querySelectorAll<HTMLButtonElement>('.checkout-tab').forEach((btn) => {
       const on = btn.dataset.tab === tab;
@@ -720,10 +791,23 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     const hosted = tab === 'individual' || tab === 'team';
     hostedShared.hidden = !hosted;
     if (tab === 'individual') {
-      quantityInput.value = '1';
-      quantityInput.readOnly = true;
-    } else {
+      await applyIndividualPath();
+    } else if (tab === 'team') {
       quantityInput.readOnly = false;
+      personalOrgStatus.hidden = true;
+      const session = readSession();
+      if (session?.token) {
+        await enableSessionOrgUi(
+          serverInput.value.trim().replace(/\/+$/, ''),
+          session.token,
+        );
+      } else {
+        orgSessionPanel.hidden = true;
+        orgManualField.hidden = false;
+        apiKeyField.hidden = false;
+      }
+    } else {
+      personalOrgStatus.hidden = true;
     }
     ctaLabel.textContent = CTA[tab];
     const url = new URL(window.location.href);
@@ -734,12 +818,12 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   document.querySelectorAll<HTMLButtonElement>('.checkout-tab').forEach((btn) => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tab as TabId;
-      if (tab) setTab(tab);
+      if (tab) void setTab(tab);
     });
   });
 
   const initialTab = (new URLSearchParams(window.location.search).get('tab') || 'team') as TabId;
-  setTab(CTA[initialTab] ? initialTab : 'team');
+  void setTab(CTA[initialTab] ? initialTab : 'team');
 
   function show(text: string, kind: 'success' | 'error') {
     message.textContent = text;
@@ -827,7 +911,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       return;
     }
     const body = await resp.json();
-    fillOrgSelect(body.organizations || []);
+    cachedOrgs = body.organizations || [];
+    fillOrgSelect(cachedOrgs);
   }
 
   async function enableSessionOrgUi(server: string, token: string) {
@@ -936,7 +1021,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     const session = readSession();
     const server = serverInput.value.trim().replace(/\/+$/, '');
     if (session?.token) {
-      await enableSessionOrgUi(server, session.token);
+      if (currentTab() === 'individual') {
+        await applyIndividualPath();
+      } else if (currentTab() === 'team') {
+        await enableSessionOrgUi(server, session.token);
+      }
       return;
     }
     try {
@@ -949,7 +1038,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     window.location.replace('/login?next=' + encodeURIComponent('/checkout'));
   }
 
-  gateSignIn();
+  void gateSignIn();
 
   function downloadLicense(envelope: unknown) {
     const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
