@@ -58,6 +58,66 @@ test.describe('hosted checkout page', () => {
     await expect(page.getByText('RTMX Sync server')).toHaveCount(0);
   });
 
+  test('SITE-124: zero orgs shows create-only; memberships show select+create option', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session-token', email: 'buyer@example.com' }),
+      );
+    });
+
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ organizations: [] }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+    await page.route('**/auth/login/**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ authorization_url: 'https://example.com/oauth', state: 'x' }),
+      });
+    });
+
+    await page.goto('/checkout');
+    await expect(page.getByTestId('org-session-panel')).toBeVisible();
+    await expect(page.getByTestId('org-select-wrap')).toBeHidden();
+    await expect(page.getByTestId('org-create-wrap')).toBeVisible();
+    await expect(page.getByTestId('org-help-empty')).toBeVisible();
+    await expect(page.getByTestId('org-create')).toHaveText(/Create organization/i);
+
+    // Remount with memberships
+    await page.unroute('**/orgs');
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            organizations: [{ id: 'o1', name: 'Acme', slug: 'acme' }],
+          }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+    await page.reload();
+    await expect(page.getByTestId('org-select-wrap')).toBeVisible();
+    await expect(page.getByTestId('org-create-wrap')).toBeHidden();
+    const select = page.getByTestId('org-select');
+    await expect(select.locator('option[value="__create__"]')).toHaveCount(1);
+    await select.selectOption('__create__');
+    await expect(page.getByTestId('org-create-wrap')).toBeVisible();
+  });
+
   test('SITE-123: three tabs and one CTA that follows the active tab', async ({ page }) => {
     await page.goto('/checkout');
     await expect(page.getByTestId('checkout-hub')).toBeVisible();

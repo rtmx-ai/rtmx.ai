@@ -1,13 +1,13 @@
 # REQ-SITE-124: Collapsed Organization Create/Select UI
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-123|REQ-SITE-112
 - **Blocks**: REQ-SITE-125
 - **External ID**: rtmx-ai/REQ-MONO-031b
@@ -20,10 +20,10 @@ selector with create-as-option.
 
 ## Acceptance Criteria
 
-1. [ ] Zero orgs: no org `<select>`; Create organization + name field.
-2. [ ] ≥1 orgs: one selector; create available without a permanent second row.
-3. [ ] Creating an org selects it for the subsequent Checkout action.
-4. [ ] Playwright covers both branches.
+1. [x] Zero orgs: no org `<select>`; Create organization + name field.
+2. [x] ≥1 orgs: one selector; create available without a permanent second row.
+3. [x] Creating an org selects it for the subsequent Checkout action.
+4. [x] Playwright covers both branches.
 
 ## Out of Scope
 

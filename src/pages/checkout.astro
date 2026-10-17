@@ -69,28 +69,42 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
         <!-- Shared hosted org/auth (Individual + Team) -->
         <div id="hosted-shared" data-testid="checkout-hosted-shared">
-          <fieldset class="checkout-step" id="org-session-panel" hidden>
+          <fieldset class="checkout-step" id="org-session-panel" hidden data-testid="org-session-panel">
             <legend class="checkout-step-title">Organization</legend>
-            <label class="field">
+
+            <!-- ≥1 orgs: single select; create is an option (SITE-124) -->
+            <label class="field" id="org-select-wrap" hidden data-testid="org-select-wrap">
               <span class="field-label">Your organizations</span>
-              <select id="org-select" class="text-input" aria-label="Select organization">
+              <select id="org-select" class="text-input" aria-label="Select organization" data-testid="org-select">
                 <option value="">Select an organization</option>
               </select>
             </label>
-            <div class="org-create-row">
-              <input
-                type="text"
-                id="org-create-name"
-                class="text-input"
-                placeholder="New org name"
-                autocomplete="organization"
-                aria-label="New organization name"
-              />
-              <button type="button" class="secondary-button" id="org-create">
-                Create
+
+            <!-- Zero orgs, or select chose "create new": name + Create -->
+            <div id="org-create-wrap" class="org-create-block" hidden data-testid="org-create-wrap">
+              <label class="field">
+                <span class="field-label" id="org-create-label">Organization name</span>
+                <input
+                  type="text"
+                  id="org-create-name"
+                  class="text-input"
+                  placeholder="Acme Engineering"
+                  autocomplete="organization"
+                  aria-label="New organization name"
+                  data-testid="org-create-name"
+                />
+              </label>
+              <button type="button" class="secondary-button" id="org-create" data-testid="org-create">
+                Create organization
               </button>
             </div>
-            <p class="field-help">Create or select an org — no ops bootstrap.</p>
+
+            <p class="field-help" id="org-help-empty" hidden data-testid="org-help-empty">
+              You do not belong to an organization yet. Create one to continue.
+            </p>
+            <p class="field-help" id="org-help-select" hidden>
+              Select an organization or create a new one.
+            </p>
             <p class="field-help" id="org-admin-link" hidden>
               <a href="#" id="org-admin-anchor">Open organization admin</a>
             </p>
@@ -454,15 +468,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     padding-right: 2.25rem;
   }
 
-  .org-create-row {
+  .org-create-block {
     display: flex;
-    gap: 0.5rem;
-    align-items: stretch;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .org-create-row .text-input {
-    flex: 1;
-    min-width: 0;
+  .org-create-block .secondary-button {
+    align-self: flex-start;
   }
 
   .secondary-button,
@@ -661,10 +674,15 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const hostedShared = document.getElementById('hosted-shared') as HTMLDivElement;
   const orgInput = document.getElementById('org-ref') as HTMLInputElement;
   const orgSelect = document.getElementById('org-select') as HTMLSelectElement;
+  const orgSelectWrap = document.getElementById('org-select-wrap') as HTMLLabelElement;
+  const orgCreateWrap = document.getElementById('org-create-wrap') as HTMLDivElement;
+  const orgHelpEmpty = document.getElementById('org-help-empty') as HTMLParagraphElement;
+  const orgHelpSelect = document.getElementById('org-help-select') as HTMLParagraphElement;
   const orgSessionPanel = document.getElementById('org-session-panel') as HTMLFieldSetElement;
   const orgManualField = document.getElementById('org-manual-field') as HTMLLabelElement;
   const orgCreateName = document.getElementById('org-create-name') as HTMLInputElement;
   const orgCreateBtn = document.getElementById('org-create') as HTMLButtonElement;
+  const CREATE_SENTINEL = '__create__';
   const keyMintBtn = document.getElementById('key-mint') as HTMLButtonElement;
   const keyOnce = document.getElementById('key-once') as HTMLPreElement;
   const keyOnceHelp = document.getElementById('key-once-help') as HTMLParagraphElement;
@@ -745,7 +763,32 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
+  function showOrgMode(mode: 'empty' | 'select' | 'create-from-select') {
+    if (mode === 'empty') {
+      orgSelectWrap.hidden = true;
+      orgCreateWrap.hidden = false;
+      orgHelpEmpty.hidden = false;
+      orgHelpSelect.hidden = true;
+      orgInput.value = '';
+      keyMintBtn.disabled = true;
+      updateOrgAdminLink('');
+      return;
+    }
+    orgSelectWrap.hidden = false;
+    orgHelpEmpty.hidden = true;
+    orgHelpSelect.hidden = false;
+    const creating = mode === 'create-from-select';
+    orgCreateWrap.hidden = !creating;
+    if (!creating) {
+      orgCreateName.value = '';
+    }
+  }
+
   function fillOrgSelect(orgs: Array<{ id: string; name: string; slug: string }>) {
+    if (orgs.length === 0) {
+      showOrgMode('empty');
+      return;
+    }
     orgSelect.innerHTML = '<option value="">Select an organization</option>';
     for (const org of orgs) {
       const opt = document.createElement('option');
@@ -753,13 +796,21 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       opt.textContent = `${org.name} (${org.slug || org.id})`;
       orgSelect.appendChild(opt);
     }
+    const createOpt = document.createElement('option');
+    createOpt.value = CREATE_SENTINEL;
+    createOpt.textContent = 'Create new organization…';
+    orgSelect.appendChild(createOpt);
+
+    showOrgMode('select');
     if (orgs.length === 1) {
       orgSelect.value = orgs[0].slug || orgs[0].id;
       orgInput.value = orgSelect.value;
       keyMintBtn.disabled = false;
       updateOrgAdminLink(orgSelect.value);
     } else {
-      updateOrgAdminLink(orgSelect.value);
+      orgInput.value = '';
+      keyMintBtn.disabled = true;
+      updateOrgAdminLink('');
     }
   }
 
@@ -789,12 +840,21 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   }
 
   orgSelect.addEventListener('change', () => {
-    orgInput.value = orgSelect.value;
-    keyMintBtn.disabled = !orgSelect.value;
-    updateOrgAdminLink(orgSelect.value);
     keyOnce.hidden = true;
     keyOnceHelp.hidden = true;
     keyOnce.textContent = '';
+    if (orgSelect.value === CREATE_SENTINEL) {
+      showOrgMode('create-from-select');
+      orgInput.value = '';
+      keyMintBtn.disabled = true;
+      updateOrgAdminLink('');
+      orgCreateName.focus();
+      return;
+    }
+    showOrgMode('select');
+    orgInput.value = orgSelect.value;
+    keyMintBtn.disabled = !orgSelect.value;
+    updateOrgAdminLink(orgSelect.value);
   });
 
   keyMintBtn.addEventListener('click', async () => {
