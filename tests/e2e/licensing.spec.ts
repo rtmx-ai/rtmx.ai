@@ -1,12 +1,23 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * REQ-SITE-105: the pricing CTA starts entitlement acquisition.
+ * REQ-SITE-105 / REQ-SITE-126: self-managed license acquisition.
  *
- * rtmx-sync can refuse an unlicensed write with 4402 and can issue a signed
- * license. Until this page existed, the site offered no way to obtain one, so
- * the product was enforceable but unbuyable.
+ * SITE-126 moved issue/download onto /checkout?tab=self-hosted; /license
+ * redirects there. Pricing secondary CTA reaches the hub tab directly.
  */
+
+const SELF_HOSTED = '/checkout?tab=self-hosted';
+
+async function openSelfHosted(page: import('@playwright/test').Page, via = SELF_HOSTED) {
+  await page.goto(via);
+  await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();
+  await expect(page.getByTestId('checkout-tab-self-hosted')).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+}
+
 test.describe('pricing entitlement CTA', () => {
   test('Team CTA leads to acquisition, not the waitlist', async ({ page }) => {
     await page.goto('/pricing');
@@ -18,10 +29,14 @@ test.describe('pricing entitlement CTA', () => {
     );
     await expect(teamCard.getByRole('link', { name: 'Self-managed license' })).toHaveAttribute(
       'href',
-      '/license',
+      SELF_HOSTED,
     );
-    await expect(teamCard.getByRole('link', { name: /14-day free trial/i })).not.toHaveText(/waitlist/i);
-    await expect(teamCard.getByRole('link', { name: 'Self-managed license' })).not.toHaveText(/waitlist/i);
+    await expect(teamCard.getByRole('link', { name: /14-day free trial/i })).not.toHaveText(
+      /waitlist/i,
+    );
+    await expect(teamCard.getByRole('link', { name: 'Self-managed license' })).not.toHaveText(
+      /waitlist/i,
+    );
   });
 
   test('the free CLI claim stays on the page', async ({ page }) => {
@@ -39,20 +54,33 @@ test.describe('pricing entitlement CTA', () => {
   });
 });
 
-test.describe('license acquisition page', () => {
-  test('collects what the license API needs', async ({ page }) => {
-    await page.goto('/license');
+test.describe('license acquisition via Self-hosted hub (SITE-105 / SITE-126)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('**/auth/login/**', async (route) => {
+      await route.fulfill({ status: 503, body: 'OAuth provider not configured' });
+    });
+  });
 
-    await expect(page.locator('#server-url')).toBeVisible();
-    await expect(page.locator('#server-url')).toHaveAttribute('type', 'url');
-    await expect(page.locator('#org-ref')).toBeVisible();
-    await expect(page.locator('#api-key')).toHaveAttribute('type', 'password');
-    await expect(page.locator('#tier')).toBeVisible();
+  test('SITE-126: /license redirects to Self-hosted tab', async ({ page }) => {
+    await page.goto('/license');
+    await expect(page).toHaveURL(/\/checkout\?tab=self-hosted/);
+    await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();
+    await expect(page.getByTestId('checkout-cta')).toContainText(/license/i);
+  });
+
+  test('collects what the license API needs', async ({ page }) => {
+    await openSelfHosted(page);
+
+    await expect(page.locator('#license-server-url')).toBeVisible();
+    await expect(page.locator('#license-server-url')).toHaveAttribute('type', 'url');
+    await expect(page.locator('#license-org-ref')).toBeVisible();
+    await expect(page.locator('#license-api-key')).toHaveAttribute('type', 'password');
+    await expect(page.locator('#license-tier')).toBeVisible();
   });
 
   test('keeps an editable sync server for self-managed (REQ-MONO-020d AC6)', async ({ page }) => {
-    await page.goto('/license');
-    const server = page.locator('#server-url');
+    await openSelfHosted(page);
+    const server = page.locator('#license-server-url');
     await expect(server).toBeVisible();
     await expect(server).not.toHaveAttribute('type', 'hidden');
     await expect(server).toBeEditable();
@@ -65,11 +93,11 @@ test.describe('license acquisition page', () => {
       await route.abort();
     });
 
-    await page.goto('/license');
-    await page.locator('#server-url').fill('https://sync.example.com');
-    await page.locator('#license-submit').click();
+    await openSelfHosted(page);
+    await page.locator('#license-server-url').fill('https://sync.example.com');
+    await page.getByTestId('checkout-cta').click();
 
-    await expect(page.locator('#license-message')).toContainText('required');
+    await expect(page.locator('#checkout-message')).toContainText('required');
     expect(called).toBe(false);
   });
 
@@ -91,16 +119,16 @@ test.describe('license acquisition page', () => {
       });
     });
 
-    await page.goto('/license');
-    await page.locator('#server-url').fill('https://sync.example.com');
-    await page.locator('#org-ref').fill('acme');
-    await page.locator('#api-key').fill('rtmx_ad_testkey');
+    await openSelfHosted(page);
+    await page.locator('#license-server-url').fill('https://sync.example.com');
+    await page.locator('#license-org-ref').fill('acme');
+    await page.locator('#license-api-key').fill('rtmx_ad_testkey');
 
     const download = page.waitForEvent('download');
-    await page.locator('#license-submit').click();
+    await page.getByTestId('checkout-cta').click();
 
     expect((await download).suggestedFilename()).toBe('license.json');
-    await expect(page.locator('#license-message')).toContainText('License downloaded');
+    await expect(page.locator('#checkout-message')).toContainText('License downloaded');
   });
 
   test('explains a rejected credential instead of failing silently', async ({ page }) => {
@@ -108,24 +136,24 @@ test.describe('license acquisition page', () => {
       await route.fulfill({ status: 403, body: 'Forbidden' });
     });
 
-    await page.goto('/license');
-    await page.locator('#server-url').fill('https://sync.example.com');
-    await page.locator('#org-ref').fill('acme');
-    await page.locator('#api-key').fill('rtmx_wr_readonly');
-    await page.locator('#license-submit').click();
+    await openSelfHosted(page);
+    await page.locator('#license-server-url').fill('https://sync.example.com');
+    await page.locator('#license-org-ref').fill('acme');
+    await page.locator('#license-api-key').fill('rtmx_wr_readonly');
+    await page.getByTestId('checkout-cta').click();
 
-    await expect(page.locator('#license-message')).toContainText('admin credential');
+    await expect(page.locator('#checkout-message')).toContainText('admin credential');
   });
 
   test('tells the operator when the server is unreachable', async ({ page }) => {
     await page.route('**/licenses/**', (route) => route.abort('failed'));
 
-    await page.goto('/license');
-    await page.locator('#server-url').fill('https://sync.example.com');
-    await page.locator('#org-ref').fill('acme');
-    await page.locator('#api-key').fill('rtmx_ad_testkey');
-    await page.locator('#license-submit').click();
+    await openSelfHosted(page);
+    await page.locator('#license-server-url').fill('https://sync.example.com');
+    await page.locator('#license-org-ref').fill('acme');
+    await page.locator('#license-api-key').fill('rtmx_ad_testkey');
+    await page.getByTestId('checkout-cta').click();
 
-    await expect(page.locator('#license-message')).toContainText('RTMX_ALLOWED_ORIGINS');
+    await expect(page.locator('#checkout-message')).toContainText('RTMX_ALLOWED_ORIGINS');
   });
 });

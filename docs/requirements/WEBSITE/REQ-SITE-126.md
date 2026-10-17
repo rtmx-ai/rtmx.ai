@@ -1,13 +1,13 @@
 # REQ-SITE-126: Self-Hosted Tab and /license Redirect
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-123|REQ-SITE-105
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-031d
@@ -20,10 +20,10 @@ SHALL remain available.
 
 ## Acceptance Criteria
 
-1. [ ] Self-hosted tab embeds issue + download chrome.
-2. [ ] `/license` → `/checkout` Self-hosted tab (302 or client redirect).
-3. [ ] Pricing “Self-managed license” reaches the tab.
-4. [ ] Playwright covers redirect and download affordance.
+1. [x] Self-hosted tab embeds issue + download chrome.
+2. [x] `/license` → `/checkout` Self-hosted tab (302 or client redirect).
+3. [x] Pricing “Self-managed license” reaches the tab.
+4. [x] Playwright covers redirect and download affordance.
 
 ## Files to modify
 

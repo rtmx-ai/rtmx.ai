@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('pricing hosted vs self-managed CTAs', () => {
-  test('Team hosted starts Checkout, self-managed still reaches /license', async ({ page }) => {
+  test('Team hosted starts Checkout, self-managed reaches Self-hosted tab', async ({ page }) => {
     await page.goto('/pricing');
 
     const teamCard = page.locator('.pricing-card', { hasText: 'Team' }).first();
@@ -17,7 +17,7 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
     );
     await expect(teamCard.getByRole('link', { name: 'Self-managed license' })).toHaveAttribute(
       'href',
-      '/license',
+      '/checkout?tab=self-hosted',
     );
 
     const enterprise = page.locator('.pricing-card', { hasText: 'Enterprise' }).first();
@@ -185,6 +185,19 @@ test.describe('hosted checkout page', () => {
     await page.getByTestId('checkout-cta').click();
     await page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }).catch(() => undefined);
     expect(checkoutQty).toBe(1);
+  });
+
+  test('SITE-126: Self-hosted tab has download chrome; /license redirects', async ({ page }) => {
+    await page.goto('/checkout?tab=self-hosted');
+    await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();
+    await expect(page.locator('#license-server-url')).toBeVisible();
+    await expect(page.locator('#license-org-ref')).toBeVisible();
+    await expect(page.locator('#license-api-key')).toBeVisible();
+    await expect(page.getByTestId('checkout-cta')).toContainText(/Issue and download license/i);
+
+    await page.goto('/license');
+    await expect(page).toHaveURL(/\/checkout\?tab=self-hosted/);
+    await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();
   });
 
   test('SITE-123: three tabs and one CTA that follows the active tab', async ({ page }) => {

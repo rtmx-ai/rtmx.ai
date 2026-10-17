@@ -267,10 +267,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       </form>
 
       <p class="checkout-alt">
-        Prefer the standalone license page?
-        <a href="/license">Open /license</a>.
-        <br />
         Enterprise and On-Prem stay <a href="/contact">sales-assisted</a>.
+        Legacy <a href="/license">/license</a> redirects here (Self-hosted).
       </p>
     </section>
   </div>
@@ -1068,7 +1066,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         body: JSON.stringify({ tier: licenseTier.value }),
       });
       if (!issued.ok) {
-        show(`License issue failed (${issued.status}).`, 'error');
+        if (issued.status === 403 || issued.status === 401) {
+          show('Use an admin credential (rtmx_ad_…) for this organization.', 'error');
+        } else {
+          show(`License issue failed (${issued.status}).`, 'error');
+        }
         return;
       }
       const download = await fetch(`${server}/licenses/${encodeURIComponent(org)}/download`, {
@@ -1081,7 +1083,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       downloadLicense(await download.json());
       show('License downloaded.', 'success');
     } catch {
-      show(`Could not reach ${server}.`, 'error');
+      show(
+        `Could not reach ${server}. Check the URL and RTMX_ALLOWED_ORIGINS.`,
+        'error',
+      );
     } finally {
       submitBtn.disabled = false;
     }
