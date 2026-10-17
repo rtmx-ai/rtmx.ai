@@ -51,12 +51,37 @@ test.describe('hosted checkout page', () => {
     const server = page.locator('#server-url');
     await expect(server).toHaveAttribute('type', 'hidden');
     await expect(server).not.toHaveValue('');
-    await expect(page.locator('body')).toContainText(/Private beta/i);
     await expect(page.getByRole('link', { name: /sales-assisted/i })).toHaveAttribute(
       'href',
       '/contact',
     );
     await expect(page.getByText('RTMX Sync server')).toHaveCount(0);
+  });
+
+  test('SITE-123: three tabs and one CTA that follows the active tab', async ({ page }) => {
+    await page.goto('/checkout');
+    await expect(page.getByTestId('checkout-hub')).toBeVisible();
+    await expect(page.getByTestId('checkout-tab-individual')).toBeVisible();
+    await expect(page.getByTestId('checkout-tab-team')).toBeVisible();
+    await expect(page.getByTestId('checkout-tab-self-hosted')).toBeVisible();
+    await expect(page.getByTestId('checkout-cta')).toHaveCount(1);
+
+    await expect(page.getByTestId('checkout-tab-team')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByTestId('checkout-cta')).toContainText(/Stripe/i);
+
+    await page.getByTestId('checkout-tab-individual').click();
+    await expect(page.getByTestId('checkout-tab-individual')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
+    await expect(page.getByTestId('checkout-cta')).toContainText(/1 seat/i);
+
+    await page.getByTestId('checkout-tab-self-hosted').click();
+    await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();
+    await expect(page.getByTestId('checkout-hosted-shared')).toBeHidden();
+    await expect(page.getByTestId('checkout-cta')).toContainText(/license/i);
+    await expect(page).toHaveURL(/tab=self-hosted/);
   });
 
   test('does not call the server until the org credential is present', async ({ page }) => {

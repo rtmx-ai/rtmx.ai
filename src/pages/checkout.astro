@@ -4,126 +4,251 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
 ---
 
-<StarlightPage frontmatter={{ title: 'Hosted Team Checkout', template: 'splash', hero: { tagline: '' } }}>
-  <div class="license-page rtmx-splash">
+<StarlightPage frontmatter={{ title: 'Get RTMX Sync', template: 'splash', hero: { tagline: '' } }}>
+  <div class="license-page rtmx-splash" data-testid="checkout-hub">
     <section class="license-header">
-      <p class="checkout-kicker">Hosted Team · $9/user/month</p>
-      <h1>Start hosted RTMX Sync</h1>
+      <p class="checkout-kicker">Purchase</p>
+      <h1>Get RTMX Sync</h1>
       <p class="license-subtitle">
-        A tenant-isolated room on
-        <code class="server-fixed">{defaultServer}</code>.
-        Card details stay on Stripe. The RTMX CLI stays free under Apache 2.0.
+        Individual or Team on
+        <code class="server-fixed">{defaultServer}</code>,
+        or a self-hosted license for your node. One checkout path.
+        The RTMX CLI stays free under Apache 2.0.
       </p>
     </section>
 
     <section class="license-form-section not-content">
+      <div
+        class="checkout-tabs"
+        role="tablist"
+        aria-label="Purchase path"
+        data-testid="checkout-tabs"
+      >
+        <button
+          type="button"
+          class="checkout-tab"
+          role="tab"
+          id="tab-individual"
+          data-testid="checkout-tab-individual"
+          data-tab="individual"
+          aria-selected="false"
+          aria-controls="panel-individual"
+        >
+          Individual
+        </button>
+        <button
+          type="button"
+          class="checkout-tab is-active"
+          role="tab"
+          id="tab-team"
+          data-testid="checkout-tab-team"
+          data-tab="team"
+          aria-selected="true"
+          aria-controls="panel-team"
+        >
+          Team
+        </button>
+        <button
+          type="button"
+          class="checkout-tab"
+          role="tab"
+          id="tab-self-hosted"
+          data-testid="checkout-tab-self-hosted"
+          data-tab="self-hosted"
+          aria-selected="false"
+          aria-controls="panel-self-hosted"
+        >
+          Self-hosted
+        </button>
+      </div>
+
       <form id="checkout-form" class="license-form checkout-panel" novalidate>
         <input type="hidden" id="server-url" name="server-url" value={defaultServer} />
+        <input type="hidden" id="active-tab" name="active-tab" value="team" />
+        <input type="hidden" id="offering" name="offering" value="managed_sync" />
 
-        <fieldset class="checkout-step" id="org-session-panel" hidden>
-          <legend class="checkout-step-title">Organization</legend>
-          <label class="field">
-            <span class="field-label">Your organizations</span>
-            <select id="org-select" class="text-input" aria-label="Select organization">
-              <option value="">Select an organization</option>
-            </select>
-          </label>
-          <div class="org-create-row">
+        <!-- Shared hosted org/auth (Individual + Team) -->
+        <div id="hosted-shared" data-testid="checkout-hosted-shared">
+          <fieldset class="checkout-step" id="org-session-panel" hidden>
+            <legend class="checkout-step-title">Organization</legend>
+            <label class="field">
+              <span class="field-label">Your organizations</span>
+              <select id="org-select" class="text-input" aria-label="Select organization">
+                <option value="">Select an organization</option>
+              </select>
+            </label>
+            <div class="org-create-row">
+              <input
+                type="text"
+                id="org-create-name"
+                class="text-input"
+                placeholder="New org name"
+                autocomplete="organization"
+                aria-label="New organization name"
+              />
+              <button type="button" class="secondary-button" id="org-create">
+                Create
+              </button>
+            </div>
+            <p class="field-help">Create or select an org — no ops bootstrap.</p>
+            <p class="field-help" id="org-admin-link" hidden>
+              <a href="#" id="org-admin-anchor">Open organization admin</a>
+            </p>
+            <div class="key-mint-row">
+              <button type="button" class="ghost-button" id="key-mint" disabled>
+                Mint admin API key
+              </button>
+              <span class="field-help key-mint-hint">Optional · for CLI / agents</span>
+            </div>
+            <pre id="key-once" class="key-once" hidden></pre>
+            <p class="field-help" id="key-once-help" hidden>
+              Copy this <code>rtmx_ad_</code> key now — it is shown once.
+              Checkout can continue with your session alone.
+            </p>
+          </fieldset>
+
+          <label class="field" id="org-manual-field">
+            <span class="field-label">Organization</span>
             <input
               type="text"
-              id="org-create-name"
+              id="org-ref"
+              name="org-ref"
               class="text-input"
-              placeholder="New org name"
-              autocomplete="organization"
-              aria-label="New organization name"
+              placeholder="acme"
+              required
             />
-            <button type="button" class="secondary-button" id="org-create">
-              Create
-            </button>
-          </div>
-          <p class="field-help">Create or select an org — no ops bootstrap.</p>
-          <p class="field-help" id="org-admin-link" hidden>
-            <a href="#" id="org-admin-anchor">Open organization admin</a>
+            <span class="field-help">Slug or id. Checkout refuses to start without one.</span>
+          </label>
+
+          <label class="field" id="api-key-field">
+            <span class="field-label">Admin API key</span>
+            <input
+              type="password"
+              id="api-key"
+              name="api-key"
+              class="text-input"
+              placeholder="rtmx_ad_..."
+              autocomplete="off"
+            />
+            <span class="field-help">
+              Prefer <a href="/login?next=/checkout">sign in</a> when OAuth is
+              configured. Private beta: ops-issued
+              <code>rtmx_ad_</code> key until self-serve mint is available.
+              Never stored by rtmx.ai after you leave.
+            </span>
+          </label>
+        </div>
+
+        <div
+          id="panel-individual"
+          class="checkout-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-individual"
+          data-testid="checkout-panel-individual"
+          hidden
+        >
+          <p class="tab-lede">
+            One seat on a personal hosted org. Stripe Team offering at quantity 1
+            (personal-org auto-create lands in SITE-125).
           </p>
-          <div class="key-mint-row">
-            <button type="button" class="ghost-button" id="key-mint" disabled>
-              Mint admin API key
-            </button>
-            <span class="field-help key-mint-hint">Optional · for CLI / agents</span>
-          </div>
-          <pre id="key-once" class="key-once" hidden></pre>
-          <p class="field-help" id="key-once-help" hidden>
-            Copy this <code>rtmx_ad_</code> key now — it is shown once.
-            Checkout can continue with your session alone.
+          <p class="field-help seats-locked-note">Seats locked to 1 for Individual.</p>
+        </div>
+
+        <div
+          id="panel-team"
+          class="checkout-tab-panel is-active"
+          role="tabpanel"
+          aria-labelledby="tab-team"
+          data-testid="checkout-panel-team"
+        >
+          <fieldset class="checkout-step checkout-step-plan">
+            <legend class="checkout-step-title">Seats</legend>
+            <div class="seats-row">
+              <label class="field seats-field">
+                <span class="field-label">Team seats</span>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  class="text-input seats-input"
+                  min="1"
+                  value="1"
+                  required
+                />
+              </label>
+              <p class="seats-meta">
+                <span class="seats-price">$9</span>
+                <span class="field-help">per user / month · 14-day free trial</span>
+              </p>
+            </div>
+          </fieldset>
+        </div>
+
+        <div
+          id="panel-self-hosted"
+          class="checkout-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-self-hosted"
+          data-testid="checkout-panel-self-hosted"
+          hidden
+        >
+          <p class="tab-lede">
+            Issue a license file for your own rtmx-sync node. Server URL is
+            editable for self-managed hosts.
           </p>
-        </fieldset>
-
-        <label class="field" id="org-manual-field">
-          <span class="field-label">Organization</span>
-          <input
-            type="text"
-            id="org-ref"
-            name="org-ref"
-            class="text-input"
-            placeholder="acme"
-            required
-          />
-          <span class="field-help">Slug or id. Checkout refuses to start without one.</span>
-        </label>
-
-        <label class="field" id="api-key-field">
-          <span class="field-label">Admin API key</span>
-          <input
-            type="password"
-            id="api-key"
-            name="api-key"
-            class="text-input"
-            placeholder="rtmx_ad_..."
-            autocomplete="off"
-          />
-          <span class="field-help">
-            Prefer <a href="/login?next=/checkout">sign in</a> when OAuth is
-            configured. Private beta: ops-issued
-            <code>rtmx_ad_</code> key until self-serve mint is available.
-            Never stored by rtmx.ai after you leave.
-          </span>
-        </label>
-
-        <fieldset class="checkout-step checkout-step-plan">
-          <legend class="checkout-step-title">Seats</legend>
-          <div class="seats-row">
-            <label class="field seats-field">
-              <span class="field-label">Team seats</span>
-              <input
-                type="number"
-                id="quantity"
-                name="quantity"
-                class="text-input seats-input"
-                min="1"
-                value="1"
-                required
-              />
-            </label>
-            <p class="seats-meta">
-              <span class="seats-price">$9</span>
-              <span class="field-help">per user / month</span>
-            </p>
-          </div>
-        </fieldset>
-
-        <input type="hidden" id="offering" name="offering" value="managed_sync" />
+          <label class="field">
+            <span class="field-label">Your rtmx-sync server</span>
+            <input
+              type="url"
+              id="license-server-url"
+              name="license-server-url"
+              class="text-input"
+              placeholder="https://sync.example.com"
+              value={defaultServer}
+            />
+            <span class="field-help">The server that will enforce the license.</span>
+          </label>
+          <label class="field">
+            <span class="field-label">Organization</span>
+            <input
+              type="text"
+              id="license-org-ref"
+              name="license-org-ref"
+              class="text-input"
+              placeholder="acme"
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Admin API key</span>
+            <input
+              type="password"
+              id="license-api-key"
+              name="license-api-key"
+              class="text-input"
+              placeholder="rtmx_ad_..."
+              autocomplete="off"
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Tier</span>
+            <select id="license-tier" name="license-tier" class="text-input">
+              <option value="team">Team</option>
+              <option value="free">Free</option>
+            </select>
+          </label>
+        </div>
 
         <div class="checkout-actions">
           <div class="form-message" id="checkout-message" role="status" aria-live="polite"></div>
-          <button type="submit" class="submit-button" id="checkout-submit">
-            <span class="button-text">Continue to Stripe Checkout</span>
+          <button type="submit" class="submit-button" id="checkout-submit" data-testid="checkout-cta">
+            <span class="button-text" id="checkout-cta-label">Continue to Stripe Checkout</span>
           </button>
         </div>
       </form>
 
       <p class="checkout-alt">
-        Operating your own node instead?
-        <a href="/license">Download a self-managed license</a>.
+        Prefer the standalone license page?
+        <a href="/license">Open /license</a>.
         <br />
         Enterprise and On-Prem stay <a href="/contact">sales-assisted</a>.
       </p>
@@ -146,6 +271,62 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--rtmx-text-dim);
+  }
+
+  .checkout-tabs {
+    display: flex;
+    gap: 0.35rem;
+    margin: 0 0 1rem;
+    padding: 0.3rem;
+    background: var(--rtmx-bg-card);
+    border: 1px solid var(--rtmx-border);
+    border-radius: 0.75rem;
+  }
+
+  .checkout-tab {
+    flex: 1;
+    margin: 0;
+    padding: 0.65rem 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--rtmx-text-muted);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .checkout-tab:hover {
+    color: var(--rtmx-text);
+  }
+
+  .checkout-tab.is-active,
+  .checkout-tab[aria-selected='true'] {
+    background: color-mix(in srgb, var(--rtmx-emerald) 18%, transparent);
+    color: var(--rtmx-emerald-light);
+  }
+
+  .checkout-tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .checkout-tab-panel[hidden] {
+    display: none !important;
+  }
+
+  .tab-lede {
+    margin: 0;
+    color: var(--rtmx-text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .seats-locked-note {
+    margin: 0;
   }
 
   .license-header h1 {
@@ -467,8 +648,17 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 <script>
   const STORAGE = 'rtmx.checkout';
   const SESSION = 'rtmx.session';
+  const CTA = {
+    individual: 'Continue to Stripe · 1 seat',
+    team: 'Continue to Stripe Checkout',
+    'self-hosted': 'Issue and download license',
+  } as const;
+  type TabId = keyof typeof CTA;
+
   const form = document.getElementById('checkout-form') as HTMLFormElement;
   const serverInput = document.getElementById('server-url') as HTMLInputElement;
+  const activeTabInput = document.getElementById('active-tab') as HTMLInputElement;
+  const hostedShared = document.getElementById('hosted-shared') as HTMLDivElement;
   const orgInput = document.getElementById('org-ref') as HTMLInputElement;
   const orgSelect = document.getElementById('org-select') as HTMLSelectElement;
   const orgSessionPanel = document.getElementById('org-session-panel') as HTMLFieldSetElement;
@@ -482,9 +672,56 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const apiKeyField = document.getElementById('api-key-field') as HTMLLabelElement;
   const quantityInput = document.getElementById('quantity') as HTMLInputElement;
   const submitBtn = document.getElementById('checkout-submit') as HTMLButtonElement;
+  const ctaLabel = document.getElementById('checkout-cta-label') as HTMLSpanElement;
   const message = document.getElementById('checkout-message') as HTMLDivElement;
   const orgAdminLink = document.getElementById('org-admin-link') as HTMLParagraphElement;
   const orgAdminAnchor = document.getElementById('org-admin-anchor') as HTMLAnchorElement;
+  const licenseServer = document.getElementById('license-server-url') as HTMLInputElement;
+  const licenseOrg = document.getElementById('license-org-ref') as HTMLInputElement;
+  const licenseKey = document.getElementById('license-api-key') as HTMLInputElement;
+  const licenseTier = document.getElementById('license-tier') as HTMLSelectElement;
+
+  function currentTab(): TabId {
+    const v = activeTabInput.value;
+    if (v === 'individual' || v === 'self-hosted' || v === 'team') return v;
+    return 'team';
+  }
+
+  function setTab(tab: TabId) {
+    activeTabInput.value = tab;
+    document.querySelectorAll<HTMLButtonElement>('.checkout-tab').forEach((btn) => {
+      const on = btn.dataset.tab === tab;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll<HTMLElement>('.checkout-tab-panel').forEach((panel) => {
+      const on = panel.id === `panel-${tab}`;
+      panel.hidden = !on;
+      panel.classList.toggle('is-active', on);
+    });
+    const hosted = tab === 'individual' || tab === 'team';
+    hostedShared.hidden = !hosted;
+    if (tab === 'individual') {
+      quantityInput.value = '1';
+      quantityInput.readOnly = true;
+    } else {
+      quantityInput.readOnly = false;
+    }
+    ctaLabel.textContent = CTA[tab];
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tab);
+    history.replaceState({}, '', url.toString());
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.checkout-tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab as TabId;
+      if (tab) setTab(tab);
+    });
+  });
+
+  const initialTab = (new URLSearchParams(window.location.search).get('tab') || 'team') as TabId;
+  setTab(CTA[initialTab] ? initialTab : 'team');
 
   function show(text: string, kind: 'success' | 'error') {
     message.textContent = text;
@@ -654,15 +891,61 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
   gateSignIn();
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  function downloadLicense(envelope: unknown) {
+    const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'license.json';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function submitSelfHosted() {
+    const server = licenseServer.value.trim().replace(/\/+$/, '');
+    const org = licenseOrg.value.trim();
+    const apiKey = licenseKey.value.trim();
+    if (!server || !org || !apiKey) {
+      show('Server, organization, and API key are all required.', 'error');
+      return;
+    }
+    submitBtn.disabled = true;
+    show('Issuing license...', 'success');
+    const headers = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+    try {
+      const issued = await fetch(`${server}/licenses/${encodeURIComponent(org)}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ tier: licenseTier.value }),
+      });
+      if (!issued.ok) {
+        show(`License issue failed (${issued.status}).`, 'error');
+        return;
+      }
+      const download = await fetch(`${server}/licenses/${encodeURIComponent(org)}/download`, {
+        headers,
+      });
+      if (!download.ok) {
+        show(`License download failed (${download.status}).`, 'error');
+        return;
+      }
+      downloadLicense(await download.json());
+      show('License downloaded.', 'success');
+    } catch {
+      show(`Could not reach ${server}.`, 'error');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  async function submitHostedStripe() {
     const server = serverInput.value.trim().replace(/\/+$/, '');
     if (orgSelect.value) orgInput.value = orgSelect.value;
     const org = orgInput.value.trim();
     const apiKey = keyInput.value.trim();
     const session = readSession();
     const bearer = apiKey || session?.token || '';
-    const quantity = Number(quantityInput.value);
+    const quantity = currentTab() === 'individual' ? 1 : Number(quantityInput.value);
     if (!org || !bearer || !Number.isInteger(quantity) || quantity < 1) {
       show('Organization, sign-in or API key, and seat count are required.', 'error');
       return;
@@ -704,5 +987,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     } finally {
       submitBtn.disabled = false;
     }
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (currentTab() === 'self-hosted') {
+      await submitSelfHosted();
+      return;
+    }
+    await submitHostedStripe();
   });
 </script>

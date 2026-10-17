@@ -1,13 +1,13 @@
 # REQ-SITE-123: Unified Purchase Hub Tabs + Common CTA
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 13
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-112
 - **Blocks**: REQ-SITE-124|REQ-SITE-125|REQ-SITE-126
 - **External ID**: rtmx-ai/REQ-MONO-031a
@@ -19,10 +19,10 @@ one view and a single primary CTA whose behavior matches the active tab.
 
 ## Acceptance Criteria
 
-1. [ ] Tabs Individual | Team | Self-hosted with `data-testid` hooks.
-2. [ ] Exactly one primary submit/CTA control for acquisition.
-3. [ ] CTA label reflects Stripe vs license download for the active tab.
-4. [ ] Playwright: tab switch updates CTA (`tests/e2e/checkout.spec.ts`).
+1. [x] Tabs Individual | Team | Self-hosted with `data-testid` hooks.
+2. [x] Exactly one primary submit/CTA control for acquisition.
+3. [x] CTA label reflects Stripe vs license download for the active tab.
+4. [x] Playwright: tab switch updates CTA (`tests/e2e/checkout.spec.ts`).
 
 ## Out of Scope
 
