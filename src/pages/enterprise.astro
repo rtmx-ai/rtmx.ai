@@ -4,26 +4,26 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 const deploymentOptions = [
   {
     name: 'Cloud Managed Service',
-    badge: 'sync.rtmx.io',
-    status: 'FedRAMP In Progress',
+    badge: 'sync.rtmx.ai',
+    status: 'Private beta',
     description: 'Fully managed RTMX Sync with real-time collaboration. Zero infrastructure management.',
     features: [
       'Real-time multiplayer synchronization',
       'TLS in transit; optional client E2E',
-      'US or EU data residency',
+      'Team Checkout self-serve; Enterprise via sales',
       'Custom availability terms via MSA',
     ],
   },
   {
     name: 'GovCloud',
-    badge: 'IL4/IL5 Ready',
-    status: 'Available',
-    description: 'Deploy on AWS GovCloud, Azure Government, or GCP Assured Workloads.',
+    badge: 'Sales-assisted',
+    status: 'Roadmap',
+    description: 'Deploy on AWS GovCloud, Azure Government, or GCP Assured Workloads with a partner.',
     features: [
-      'FedRAMP High environments',
-      'DoD IL4/IL5 compliant infrastructure',
-      'ITAR/EAR compatible',
-      'Managed by ioTACTICAL or self-managed',
+      'Target FedRAMP / DoD environments',
+      'Partner-operated or self-managed',
+      'ITAR/EAR packaging on request',
+      'Not a current self-serve ATO',
     ],
   },
   {
@@ -164,7 +164,7 @@ const cmmcSupport = [
 ---
 
 <StarlightPage frontmatter={{ title: 'Enterprise', template: 'splash', hero: { tagline: '' } }}>
-  <div class="enterprise-page">
+  <div class="enterprise-page" data-testid="enterprise-page">
     <!-- Hero Section -->
     <section class="enterprise-hero">
       <span class="enterprise-badge">Enterprise & Government</span>

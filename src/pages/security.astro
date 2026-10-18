@@ -1,31 +1,36 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
-const plannedSecurityFeatures = [
+const shippedSecurityFeatures = [
   {
     icon: 'lock',
     title: 'TLS 1.3 Transport Encryption',
-    description: 'All data in transit will be protected with TLS 1.3, ensuring forward secrecy and strong encryption.',
+    description:
+      'Managed Sync terminates TLS 1.3 at the edge. Data in transit uses modern cipher suites with forward secrecy.',
   },
   {
     icon: 'shield',
-    title: 'Optional Client End-to-End Encryption',
-    description: 'Optional AES-256-GCM client-side E2E so the sync host sees only ciphertext when enabled. Managed default uses TLS in transit and org-isolated room storage.',
+    title: 'Org-Isolated Room Storage',
+    description:
+      'Tenant isolation enforces org_id on every Sync operation. Managed default is TLS in transit plus org-scoped rooms—not default client E2E.',
   },
   {
     icon: 'key',
-    title: 'OAuth2/SAML SSO Support',
-    description: 'Enterprise single sign-on integration with your existing identity provider. Support for Okta, Azure AD, and more.',
+    title: 'OAuth Sign-In (GitHub, Google, Microsoft)',
+    description:
+      'Managed buyers sign in with configured OIDC providers. Enterprise SAML/SSO is sales-assisted for self-managed and air-gapped deployments.',
   },
   {
     icon: 'users',
-    title: 'Role-Based Access Control',
-    description: 'Fine-grained permissions will control who can view, edit, or manage requirements and configurations.',
+    title: 'Org Role-Based Access',
+    description:
+      'Viewer / member / admin / owner roles hydrate AuthResult and gate org-scoped Sync writes.',
   },
   {
     icon: 'clipboard',
-    title: 'Immutable Audit Logging',
-    description: 'Every action will be logged with cryptographic integrity. Audit trails cannot be modified or deleted.',
+    title: 'Optional Client End-to-End Encryption',
+    description:
+      'Optional AES-256-GCM client-side E2E so the sync host sees only ciphertext when enabled. Not the managed default.',
   },
 ];
 
@@ -94,8 +99,9 @@ const pqcTimeline = [
 const complianceStandards = [
   {
     name: 'FIPS 140-3',
-    status: 'supported',
-    description: 'Federal Information Processing Standard for cryptographic modules.',
+    status: 'roadmap',
+    description:
+      'Target: OpenSSL FIPS provider / AWS-LC for FIPS-validated crypto in self-managed and air-gapped builds.',
   },
   {
     name: 'CNSA 2.0',
@@ -112,27 +118,30 @@ const complianceStandards = [
 const authorizationRoadmap = [
   {
     name: 'FedRAMP Moderate',
-    status: 'in-progress',
-    description: 'Federal Risk and Authorization Management Program via FedRAMP 20x pilot.',
-    timeline: 'Q4 2026',
+    status: 'planned',
+    description:
+      'Target authorization path via FedRAMP 20x pilot. Not currently authorized—contact sales for status.',
+    timeline: 'Roadmap',
   },
   {
     name: 'DoD IL4/IL5',
     status: 'planned',
-    description: 'Department of Defense Impact Level 4/5 via GovCloud partners.',
-    timeline: '2027',
+    description:
+      'Target Impact Level support via GovCloud / air-gapped partners. Not a current ATO claim.',
+    timeline: 'Roadmap',
   },
   {
     name: 'CMMC 2.0 Level 2',
-    status: 'supported',
-    description: 'Cybersecurity Maturity Model Certification for defense contractors.',
-    timeline: 'Available',
+    status: 'planned',
+    description: 'Cybersecurity Maturity Model Certification target for defense contractors.',
+    timeline: 'Roadmap',
   },
   {
     name: 'NIST 800-53 Rev 5',
-    status: 'supported',
-    description: 'Security and Privacy Controls for Information Systems and Organizations.',
-    timeline: 'Available',
+    status: 'planned',
+    description:
+      'Control mapping artifact for enterprise ATO packages—available on request, not a certification.',
+    timeline: 'On request',
   },
 ];
 
@@ -153,23 +162,24 @@ const supplyChainFeatures = [
 ---
 
 <StarlightPage frontmatter={{ title: 'Security', template: 'splash', hero: { tagline: '' } }}>
-  <div class="security-page">
+  <div class="security-page" data-testid="security-page">
     <!-- Hero Section -->
     <section class="security-hero">
       <span class="security-badge">Security</span>
-      <h1>Enterprise-Grade Security Built In</h1>
+      <h1>Security for managed and self-hosted Sync</h1>
       <p class="hero-subtitle">
-        RTMX is built from the ground up with security as a core principle. From end-to-end encryption
-        to post-quantum cryptography readiness, we protect your most sensitive requirements data.
+        Managed Sync ships TLS in transit, org-isolated rooms, and OAuth sign-in today.
+        Optional client E2E, FIPS modes, and federal authorizations are roadmap or
+        sales-assisted—not default Team claims.
       </p>
     </section>
 
-    <!-- Planned Security Section -->
-    <section class="security-section">
-      <h2>Security Roadmap</h2>
-      <p class="section-subtitle">Enterprise security features planned for the RTMX Sync service.</p>
+    <!-- Shipped Security Section -->
+    <section class="security-section" data-testid="security-shipped">
+      <h2>What ships today</h2>
+      <p class="section-subtitle">Capabilities on sync.rtmx.ai and self-managed deployments.</p>
       <div class="features-grid not-content">
-        {plannedSecurityFeatures.map((feature) => (
+        {shippedSecurityFeatures.map((feature) => (
           <div class="feature-card">
             <div class="feature-icon" data-icon={feature.icon}>
               {feature.icon === 'lock' && (

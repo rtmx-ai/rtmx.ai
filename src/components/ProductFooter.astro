@@ -1,8 +1,9 @@
 ---
 /**
  * Compact product footer for demoted top-nav links (SITE-117 IA).
- * About, Roadmap, aegis, Contact, GitHub.
+ * About, Roadmap, Security, Enterprise, aegis, Contact, GitHub.
  * Privacy/Terms live in StarlightFooter site-legal-bar (always last).
+ * REQ-SITE-136 / WEB-009: Security + Enterprise live routes (not header).
  */
 ---
 
@@ -10,6 +11,8 @@
 	<nav class="product-footer-nav" aria-label="Site">
 		<a href="/about">About</a>
 		<a href="/roadmap">Roadmap</a>
+		<a href="/security" data-testid="footer-security">Security</a>
+		<a href="/enterprise" data-testid="footer-enterprise">Enterprise</a>
 		<a href="/aegis">aegis</a>
 		<a href="/contact">Contact</a>
 		<a href="https://github.com/rtmx-ai/rtmx" target="_blank" rel="noopener noreferrer">GitHub</a>
