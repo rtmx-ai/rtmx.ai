@@ -144,4 +144,98 @@ test.describe('account page', () => {
     await page.locator('.share-select').selectOption('org-1');
     await expect(page.locator('#account-message')).toContainText(/shared/i);
   });
+
+  test('SITE-132: multi-org memberships and GitHub affiliate candidates', async ({ page }) => {
+    let memberships = [
+      { id: 'p1', name: 'OSS Lab', slug: 'oss-lab', visibility: 'public' },
+    ];
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+          tier: 'free',
+        }),
+      });
+    });
+    await page.route('**/orgs', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ organizations: memberships }),
+      });
+    });
+    await page.route('**/auth/github/orgs/affiliate', async (route) => {
+      const body = route.request().postDataJSON() as { login?: string };
+      memberships = [
+        ...memberships,
+        { id: 'p2', name: body.login || 'rtmx-ai', slug: body.login || 'rtmx-ai', visibility: 'public' },
+      ];
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'p2',
+          name: body.login,
+          slug: body.login,
+          visibility: 'public',
+          role: 'member',
+          action: 'joined',
+        }),
+      });
+    });
+    await page.route('**/auth/github/orgs', async (route) => {
+      if (route.request().url().includes('/affiliate')) {
+        await route.fallback();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          orgs: [
+            { id: 1, login: 'oss-lab', description: 'Already affiliated' },
+            { id: 2, login: 'rtmx-ai', description: 'RTMX' },
+          ],
+        }),
+      });
+    });
+    await page.route('**/connections', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ connections: [] }),
+      });
+    });
+
+    await page.goto('/account');
+    await page.evaluate(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+          user_id: 'u1',
+        }),
+      );
+      localStorage.removeItem('rtmx.active_org');
+    });
+    await page.reload();
+
+    await expect(page.getByTestId('github-affiliation')).toBeVisible();
+    await expect(page.getByTestId('github-org-candidates')).toContainText('rtmx-ai');
+    await expect(page.getByTestId('org-membership-list')).toContainText('oss-lab');
+
+    await page.getByTestId('affiliate-gh-rtmx-ai').click();
+    await expect(page.locator('#gh-affiliate-message')).toContainText(/Affiliated with rtmx-ai/i);
+    await expect(page.getByTestId('org-membership-list')).toContainText('rtmx-ai');
+    await expect(page.getByTestId('org-membership-list')).toContainText('oss-lab');
+
+    await page.getByTestId('select-org-oss-lab').click();
+    await expect(page.getByTestId('org-membership-list')).toContainText('active');
+  });
 });

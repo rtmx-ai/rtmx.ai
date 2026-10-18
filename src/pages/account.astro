@@ -23,9 +23,33 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 
       <div class="account-card" id="organizations">
         <h2 class="account-section-title">Organizations</h2>
-        <ul class="org-list" id="org-list"></ul>
-        <p class="field-help" id="org-empty" hidden>No organizations yet. Create one on Checkout.</p>
+        <p class="field-help">
+          All Sync memberships appear here. Select an active org for subsequent
+          collaboration (multi-org accounts are first-class).
+        </p>
+        <ul class="org-list" id="org-list" data-testid="org-membership-list"></ul>
+        <p class="field-help" id="org-empty" hidden>No organizations yet. Create one on Checkout or affiliate from GitHub below.</p>
         <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
+      </div>
+
+      <div class="account-card" id="github-affiliation" data-testid="github-affiliation">
+        <h2 class="account-section-title">GitHub organizations</h2>
+        <p class="field-help">
+          When your account is linked to GitHub with <code>read:org</code>, Sync
+          can suggest public affiliation candidates. Private Sync orgs stay on the
+          Team path.
+        </p>
+        <ul class="org-list" id="gh-org-list" data-testid="github-org-candidates"></ul>
+        <p class="field-help" id="gh-org-empty" hidden>No GitHub organizations returned.</p>
+        <p class="field-help" id="gh-org-reauth" hidden>
+          Link or re-authorize GitHub with organization access to load candidates.
+          <a href="/login?next=%2Faccount">Sign in with GitHub</a>
+        </p>
+        <label class="gh-create-public">
+          <input type="checkbox" id="gh-create-public" checked data-testid="gh-create-public" />
+          Create a public Sync org when no matching slug exists
+        </label>
+        <div class="form-message" id="gh-affiliate-message" role="status" aria-live="polite"></div>
       </div>
 
       <nav class="account-nav">
@@ -93,19 +117,38 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .form-message.is-error { color: #fecaca; }
   .form-message.is-success { color: var(--rtmx-emerald-light); }
   .form-message:empty { display: none; }
+  .gh-create-public {
+    display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.75rem;
+    color: var(--rtmx-text-dim); font-size: 0.85rem; line-height: 1.4; cursor: pointer;
+  }
+  .gh-create-public input { margin-top: 0.15rem; }
+  .org-active-badge {
+    font-size: 0.75rem; color: var(--rtmx-emerald-light); border: 1px solid var(--rtmx-emerald);
+    border-radius: 0.25rem; padding: 0.1rem 0.4rem; margin-left: 0.35rem;
+  }
+  .org-select-btn, .gh-affiliate-btn {
+    border: 1px solid var(--rtmx-border-hover); background: transparent; color: var(--rtmx-emerald-light);
+    border-radius: 0.35rem; padding: 0.25rem 0.55rem; font: inherit; font-size: 0.8rem; cursor: pointer;
+  }
 </style>
 
 <script define:vars={{ defaultServer }}>
   const SESSION = 'rtmx.session';
+  const ACTIVE_ORG = 'rtmx.active_org';
   const server = defaultServer.replace(/\/+$/, '');
   const displayEl = document.getElementById('account-display-name');
   const emailEl = document.getElementById('account-email');
   const orgListEl = document.getElementById('org-list');
   const orgEmptyEl = document.getElementById('org-empty');
+  const ghListEl = document.getElementById('gh-org-list');
+  const ghEmptyEl = document.getElementById('gh-org-empty');
+  const ghReauthEl = document.getElementById('gh-org-reauth');
+  const ghMsgEl = document.getElementById('gh-affiliate-message');
+  const ghCreatePublicEl = document.getElementById('gh-create-public');
   const listEl = document.getElementById('connection-list');
   const emptyEl = document.getElementById('connection-empty');
   const message = document.getElementById('account-message');
-  /** @type {{ id: string, name?: string, slug?: string }[]} */
+  /** @type {{ id: string, name?: string, slug?: string, visibility?: string }[]} */
   let cachedOrgs = [];
 
   function readSession() {
@@ -123,6 +166,20 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     message.className = 'form-message is-' + kind;
   }
 
+  function showGh(text, kind) {
+    ghMsgEl.textContent = text;
+    ghMsgEl.className = 'form-message is-' + kind;
+  }
+
+  function getActiveOrgSlug() {
+    return localStorage.getItem(ACTIVE_ORG) || '';
+  }
+
+  function setActiveOrgSlug(slug) {
+    if (slug) localStorage.setItem(ACTIVE_ORG, slug);
+    else localStorage.removeItem(ACTIVE_ORG);
+  }
+
   async function loadOrgs(token) {
     const resp = await fetch(server + '/orgs', {
       headers: { Authorization: 'Bearer ' + token },
@@ -137,16 +194,134 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     cachedOrgs = orgs;
     orgListEl.innerHTML = '';
     orgEmptyEl.hidden = orgs.length > 0;
+    let active = getActiveOrgSlug();
+    if (active && !orgs.some((o) => o.slug === active)) {
+      active = orgs[0]?.slug || '';
+      setActiveOrgSlug(active);
+    } else if (!active && orgs[0]?.slug) {
+      active = orgs[0].slug;
+      setActiveOrgSlug(active);
+    }
     for (const org of orgs) {
       const li = document.createElement('li');
       const label = document.createElement('span');
       label.textContent = (org.name || org.slug) + ' (' + (org.slug || org.id) + ')';
+      if (org.visibility) {
+        label.textContent += ' · ' + org.visibility;
+      }
+      if (org.slug === active) {
+        const badge = document.createElement('span');
+        badge.className = 'org-active-badge';
+        badge.textContent = 'active';
+        label.appendChild(badge);
+      }
+      const actions = document.createElement('div');
+      actions.className = 'connection-actions';
+      if (org.slug && org.slug !== active) {
+        const selectBtn = document.createElement('button');
+        selectBtn.type = 'button';
+        selectBtn.className = 'org-select-btn';
+        selectBtn.textContent = 'Use';
+        selectBtn.setAttribute('data-testid', 'select-org-' + org.slug);
+        selectBtn.addEventListener('click', () => {
+          setActiveOrgSlug(org.slug);
+          loadOrgs(token);
+        });
+        actions.appendChild(selectBtn);
+      }
       const admin = document.createElement('a');
       admin.href = '/orgs/admin?slug=' + encodeURIComponent(org.slug || org.id);
       admin.textContent = 'Admin';
+      actions.appendChild(admin);
       li.appendChild(label);
-      li.appendChild(admin);
+      li.appendChild(actions);
       orgListEl.appendChild(li);
+    }
+  }
+
+  async function affiliateGithubOrg(token, login) {
+    const createPublic = !!ghCreatePublicEl.checked;
+    showGh('Affiliating with ' + login + '…', 'success');
+    const resp = await fetch(server + '/auth/github/orgs/affiliate', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ login, create_public: createPublic }),
+    });
+    const body = await resp.json().catch(() => ({}));
+    if (resp.status === 409 && !createPublic) {
+      showGh('No public Sync org for ' + login + '. Enable create-public and try again.', 'error');
+      return;
+    }
+    if (resp.status === 403) {
+      const detail = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail || body);
+      showGh(detail || 'Private Sync orgs require Team entitlement.', 'error');
+      return;
+    }
+    if (resp.status === 401) {
+      ghReauthEl.hidden = false;
+      showGh('GitHub re-authorization required for organization access.', 'error');
+      return;
+    }
+    if (!resp.ok) {
+      showGh('Affiliate failed (' + resp.status + ').', 'error');
+      return;
+    }
+    showGh('Affiliated with ' + (body.slug || login) + ' (' + (body.action || 'ok') + ').', 'success');
+    if (body.slug) setActiveOrgSlug(body.slug);
+    await loadOrgs(token);
+    await loadGithubOrgs(token);
+  }
+
+  async function loadGithubOrgs(token) {
+    ghReauthEl.hidden = true;
+    ghEmptyEl.hidden = true;
+    const resp = await fetch(server + '/auth/github/orgs', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (resp.status === 401) {
+      ghListEl.innerHTML = '';
+      ghReauthEl.hidden = false;
+      return;
+    }
+    if (!resp.ok) {
+      ghListEl.innerHTML = '';
+      ghEmptyEl.hidden = false;
+      ghEmptyEl.textContent = 'Could not list GitHub orgs (' + resp.status + ').';
+      return;
+    }
+    const body = await resp.json();
+    const candidates = body.orgs || [];
+    ghListEl.innerHTML = '';
+    ghEmptyEl.hidden = candidates.length > 0;
+    const memberSlugs = new Set(cachedOrgs.map((o) => (o.slug || '').toLowerCase()));
+    for (const gh of candidates) {
+      const login = gh.login || '';
+      if (!login) continue;
+      const li = document.createElement('li');
+      const label = document.createElement('span');
+      label.textContent = login + (gh.description ? ' — ' + gh.description : '');
+      const actions = document.createElement('div');
+      actions.className = 'connection-actions';
+      if (memberSlugs.has(login.toLowerCase())) {
+        const joined = document.createElement('span');
+        joined.className = 'org-active-badge';
+        joined.textContent = 'member';
+        actions.appendChild(joined);
+      } else {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'gh-affiliate-btn';
+        btn.textContent = 'Affiliate';
+        btn.setAttribute('data-testid', 'affiliate-gh-' + login);
+        btn.addEventListener('click', () => affiliateGithubOrg(token, login));
+        actions.appendChild(btn);
+      }
+      li.appendChild(label);
+      li.appendChild(actions);
+      ghListEl.appendChild(li);
     }
   }
 
@@ -302,6 +477,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     emailEl.textContent = session.email || '';
     await completeAsanaIfPresent(session.token);
     await loadOrgs(session.token);
+    await loadGithubOrgs(session.token);
     await loadConnections(session.token);
   })();
 
