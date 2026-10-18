@@ -191,7 +191,7 @@ test.describe('hosted checkout page', () => {
     await expect(page.getByTestId('checkout-cta')).not.toContainText(/1 seat/i);
   });
 
-  test('SITE-125: Individual creates/reuses personal org and posts quantity 1', async ({
+  test('SITE-130: Individual does not mint a personal org or Team×1 Checkout', async ({
     page,
   }) => {
     await page.addInitScript(() => {
@@ -201,8 +201,18 @@ test.describe('hosted checkout page', () => {
       );
     });
 
-    let created = false;
+    let orgPosts = 0;
+    let checkoutCalled = false;
     await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'POST') {
+        orgPosts += 1;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ id: 'x', name: 'Should Not Create', slug: 'x' }),
+        });
+        return;
+      }
       if (route.request().method() === 'GET') {
         await route.fulfill({
           status: 200,
@@ -211,53 +221,23 @@ test.describe('hosted checkout page', () => {
         });
         return;
       }
-      if (route.request().method() === 'POST') {
-        created = true;
-        const body = route.request().postDataJSON() as { name?: string };
-        expect(body.name).toMatch(/Personal/i);
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            id: 'po1',
-            name: body.name || 'Buyer Personal',
-            slug: 'buyer-personal',
-          }),
-        });
-        return;
-      }
       await route.continue();
     });
-
-    let checkoutQty: number | undefined;
     await page.route('**/billing/checkout', async (route) => {
-      const body = route.request().postDataJSON() as {
-        quantity?: number;
-        org_id?: string;
-        offering?: string;
-      };
-      checkoutQty = body.quantity;
-      expect(body.offering).toBe('managed_sync');
-      expect(body.org_id).toBe('buyer-personal');
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          url: 'https://checkout.stripe.com/c/pay/cs_test_individual',
-          session_id: 'cs_test_individual',
-        }),
-      });
+      checkoutCalled = true;
+      await route.abort();
     });
 
     await page.goto('/checkout?tab=individual');
     await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
-    await expect(page.getByTestId('org-session-panel')).toBeHidden();
-    await expect(page.getByTestId('personal-org-status')).toContainText(/buyer-personal|Personal/i);
-    expect(created).toBe(true);
+    await expect(page.getByTestId('checkout-hosted-shared')).toBeHidden();
+    await expect(page.getByTestId('personal-org-status')).toContainText(/buyer@example.com|Signed in/i);
+    expect(orgPosts).toBe(0);
 
     await page.getByTestId('checkout-cta').click();
-    await page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }).catch(() => undefined);
-    expect(checkoutQty).toBe(1);
+    await expect(page.locator('#checkout-message')).toContainText(/signed in|Team|public/i);
+    expect(checkoutCalled).toBe(false);
+    expect(orgPosts).toBe(0);
   });
 
   test('SITE-126: Self-hosted tab has download chrome; /license redirects', async ({ page }) => {

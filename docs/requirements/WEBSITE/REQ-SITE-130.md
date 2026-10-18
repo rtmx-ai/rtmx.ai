@@ -1,13 +1,13 @@
 # REQ-SITE-130: Individual Without Personal-Org Auto-Create
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 14
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-129|REQ-SITE-125
 - **Blocks**: REQ-SITE-131
 - **External ID**: rtmx-ai/REQ-MONO-032b

@@ -766,67 +766,24 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     return 'team';
   }
 
-  function isPersonalOrg(org: { name: string; slug: string }): boolean {
-    const slug = (org.slug || '').toLowerCase();
-    const name = (org.name || '').toLowerCase();
-    return slug === 'personal' || slug.endsWith('-personal') || name === 'personal';
-  }
-
-  function personalOrgName(email?: string): string {
-    const local = (email || 'user').split('@')[0] || 'user';
-    const clean = local.replace(/[^a-zA-Z0-9]+/g, ' ').trim() || 'User';
-    return `${clean} Personal`;
-  }
-
-  async function ensurePersonalOrg(
-    server: string,
-    token: string,
-    email?: string,
-  ): Promise<{ id: string; name: string; slug: string } | null> {
-    const existing = cachedOrgs.find(isPersonalOrg);
-    if (existing) return existing;
-    const resp = await fetch(`${server}/orgs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: personalOrgName(email) }),
-    });
-    if (!resp.ok) {
-      show(`Could not create personal organization (${resp.status}).`, 'error');
-      return null;
-    }
-    const org = await resp.json();
-    cachedOrgs = [...cachedOrgs, org];
-    return org;
-  }
-
   async function applyIndividualPath() {
     const session = readSession();
-    const server = serverInput.value.trim().replace(/\/+$/, '');
-    // Individual hides Team org picker; uses session + personal org only.
+    // SITE-130: account-only — no personal-org mint, no Team org chrome.
     orgSessionPanel.hidden = true;
     orgManualField.hidden = true;
     apiKeyField.hidden = true;
     keyInput.removeAttribute('required');
     orgInput.removeAttribute('required');
-    quantityInput.value = '1';
-    quantityInput.readOnly = true;
+    orgInput.value = '';
+    quantityInput.readOnly = false;
+    personalOrgStatus.hidden = false;
     if (!session?.token) {
-      personalOrgStatus.hidden = false;
-      personalOrgStatus.textContent = 'Sign in to continue with an Individual plan.';
+      personalOrgStatus.textContent =
+        'Sign in with your RTMX account to continue. Private teams use the Team tab.';
       return;
     }
-    personalOrgStatus.hidden = false;
-    personalOrgStatus.textContent = 'Preparing personal organization…';
-    if (cachedOrgs.length === 0) {
-      await loadOrgs(server, session.token);
-    }
-    const org = await ensurePersonalOrg(server, session.token, session.email);
-    if (!org) return;
-    orgInput.value = org.slug || org.id;
-    personalOrgStatus.textContent = `Personal org: ${org.name} (${org.slug || org.id})`;
+    const who = session.email || 'your RTMX account';
+    personalOrgStatus.textContent = `Signed in as ${who}. Public open-source Sync stays free; private multiplayer is on Team.`;
   }
 
   async function setTab(tab: TabId) {
@@ -841,8 +798,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       panel.hidden = !on;
       panel.classList.toggle('is-active', on);
     });
-    const hosted = tab === 'individual' || tab === 'team';
-    hostedShared.hidden = !hosted;
+    // Team only uses shared org/auth chrome; Individual is account-oriented.
+    hostedShared.hidden = tab !== 'team';
     if (tab === 'individual') {
       await applyIndividualPath();
     } else if (tab === 'team') {
@@ -1154,14 +1111,32 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
+  async function submitIndividualAccount() {
+    const session = readSession();
+    if (!session?.token) {
+      show('Sign in with your RTMX account to continue.', 'error');
+      window.location.assign('/login?next=' + encodeURIComponent('/checkout?tab=individual'));
+      return;
+    }
+    // SITE-130: Individual is not Team×1 Checkout. Public join lands in SITE-131.
+    show(
+      'You are signed in. Public open-source Sync is free; use Team for private seats. Public project join is next.',
+      'success',
+    );
+  }
+
   async function submitHostedStripe() {
+    if (currentTab() === 'individual') {
+      await submitIndividualAccount();
+      return;
+    }
     const server = serverInput.value.trim().replace(/\/+$/, '');
     if (orgSelect.value) orgInput.value = orgSelect.value;
     const org = orgInput.value.trim();
     const apiKey = keyInput.value.trim();
     const session = readSession();
     const bearer = apiKey || session?.token || '';
-    const quantity = currentTab() === 'individual' ? 1 : Number(quantityInput.value);
+    const quantity = Number(quantityInput.value);
     if (!org || !bearer || !Number.isInteger(quantity) || quantity < 1) {
       show('Organization, sign-in or API key, and seat count are required.', 'error');
       return;
