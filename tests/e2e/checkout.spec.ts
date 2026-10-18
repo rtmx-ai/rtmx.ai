@@ -235,9 +235,63 @@ test.describe('hosted checkout page', () => {
     expect(orgPosts).toBe(0);
 
     await page.getByTestId('checkout-cta').click();
-    await expect(page.locator('#checkout-message')).toContainText(/signed in|Team|public/i);
+    await expect(page.locator('#checkout-message')).toContainText(/public organization/i);
     expect(checkoutCalled).toBe(false);
     expect(orgPosts).toBe(0);
+  });
+
+  test('SITE-131: Individual affiliates with public org and rejects private', async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session-token', email: 'buyer@example.com' }),
+      );
+    });
+
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            organizations: [
+              { id: 'p1', name: 'OSS Lab', slug: 'oss-lab', visibility: 'public' },
+              { id: 'v1', name: 'Secret Co', slug: 'secret-co', visibility: 'private' },
+            ],
+          }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+    let checkoutCalled = false;
+    await page.route('**/billing/checkout', async (route) => {
+      checkoutCalled = true;
+      await route.abort();
+    });
+
+    await page.goto('/checkout?tab=individual');
+    await expect(page.getByTestId('individual-public-panel')).toBeVisible();
+    const select = page.getByTestId('individual-public-org');
+    await expect(select.locator('option[value="oss-lab"]')).toHaveCount(1);
+    await expect(select.locator('option[value="secret-co"]')).toHaveCount(0);
+
+    await select.selectOption('oss-lab');
+    await page.getByTestId('checkout-cta').click();
+    await expect(page.locator('#checkout-message')).toContainText(/public org oss-lab/i);
+    expect(checkoutCalled).toBe(false);
+
+    // Inject a private target not in the public-only list; unknown → treated private.
+    await page.evaluate(() => {
+      const el = document.getElementById('individual-public-org') as HTMLSelectElement;
+      const opt = document.createElement('option');
+      opt.value = 'secret-co';
+      opt.textContent = 'Secret Co (secret-co)';
+      el.appendChild(opt);
+      el.value = 'secret-co';
+    });
+    await page.getByTestId('checkout-cta').click();
+    await expect(page.locator('#checkout-message')).toContainText(/public organizations|Team for private/i);
   });
 
   test('SITE-126: Self-hosted tab has download chrome; /license redirects', async ({ page }) => {

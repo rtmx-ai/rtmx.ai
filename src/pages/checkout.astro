@@ -203,6 +203,46 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
             data-testid="personal-org-status"
             hidden
           ></p>
+          <div
+            id="individual-public-panel"
+            class="individual-public-panel"
+            data-testid="individual-public-panel"
+            hidden
+          >
+            <label class="field">
+              <span class="field-label">Public organization</span>
+              <select
+                id="individual-public-org"
+                class="text-input"
+                data-testid="individual-public-org"
+                aria-label="Select a public organization"
+              >
+                <option value="">Select a public organization</option>
+              </select>
+            </label>
+            <p class="field-help" data-testid="individual-public-help">
+              Only <strong>public</strong> orgs appear here. Private tenants use Team.
+            </p>
+            <label class="field">
+              <span class="field-label">Or create a public org</span>
+              <input
+                type="text"
+                id="individual-public-create-name"
+                class="text-input"
+                placeholder="my-oss-project"
+                data-testid="individual-public-create-name"
+                autocomplete="organization"
+              />
+            </label>
+            <button
+              type="button"
+              class="secondary-button"
+              id="individual-public-create"
+              data-testid="individual-public-create"
+            >
+              Create public organization
+            </button>
+          </div>
         </div>
 
         <div
@@ -533,6 +573,15 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     color: var(--rtmx-text);
   }
 
+  .individual-public-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rtmx-border);
+  }
+
   .org-create-block .secondary-button {
     align-self: flex-start;
   }
@@ -758,12 +807,38 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const licenseKey = document.getElementById('license-api-key') as HTMLInputElement;
   const licenseTier = document.getElementById('license-tier') as HTMLSelectElement;
   const personalOrgStatus = document.getElementById('personal-org-status') as HTMLParagraphElement;
-  let cachedOrgs: Array<{ id: string; name: string; slug: string }> = [];
+  const individualPublicPanel = document.getElementById(
+    'individual-public-panel',
+  ) as HTMLDivElement;
+  const individualPublicOrg = document.getElementById(
+    'individual-public-org',
+  ) as HTMLSelectElement;
+  const individualPublicCreateName = document.getElementById(
+    'individual-public-create-name',
+  ) as HTMLInputElement;
+  const individualPublicCreateBtn = document.getElementById(
+    'individual-public-create',
+  ) as HTMLButtonElement;
+  let cachedOrgs: Array<{ id: string; name: string; slug: string; visibility?: string }> = [];
 
   function currentTab(): TabId {
     const v = activeTabInput.value;
     if (v === 'individual' || v === 'self-hosted' || v === 'team') return v;
     return 'team';
+  }
+
+  function fillIndividualPublicSelect(
+    orgs: Array<{ id: string; name: string; slug: string; visibility?: string }>,
+  ) {
+    const publicOrgs = orgs.filter((o) => (o.visibility || 'private') === 'public');
+    individualPublicOrg.innerHTML = '<option value="">Select a public organization</option>';
+    for (const org of publicOrgs) {
+      const opt = document.createElement('option');
+      opt.value = org.slug || org.id;
+      opt.textContent = `${org.name} (${org.slug || org.id})`;
+      opt.dataset.visibility = 'public';
+      individualPublicOrg.appendChild(opt);
+    }
   }
 
   async function applyIndividualPath() {
@@ -778,12 +853,17 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     quantityInput.readOnly = false;
     personalOrgStatus.hidden = false;
     if (!session?.token) {
+      individualPublicPanel.hidden = true;
       personalOrgStatus.textContent =
         'Sign in with your RTMX account to continue. Private teams use the Team tab.';
       return;
     }
     const who = session.email || 'your RTMX account';
-    personalOrgStatus.textContent = `Signed in as ${who}. Public open-source Sync stays free; private multiplayer is on Team.`;
+    personalOrgStatus.textContent = `Signed in as ${who}. Choose a public org below — private multiplayer is on Team.`;
+    individualPublicPanel.hidden = false;
+    const server = serverInput.value.trim().replace(/\/+$/, '');
+    await loadOrgs(server, session.token);
+    fillIndividualPublicSelect(cachedOrgs);
   }
 
   async function setTab(tab: TabId) {
@@ -1118,12 +1198,58 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       window.location.assign('/login?next=' + encodeURIComponent('/checkout?tab=individual'));
       return;
     }
-    // SITE-130: Individual is not Team×1 Checkout. Public join lands in SITE-131.
+    const selected = individualPublicOrg.value.trim();
+    if (!selected) {
+      show('Select or create a public organization for free Individual Sync.', 'error');
+      return;
+    }
+    const org = cachedOrgs.find((o) => (o.slug || o.id) === selected);
+    const visibility = org?.visibility || 'private';
+    if (visibility !== 'public') {
+      show('Free Individual only works with public organizations. Use Team for private.', 'error');
+      return;
+    }
+    orgInput.value = selected;
     show(
-      'You are signed in. Public open-source Sync is free; use Team for private seats. Public project join is next.',
+      `Affiliated with public org ${selected}. Managed Sync writes are free for public orgs — no Team Checkout.`,
       'success',
     );
   }
+
+  individualPublicCreateBtn.addEventListener('click', async () => {
+    const session = readSession();
+    const name = individualPublicCreateName.value.trim();
+    const server = serverInput.value.trim().replace(/\/+$/, '');
+    if (!session?.token || !name) {
+      show('Sign in and enter a name to create a public organization.', 'error');
+      return;
+    }
+    individualPublicCreateBtn.disabled = true;
+    try {
+      const resp = await fetch(`${server}/orgs`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, visibility: 'public' }),
+      });
+      if (!resp.ok) {
+        show(`Could not create public organization (${resp.status}).`, 'error');
+        return;
+      }
+      const org = await resp.json();
+      await loadOrgs(server, session.token);
+      fillIndividualPublicSelect(cachedOrgs);
+      individualPublicOrg.value = org.slug || org.id;
+      individualPublicCreateName.value = '';
+      show(`Created public organization ${org.name}.`, 'success');
+    } catch {
+      show(`Could not reach ${server}.`, 'error');
+    } finally {
+      individualPublicCreateBtn.disabled = false;
+    }
+  });
 
   async function submitHostedStripe() {
     if (currentTab() === 'individual') {

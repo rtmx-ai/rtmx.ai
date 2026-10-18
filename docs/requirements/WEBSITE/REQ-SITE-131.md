@@ -1,13 +1,13 @@
 # REQ-SITE-131: Free Individual Public-Org Affiliation
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 14
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-130|REQ-SITE-127
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-032c
