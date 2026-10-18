@@ -238,4 +238,109 @@ test.describe('account page', () => {
     await page.getByTestId('select-org-oss-lab').click();
     await expect(page.getByTestId('org-membership-list')).toContainText('active');
   });
+
+  test('SITE-133: adoption recommendations show rtmx-ai/rtmx and affiliate CTA', async ({ page }) => {
+    let memberships: { id: string; name: string; slug: string; visibility: string }[] = [];
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+          tier: 'free',
+        }),
+      });
+    });
+    await page.route('**/orgs/rtmx-ai/join', async (route) => {
+      memberships = [
+        { id: 'p1', name: 'rtmx-ai', slug: 'rtmx-ai', visibility: 'public' },
+      ];
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'p1',
+          name: 'rtmx-ai',
+          slug: 'rtmx-ai',
+          visibility: 'public',
+          role: 'member',
+        }),
+      });
+    });
+    await page.route('**/orgs', async (route) => {
+      if (route.request().url().includes('/join')) {
+        await route.fallback();
+        return;
+      }
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ organizations: memberships }),
+        });
+        return;
+      }
+      await route.fallback();
+    });
+    await page.route('**/adoption', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          schema_version: 'adoption-v1',
+          entries: [
+            {
+              external_ref: 'github.com/rtmx-ai/rtmx',
+              provider: 'github',
+              org_slug: 'rtmx-ai',
+              room: 'main',
+              visibility: 'public',
+              last_seen_at: '2026-10-18T00:00:00Z',
+              source: 'seed',
+            },
+          ],
+        }),
+      });
+    });
+    await page.route('**/auth/github/orgs', async (route) => {
+      if (route.request().url().includes('/affiliate')) {
+        await route.fallback();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ orgs: [] }),
+      });
+    });
+    await page.route('**/connections', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ connections: [] }),
+      });
+    });
+
+    await page.goto('/account');
+    await page.evaluate(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+          user_id: 'u1',
+        }),
+      );
+    });
+    await page.reload();
+
+    await expect(page.getByTestId('adoption-recommendations')).toBeVisible();
+    await expect(page.getByTestId('adoption-list')).toContainText('github.com/rtmx-ai/rtmx');
+    await page.getByTestId('adopt-affiliate-rtmx-ai').click();
+    await expect(page.locator('#adoption-message')).toContainText(/affiliated with rtmx-ai/i);
+    await expect(page.getByTestId('org-membership-list')).toContainText('rtmx-ai');
+  });
 });

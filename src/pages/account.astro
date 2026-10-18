@@ -32,6 +32,17 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
       </div>
 
+      <div class="account-card" id="adoption-recommendations" data-testid="adoption-recommendations">
+        <h2 class="account-section-title">Already on Sync</h2>
+        <p class="field-help">
+          Projects recorded in the managed Sync adoption registry. Affiliate with
+          the hosting public org to collaborate (dogfood: <code>rtmx-ai/rtmx</code>).
+        </p>
+        <ul class="org-list" id="adoption-list" data-testid="adoption-list"></ul>
+        <p class="field-help" id="adoption-empty" hidden>No public adoption entries yet.</p>
+        <div class="form-message" id="adoption-message" role="status" aria-live="polite"></div>
+      </div>
+
       <div class="account-card" id="github-affiliation" data-testid="github-affiliation">
         <h2 class="account-section-title">GitHub organizations</h2>
         <p class="field-help">
@@ -145,6 +156,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const ghReauthEl = document.getElementById('gh-org-reauth');
   const ghMsgEl = document.getElementById('gh-affiliate-message');
   const ghCreatePublicEl = document.getElementById('gh-create-public');
+  const adoptionListEl = document.getElementById('adoption-list');
+  const adoptionEmptyEl = document.getElementById('adoption-empty');
+  const adoptionMsgEl = document.getElementById('adoption-message');
   const listEl = document.getElementById('connection-list');
   const emptyEl = document.getElementById('connection-empty');
   const message = document.getElementById('account-message');
@@ -169,6 +183,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   function showGh(text, kind) {
     ghMsgEl.textContent = text;
     ghMsgEl.className = 'form-message is-' + kind;
+  }
+
+  function showAdoption(text, kind) {
+    adoptionMsgEl.textContent = text;
+    adoptionMsgEl.className = 'form-message is-' + kind;
   }
 
   function getActiveOrgSlug() {
@@ -236,6 +255,87 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       li.appendChild(label);
       li.appendChild(actions);
       orgListEl.appendChild(li);
+    }
+  }
+
+  async function joinPublicFromAdoption(token, orgSlug, externalRef) {
+    showAdoption('Affiliating with ' + orgSlug + '…', 'success');
+    const resp = await fetch(server + '/orgs/' + encodeURIComponent(orgSlug) + '/join', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (resp.status === 404) {
+      // Org missing — try create-public affiliate from GitHub login when possible.
+      const create = await fetch(server + '/auth/github/orgs/affiliate', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ login: orgSlug, create_public: true }),
+      });
+      if (!create.ok) {
+        showAdoption('Could not affiliate with ' + orgSlug + ' (' + create.status + ').', 'error');
+        return;
+      }
+    } else if (resp.status === 403) {
+      showAdoption('Private Sync orgs require Team entitlement.', 'error');
+      return;
+    } else if (!resp.ok) {
+      showAdoption('Join failed (' + resp.status + ').', 'error');
+      return;
+    }
+    showAdoption(externalRef + ' → affiliated with ' + orgSlug + '.', 'success');
+    setActiveOrgSlug(orgSlug);
+    await loadOrgs(token);
+    await loadAdoption(token);
+  }
+
+  async function loadAdoption(token) {
+    const resp = await fetch(server + '/adoption', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) {
+      adoptionListEl.innerHTML = '';
+      adoptionEmptyEl.hidden = false;
+      adoptionEmptyEl.textContent = 'Could not load adoption registry (' + resp.status + ').';
+      return;
+    }
+    const body = await resp.json();
+    const entries = body.entries || [];
+    adoptionListEl.innerHTML = '';
+    adoptionEmptyEl.hidden = entries.length > 0;
+    const memberSlugs = new Set(cachedOrgs.map((o) => (o.slug || '').toLowerCase()));
+    for (const entry of entries) {
+      const li = document.createElement('li');
+      const label = document.createElement('span');
+      label.textContent =
+        (entry.external_ref || '') +
+        ' · org ' +
+        (entry.org_slug || '') +
+        (entry.room ? '/' + entry.room : '');
+      const actions = document.createElement('div');
+      actions.className = 'connection-actions';
+      const slug = entry.org_slug || '';
+      if (slug && memberSlugs.has(slug.toLowerCase())) {
+        const badge = document.createElement('span');
+        badge.className = 'org-active-badge';
+        badge.textContent = 'member';
+        actions.appendChild(badge);
+      } else if (slug && entry.visibility === 'public') {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'gh-affiliate-btn';
+        btn.textContent = 'Affiliate';
+        btn.setAttribute('data-testid', 'adopt-affiliate-' + slug);
+        btn.addEventListener('click', () =>
+          joinPublicFromAdoption(token, slug, entry.external_ref || ''),
+        );
+        actions.appendChild(btn);
+      }
+      li.appendChild(label);
+      li.appendChild(actions);
+      adoptionListEl.appendChild(li);
     }
   }
 
@@ -477,6 +577,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     emailEl.textContent = session.email || '';
     await completeAsanaIfPresent(session.token);
     await loadOrgs(session.token);
+    await loadAdoption(session.token);
     await loadGithubOrgs(session.token);
     await loadConnections(session.token);
   })();

@@ -1,6 +1,6 @@
 # REQ-SITE-133: Adoption recommendations UI
 
-## Status: MISSING
+## Status: COMPLETE
 ## Priority: MEDIUM
 ## Phase: 15
 ## External ID: rtmx-ai/REQ-MONO-033f
@@ -13,10 +13,10 @@ public org.
 
 ## Acceptance Criteria
 
-- [ ] Recommendations panel/section fetches registry list
-- [ ] Entry for `github.com/rtmx-ai/rtmx` visible when seeded
-- [ ] CTA affiliates to `rtmx-ai` public org when not already a member
-- [ ] Playwright coverage
+- [x] Recommendations panel/section fetches registry list
+- [x] Entry for `github.com/rtmx-ai/rtmx` visible when seeded
+- [x] CTA affiliates to `rtmx-ai` public org when not already a member
+- [x] Playwright coverage
 
 ## Dependencies
 
