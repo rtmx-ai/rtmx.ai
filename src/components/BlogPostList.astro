@@ -1,0 +1,80 @@
+---
+// REQ-SITE-027: reverse-chronological blog index listing.
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('docs'))
+	.filter((entry) => {
+		const id = entry.id.replace(/\\/g, '/');
+		return (
+			/(^|\/)blog\//.test(id) &&
+			!/(^|\/)blog\/index(\.|$)/.test(id) &&
+			entry.data.date instanceof Date
+		);
+	})
+	.sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0));
+
+function postHref(id: string): string {
+	const clean = id
+		.replace(/\\/g, '/')
+		.replace(/\.(md|mdx)$/, '')
+		.replace(/^.*?((?:^|\/)blog\/)/, 'blog/');
+	return `/${clean}`;
+}
+
+function formatDate(d: Date): string {
+	return d.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+		timeZone: 'UTC',
+	});
+}
+---
+
+<ul class="blog-post-list" data-testid="blog-post-list">
+	{
+		posts.map((post) => (
+			<li class="blog-post-item" data-testid="blog-post-item">
+				<a
+					href={postHref(post.id)}
+					class="blog-post-link"
+					data-testid="blog-post-link"
+				>
+					{post.data.title}
+				</a>
+				<time
+					datetime={post.data.date!.toISOString().slice(0, 10)}
+					class="blog-post-date"
+					data-testid="blog-post-date"
+				>
+					{formatDate(post.data.date!)}
+				</time>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.blog-post-list {
+		list-style: none;
+		padding: 0;
+		margin: 1.5rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+	.blog-post-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+	.blog-post-link {
+		font-size: 1.125rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.blog-post-date {
+		font-size: 0.875rem;
+		color: var(--sl-color-gray-3);
+	}
+</style>

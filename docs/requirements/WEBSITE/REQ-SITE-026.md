@@ -1,8 +1,9 @@
 # REQ-SITE-026: Blog shall publish Show HN launch article
 
-## Status: MISSING
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 2
+## Completed: 2026-10-17
 
 ## Description
 Blog shall publish Show HN launch article with origin story and AI workflow narrative.
@@ -19,11 +20,11 @@ The article should cover:
 - Self-referential dogfooding (219 requirements managed by RTMX)
 
 ## Acceptance Criteria
-- [ ] Blog post accessible at /blog/show-hn-rtmx (or similar slug)
-- [ ] Post has structured frontmatter (title, date, description)
-- [ ] Post includes embedded Mermaid diagrams or rendered images
-- [ ] Post links to GitHub repo
-- [ ] Post does not mention rtmx-sync or paid products
+- [x] Blog post accessible at /blog/show-hn-rtmx (or similar slug)
+- [x] Post has structured frontmatter (title, date, description)
+- [x] Post includes embedded Mermaid diagrams or rendered images
+- [x] Post links to GitHub repo
+- [x] Post does not mention rtmx-sync or paid products
 
 ## Test Cases
 - `tests/e2e/blog.spec.ts::test_show_hn_blog_post`

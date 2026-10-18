@@ -1,6 +1,9 @@
 ---
 title: "Show HN: RTMX -- What I Built to Stop AI Agents from Building the Wrong Thing"
 description: "RTMX is a CLI that manages requirements traceability as CSV in git. It gives AI agents a verifiable, queryable model of what to build -- and proof that they built it."
+date: 2026-10-15
+sidebar:
+  order: 2
 ---
 
 This is the companion post to our [Show HN submission](https://github.com/rtmx-ai/rtmx). If you came from Hacker News, welcome. This is the longer version of the story.
@@ -68,6 +71,19 @@ $ rtmx mcp-server
 
 The MCP server exposes ten tools over JSON-RPC that AI agents (Cursor, Copilot, or any MCP-compatible client) can call directly: `status`, `backlog`, `next`, `verify`, `health`, `markers`, `deps` for querying, plus `claim`, `release`, and `release_assign` for multi-agent coordination with atomic locking.
 
+Requirement status itself is derived from tests — not a human flipping a ticket:
+
+```mermaid
+stateDiagram-v2
+    [*] --> missing : rtmx init / add row
+    missing --> partial : some linked tests pass
+    missing --> complete : all linked tests pass
+    partial --> complete : remaining tests pass
+    complete --> partial : test regression
+    partial --> missing : all tests removed
+    complete --> missing : all tests removed
+```
+
 ## Why CSV in Git
 
 This is the question everyone asks. The answer is simpler than you'd expect.
@@ -85,6 +101,24 @@ This is the question everyone asks. The answer is simpler than you'd expect.
 ## The AI Workflow
 
 This is where RTMX changes how you work with agents. The loop is:
+
+```mermaid
+flowchart TD
+    A["Requirements\n(CSV in git)"] --> B["rtmx next\nPick unblocked requirement"]
+    B --> C["Agent writes\ncode + tests"]
+    C --> D{"rtmx verify\nTests pass?"}
+    D -- yes --> E["Status updates\nautomatically"]
+    D -- no --> C
+    E --> F["rtmx status\nTeam sees progress"]
+    F -.-> B
+
+    style A fill:#d1fae5,stroke:#059669,color:#065f46
+    style B fill:#d1fae5,stroke:#059669,color:#065f46
+    style C fill:#e5e7eb,stroke:#6b7280,color:#1f2937
+    style D fill:#fef3c7,stroke:#d97706,color:#92400e
+    style E fill:#d1fae5,stroke:#059669,color:#065f46
+    style F fill:#d1fae5,stroke:#059669,color:#065f46
+```
 
 1. **`rtmx next --one`** -- the agent picks the highest-priority unblocked requirement.
 2. **Read the spec** -- the agent reads the requirement text and acceptance criteria.

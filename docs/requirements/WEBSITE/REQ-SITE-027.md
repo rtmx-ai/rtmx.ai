@@ -1,8 +1,9 @@
 # REQ-SITE-027: Blog section shall appear in site navigation
 
-## Status: MISSING
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 2
+## Completed: 2026-10-17
 
 ## Description
 Blog section shall appear in site navigation with index page listing all
@@ -12,10 +13,10 @@ The existing back-to-basics post is already in the content collection at
 src/content/docs/blog/ but is not exposed in sidebar navigation or header nav.
 
 ## Acceptance Criteria
-- [ ] Blog link visible in Starlight sidebar navigation
-- [ ] /blog or /docs/blog index page lists all posts
-- [ ] Posts ordered reverse-chronologically (newest first)
-- [ ] Each post shows title and date at minimum
+- [x] Blog link visible in Starlight sidebar navigation
+- [x] /blog or /docs/blog index page lists all posts
+- [x] Posts ordered reverse-chronologically (newest first)
+- [x] Each post shows title and date at minimum
 
 ## Test Cases
 - `tests/e2e/blog.spec.ts::test_blog_navigation`

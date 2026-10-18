@@ -1,5 +1,9 @@
 ---
 title: "I Spent a Year Cleaning Up After AI Agents. Then I Went Back to Basics."
+description: "Why agentic engineering needs TDD, BDD, and requirements traceability — and how RTMX puts that contract back in front of the agent."
+date: 2026-05-12
+sidebar:
+  order: 3
 ---
 
 I started working with GitHub Copilot a year ago, migrated to agentic AI tools last summer, and started building real products with AI last fall. That's when the problems started.

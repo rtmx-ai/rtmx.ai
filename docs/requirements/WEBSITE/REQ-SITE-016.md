@@ -1,14 +1,15 @@
 # REQ-SITE-016: Website shall have a blog content strategy with minimum mont...
 
-## Status: MISSING
+## Status: COMPLETE
 ## Priority: MEDIUM
 ## Phase: 2
+## Completed: 2026-10-17
 
 ## Description
 Website shall have a blog content strategy with minimum monthly publishing cadence
 
 ## Acceptance Criteria
-- [ ] Blog index page with 2+ posts; content calendar documented
+- [x] Blog index page with 2+ posts; content calendar documented
 
 ## Test Cases
 - `tests/test_website.py::test_blog_cadence`
