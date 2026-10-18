@@ -11,12 +11,16 @@
 - **Dependencies**: REQ-SITE-124
 - **Blocks**:
 - **External ID**: rtmx-ai/REQ-MONO-031c
+- **Superseded by**: REQ-SITE-129|REQ-SITE-130|REQ-SITE-131 (MONO-032)
 
 ## Requirement
 
 Individual tab SHALL start hosted Team Checkout at quantity 1 against a
 personal organization (created if the user has none suitable), without
 requiring the Team org picker flow.
+
+> **Historical.** Transitional personal-org path. Forward: account-centric
+> Individual (SITE-129–131).
 
 ## Acceptance Criteria
 
