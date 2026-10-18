@@ -25,6 +25,20 @@ def test_production_sync_url_in_deploy_workflow() -> None:
     assert "PUBLIC_RTMX_SYNC_HTTP_URL" in env_section
 
 
+@pytest.mark.req("REQ-SITE-018")
+@pytest.mark.technique_nominal
+def test_demo_video() -> None:
+    """Landing page ships a product demo video asset and embeds it."""
+    demo = ROOT / "public" / "demo" / "rtmx-product-demo.mp4"
+    assert demo.exists(), "public/demo/rtmx-product-demo.mp4 required"
+    assert demo.stat().st_size > 50_000
+
+    hero = (ROOT / "src" / "components" / "Hero.astro").read_text()
+    assert 'data-testid="product-demo-video"' in hero
+    assert "/demo/rtmx-product-demo.mp4" in hero
+    assert "<video" in hero
+
+
 @pytest.mark.req("REQ-SITE-016")
 @pytest.mark.technique_nominal
 def test_blog_cadence() -> None:

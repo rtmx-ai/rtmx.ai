@@ -53,3 +53,11 @@ test.describe('Show HN launch readiness (SITE-029)', () => {
     await expect(page.getByTestId('nav-sync')).toBeVisible();
   });
 });
+
+test('landing page embeds product demo video (SITE-018)', async ({ page }) => {
+  await page.goto('/');
+  const video = page.getByTestId('product-demo-video');
+  await expect(video).toBeVisible();
+  const src = await video.locator('source').getAttribute('src');
+  expect(src).toBe('/demo/rtmx-product-demo.mp4');
+});
