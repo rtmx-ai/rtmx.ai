@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 /**
  * REQ-SITE-117: Sync explainer is the product thesis; Pricing is plans only.
  * Open source CLI is positioned as how you access Sync.
- * Header is product-led: Sync · Docs · Pricing.
+ * Header is product-led: Sync · Docs · Blog · Pricing.
  */
 
 test.describe('Sync explainer (SITE-117)', () => {
-  test('header is Sync, Docs, Pricing — Sync ahead of Pricing', async ({ page }) => {
+  test('header is Sync, Docs, Blog, Pricing — Sync ahead of Pricing', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByTestId('header-nav');
     await expect(nav.getByTestId('nav-sync')).toBeVisible();
@@ -17,7 +17,7 @@ test.describe('Sync explainer (SITE-117)', () => {
 
     const links = nav.locator('a.header-nav-link');
     const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute('href')));
-    expect(hrefs).toEqual(['/sync', '/quickstart', '/pricing']);
+    expect(hrefs).toEqual(['/sync', '/quickstart', '/blog', '/pricing']);
     expect(hrefs.indexOf('/sync')).toBeLessThan(hrefs.indexOf('/pricing'));
 
     // Demoted links live in the product footer, not the header.

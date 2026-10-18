@@ -12,7 +12,12 @@ test.describe('account page', () => {
   });
 
   test('signed-in visitors see profile and connections chrome', async ({ page }) => {
-    await page.route('**/orgs', async (route) => {
+    await page.route(/\/orgs$/, async (route) => {
+      // /auth/github/orgs also ends with /orgs — do not steal that route
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -41,8 +46,7 @@ test.describe('account page', () => {
       });
     });
 
-    await page.goto('/account');
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       sessionStorage.setItem(
         'rtmx.session',
         JSON.stringify({
@@ -52,7 +56,7 @@ test.describe('account page', () => {
         }),
       );
     });
-    await page.reload();
+    await page.goto('/account');
 
     await expect(page.locator('#account-display-name')).toHaveText('Buyer Example');
     await expect(page.locator('#account-email')).toHaveText('buyer@example.com');
@@ -78,7 +82,12 @@ test.describe('account page', () => {
         }),
       });
     });
-    await page.route('**/orgs', async (route) => {
+    await page.route(/\/orgs$/, async (route) => {
+      // /auth/github/orgs also ends with /orgs — do not steal that route
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -88,23 +97,25 @@ test.describe('account page', () => {
       });
     });
     let shared = false;
-    await page.route('**/connections**', async (route) => {
-      const url = route.request().url();
-      if (route.request().method() === 'POST' && url.includes('/share')) {
-        shared = true;
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            id: 'c1',
-            provider: 'asana',
-            status: 'active',
-            owner_user_id: 'u1',
-            display_label: 'Asana',
-            scopes: ['default'],
-            shared_org_ids: ['org-1'],
-          }),
-        });
+    await page.route('**/connections/**/share', async (route) => {
+      shared = true;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'c1',
+          provider: 'asana',
+          status: 'active',
+          owner_user_id: 'u1',
+          display_label: 'Asana',
+          scopes: ['default'],
+          shared_org_ids: ['org-1'],
+        }),
+      });
+    });
+    await page.route('**/connections', async (route) => {
+      if (route.request().url().includes('/share')) {
+        await route.fallback();
         return;
       }
       await route.fulfill({
@@ -125,9 +136,22 @@ test.describe('account page', () => {
         }),
       });
     });
+    await page.route('**/adoption', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ schema_version: 'adoption-v1', entries: [] }),
+      });
+    });
+    await page.route('**/auth/github/orgs', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ orgs: [] }),
+      });
+    });
 
-    await page.goto('/account');
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       sessionStorage.setItem(
         'rtmx.session',
         JSON.stringify({
@@ -138,7 +162,7 @@ test.describe('account page', () => {
         }),
       );
     });
-    await page.reload();
+    await page.goto('/account');
 
     await expect(page.locator('.share-select')).toBeVisible();
     await page.locator('.share-select').selectOption('org-1');
@@ -161,7 +185,12 @@ test.describe('account page', () => {
         }),
       });
     });
-    await page.route('**/orgs', async (route) => {
+    await page.route(/\/orgs$/, async (route) => {
+      // /auth/github/orgs also ends with /orgs — do not steal that route
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -187,6 +216,21 @@ test.describe('account page', () => {
         }),
       });
     });
+    await page.route('**/connections', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ connections: [] }),
+      });
+    });
+    await page.route('**/adoption', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ schema_version: 'adoption-v1', entries: [] }),
+      });
+    });
+    // Register last so it wins over /orgs$ for /auth/github/orgs
     await page.route('**/auth/github/orgs', async (route) => {
       if (route.request().url().includes('/affiliate')) {
         await route.fallback();
@@ -203,16 +247,8 @@ test.describe('account page', () => {
         }),
       });
     });
-    await page.route('**/connections', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ connections: [] }),
-      });
-    });
 
-    await page.goto('/account');
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       sessionStorage.setItem(
         'rtmx.session',
         JSON.stringify({
@@ -224,7 +260,7 @@ test.describe('account page', () => {
       );
       localStorage.removeItem('rtmx.active_org');
     });
-    await page.reload();
+    await page.goto('/account');
 
     await expect(page.getByTestId('github-affiliation')).toBeVisible();
     await expect(page.getByTestId('github-org-candidates')).toContainText('rtmx-ai');
@@ -270,7 +306,7 @@ test.describe('account page', () => {
       });
     });
     await page.route('**/orgs', async (route) => {
-      if (route.request().url().includes('/join')) {
+      if (route.request().url().includes('/join') || route.request().url().includes('/auth/github')) {
         await route.fallback();
         return;
       }
@@ -304,7 +340,7 @@ test.describe('account page', () => {
         }),
       });
     });
-    await page.route('**/auth/github/orgs', async (route) => {
+    await page.route(/\/auth\/github\/orgs$/, async (route) => {
       if (route.request().url().includes('/affiliate')) {
         await route.fallback();
         return;
@@ -323,8 +359,7 @@ test.describe('account page', () => {
       });
     });
 
-    await page.goto('/account');
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       sessionStorage.setItem(
         'rtmx.session',
         JSON.stringify({
@@ -335,7 +370,7 @@ test.describe('account page', () => {
         }),
       );
     });
-    await page.reload();
+    await page.goto('/account');
 
     await expect(page.getByTestId('adoption-recommendations')).toBeVisible();
     await expect(page.getByTestId('adoption-list')).toContainText('github.com/rtmx-ai/rtmx');
