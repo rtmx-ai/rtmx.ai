@@ -2,8 +2,8 @@
 /**
  * REQ-SITE-114: Signed-in identity chrome in the site header.
  * REQ-SITE-134: Validate Bearer via GET /auth/me; clear on 401 (honest signed-out).
- * Session is client-only (sessionStorage `rtmx.session`) until a cookie path exists
- * (SITE-135 / ONBOARD-014).
+ * REQ-SITE-135: On 401, try Sync prompt=none silent OAuth once before clear
+ * (ONBOARD-014 HttpOnly rtmx_session cookie + credentials: include).
  */
 const syncHttpUrl = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
 ---
@@ -111,7 +111,47 @@ const syncHttpUrl = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.r
 		}
 	}
 
-	/** REQ-SITE-134: confirm token with Sync; soft sign-out on 401. */
+	/**
+	 * REQ-SITE-135 / MONO-034c: try silent IdP re-auth once before SITE-134 clear.
+	 * Uses top-level prompt=none (Google/Microsoft). GitHub returns 409 → skip.
+	 */
+	async function trySilentReauth(): Promise<boolean> {
+		if (sessionStorage.getItem('rtmx.oauth.silent_attempted') === '1') {
+			return false;
+		}
+		const preferred = (sessionStorage.getItem('rtmx.oauth.provider') || '').trim();
+		const providers = preferred
+			? [preferred, ...['google', 'microsoft', 'github'].filter((p) => p !== preferred)]
+			: ['google', 'microsoft', 'github'];
+		const next = window.location.pathname + window.location.search;
+		for (const provider of providers) {
+			try {
+				const resp = await fetch(
+					`${syncUrl}/auth/login/${encodeURIComponent(provider)}?prompt=none&next=${encodeURIComponent(next)}`,
+				);
+				if (resp.status === 409) {
+					// Provider cannot silent-auth (e.g. GitHub)
+					continue;
+				}
+				if (!resp.ok) continue;
+				const body = (await resp.json()) as {
+					authorization_url?: string;
+					silent_supported?: boolean;
+				};
+				if (!body.authorization_url) continue;
+				sessionStorage.setItem('rtmx.oauth.silent_attempted', '1');
+				sessionStorage.setItem('rtmx.oauth.provider', provider);
+				sessionStorage.setItem('rtmx.oauth.next', next);
+				window.location.assign(body.authorization_url);
+				return true;
+			} catch {
+				continue;
+			}
+		}
+		return false;
+	}
+
+	/** REQ-SITE-134: confirm token with Sync; soft sign-out on 401 after silent try. */
 	async function validateSession() {
 		const session = readSession();
 		if (!session?.token) {
@@ -123,13 +163,17 @@ const syncHttpUrl = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.r
 		try {
 			const resp = await fetch(`${syncUrl}/auth/me`, {
 				headers: { Authorization: `Bearer ${session.token}` },
+				credentials: 'include',
 			});
 			if (resp.status === 401) {
+				const navigating = await trySilentReauth();
+				if (navigating) return;
 				clearSession();
 				render();
 				return;
 			}
 			if (resp.ok) {
+				sessionStorage.removeItem('rtmx.oauth.silent_attempted');
 				const me = (await resp.json()) as {
 					email?: string;
 					display_name?: string;

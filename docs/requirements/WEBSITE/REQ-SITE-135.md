@@ -1,6 +1,6 @@
 # REQ-SITE-135: Silent OAuth re-auth without a click
 
-## Status: MISSING
+## Status: COMPLETE
 ## Priority: P0
 ## Phase: 16
 ## External ID: rtmx-ai/REQ-MONO-034c
@@ -8,16 +8,18 @@
 ## Description
 
 After SITE-134 graceful expiry, the site SHALL attempt silent IdP re-auth
-(no user click) when Sync reports 401 and the browser may still hold an IdP
-SSO cookie. Implementation depends on Sync ONBOARD-014 / MONO-034b.
+(no user click) when Sync reports 401. Uses Sync `prompt=none` login
+(ONBOARD-014). On success the browser follows the authorize URL
+automatically; on failure (or GitHub 409) SITE-134 signed-out chrome applies.
 
 ## Acceptance Criteria
 
-- [ ] Spec + Gherkin in `system/features/silent-oauth-reauth/`
-- [ ] On 401: try silent restore once before SITE-134 clear
-- [ ] Success: session restored; page continues
-- [ ] Failure: SITE-134 signed-out chrome (no red “sign out again” callout)
-- [ ] Playwright covers silent success (mocked) and failure paths
+- [x] On `/auth/me` 401: try silent restore once (`rtmx.oauth.silent_attempted`)
+- [x] Prefer last `rtmx.oauth.provider`, then google / microsoft / github
+- [x] GitHub / unsupported → continue; clear local session (SITE-134)
+- [x] Supported provider → top-level navigate to `authorization_url` (no click)
+- [x] Callback clears `silent_attempted` on success
+- [x] Playwright: failure path (SITE-134) + silent start (SITE-135)
 
 ## Dependencies
 

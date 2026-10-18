@@ -163,6 +163,20 @@ test.describe('header session chrome', () => {
         body: JSON.stringify({ detail: 'Unauthorized' }),
       });
     });
+    // SITE-135: silent providers unavailable → fall through to SITE-134 clear
+    await page.route('**/auth/login/**', async (route) => {
+      await route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          detail: {
+            error: 'login_required',
+            silent_supported: false,
+            provider: 'github',
+          },
+        }),
+      });
+    });
     await page.goto('/pricing');
     await page.evaluate(() => {
       sessionStorage.setItem(
@@ -180,6 +194,62 @@ test.describe('header session chrome', () => {
     await expect(chrome.getByTestId('session-identity')).toBeHidden();
     const remaining = await page.evaluate(() => sessionStorage.getItem('rtmx.session'));
     expect(remaining).toBeNull();
+  });
+
+  test('SITE-135: silent OAuth starts when Sync returns 401 and IdP supports prompt=none', async ({
+    page,
+  }) => {
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({ detail: 'Unauthorized' }),
+      });
+    });
+    let silentLogin = false;
+    await page.route('**/auth/login/**', async (route) => {
+      const url = route.request().url();
+      if (url.includes('prompt=none') && url.includes('/google')) {
+        silentLogin = true;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            authorization_url: 'https://accounts.google.com/o/oauth2/v2/auth?prompt=none&state=x',
+            state: 'x',
+            provider: 'google',
+            silent_supported: true,
+            prompt: 'none',
+            next: '/pricing',
+          }),
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          detail: { error: 'login_required', silent_supported: false },
+        }),
+      });
+    });
+
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'expired-token',
+          email: 'buyer@gmail.com',
+          display_name: 'Buyer',
+        }),
+      );
+      sessionStorage.setItem('rtmx.oauth.provider', 'google');
+    });
+
+    const nav = page.waitForURL(/accounts\.google\.com/, { timeout: 10000 });
+    await page.goto('/pricing');
+    await nav;
+    expect(silentLogin).toBe(true);
   });
 
   test('SITE-134: checkout 401 soft-prompts Sign in without red sign-out-again copy', async ({

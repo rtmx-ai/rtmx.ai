@@ -72,6 +72,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           login: body.login || '',
         }),
       );
+      sessionStorage.removeItem('rtmx.oauth.silent_attempted');
       if (body.cli_redirect) {
         const handoff = new URL(body.cli_redirect);
         handoff.searchParams.set('session_token', body.session_token);
