@@ -10,14 +10,19 @@ Website shall include product demo video on landing page
 
 ## Acceptance Criteria
 - [x] Video element or embed renders on landing page
+- [x] Walkthrough matches title: `status`, `next`, `verify`, Cursor MCP setup
+- [x] Recordings produced in Docker (generic `/workspace`, `/home/demo` paths)
 
 ## Test Cases
 - `tests/test_website.py::test_demo_video`
 
 ## Notes
-Create 3-5 minute product walkthrough video showing rtmx status and MCP integration.
+`<video data-testid="product-demo-video">` embeds
+`public/demo/rtmx-product-demo.mp4`, concatenated from container-recorded
+vhs assets (`rtmx-workflow` + `rtmx-mcp-setup`).
 
-Shipped MVP: `<video data-testid="product-demo-video">` on the landing Hero
-embeds `public/demo/rtmx-product-demo.mp4`, concatenated from the dogfooded
-vhs assets (`rtmx-workflow` + `rtmx-mcp-setup`). Longer narrative walkthrough
-can replace this file later without changing the embed contract.
+Regenerate from the CLI repo:
+
+```bash
+cd rtmx && make gifs-site
+```

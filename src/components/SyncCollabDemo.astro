@@ -21,7 +21,7 @@
       <span class="sync-demo-room-label">acme / main</span>
       <div class="sync-demo-presence" aria-label="People in the room">
         <span class="sync-demo-avatar you" data-presence="you" title="You">Y</span>
-        <span class="sync-demo-avatar agent" data-presence="agent" title="Agent">A</span>
+        <span class="sync-demo-avatar agent" data-presence="agent" title="Cursor">C</span>
       </div>
     </div>
 
@@ -39,17 +39,17 @@
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">✓ joined room acme/main</div>
-          <div class="sync-demo-line dim" data-step="3">Listening for updates…</div>
-          <div class="sync-demo-line live" data-step="5">
-            <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Agent
+          <div class="sync-demo-line ok" data-step="2">Connecting to https://sync.rtmx.ai/sync/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
+          <div class="sync-demo-line dim" data-step="5">
+            <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Cursor
           </div>
           <div class="sync-demo-line ok" data-step="6">
-            Status → IN_PROGRESS · blocked-by cleared
+            Local database: 1 updated, 0 errors
           </div>
           <div class="sync-demo-line prompt" data-step="7">
             <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx next"></span>
+            <span class="typed" data-type="rtmx next --one"></span>
             <span class="cursor late">▋</span>
           </div>
           <div class="sync-demo-line accent" data-step="8">
@@ -63,7 +63,7 @@
           <div class="sync-demo-dots" aria-hidden="true">
             <span></span><span></span><span></span>
           </div>
-          <span class="sync-demo-pane-title">Agent</span>
+          <span class="sync-demo-pane-title">Cursor</span>
         </div>
         <div class="sync-demo-pane-body">
           <div class="sync-demo-line prompt" data-step="1">
@@ -71,19 +71,20 @@
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">✓ joined room acme/main</div>
-          <div class="sync-demo-line dim" data-step="3">Next unblocked: REQ-AUTH-012</div>
-          <div class="sync-demo-line prompt" data-step="4">
+          <div class="sync-demo-line ok" data-step="2">Connecting to https://sync.rtmx.ai/sync/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
+          <div class="sync-demo-line dim" data-step="4">Next unblocked: REQ-AUTH-012</div>
+          <div class="sync-demo-line prompt" data-step="5">
             <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx claim REQ-AUTH-012"></span>
+            <span class="typed" data-type="rtmx claim REQ-AUTH-012 --agent-id cursor"></span>
             <span class="cursor mid">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="5">✓ claimed · publishing to room</div>
-          <div class="sync-demo-line accent" data-step="6">
+          <div class="sync-demo-line ok" data-step="6">✓ claimed · publishing to room</div>
+          <div class="sync-demo-line accent" data-step="7">
             Working… tests green · status COMPLETE
           </div>
           <div class="sync-demo-line dim" data-step="8">
-            Room updated · 2 peers online
+            Local database: 1 updated, 0 errors
           </div>
         </div>
       </div>

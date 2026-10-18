@@ -71,15 +71,12 @@ const terminals = [
     id: 'sync',
     title: 'rtmx sync',
     command: 'rtmx sync',
-    caption: 'Join the live room with one command.',
+    caption: 'After rtmx login, bare sync pulls your managed room.',
     lines: [
-      { text: 'Resolving managed Sync room for org acme …', color: '#9ca3af' },
-      { text: 'Room: sync.rtmx.ai/sync/acme/main', color: '#e5e7eb' },
-      { text: 'Entitlement: active (trial ends in 12 days)', color: '#22c55e' },
-      { text: 'Connected. Pulling matrix …', color: '#9ca3af' },
-      { text: '  ✓ 48 requirements converged', color: '#22c55e' },
-      { text: '  ✓ 2 peers online (you, agent-runner)', color: '#22c55e' },
-      { text: 'Watching for updates. Ctrl-C to leave the room.', color: '#6b7280' },
+      { text: 'Connecting to https://sync.rtmx.ai/sync/acme/main...', color: '#e5e7eb' },
+      { text: '  ✓ joined room', color: '#22c55e' },
+      { text: '', color: '#e5e7eb' },
+      { text: 'Local database: 48 updated, 0 created, 0 errors', color: '#e5e7eb' },
     ]
   }
 ];
