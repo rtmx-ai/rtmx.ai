@@ -189,11 +189,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           data-testid="checkout-panel-individual"
           hidden
         >
-          <p class="tab-lede">
-            One seat on your personal hosted organization. Uses the Team plan at
-            quantity 1 — no org picker or multi-seat UI.
+          <p class="tab-lede" data-testid="individual-lede">
+            Your RTMX account is how you use Sync and collaborate with others.
+            Open-source work on <strong>public</strong> projects stays free;
+            private multiplayer teams use the Team tab.
           </p>
-          <p class="field-help seats-locked-note">Seats locked to 1 · $9/mo after trial</p>
+          <p class="field-help" data-testid="individual-account-note">
+            Signed in as your account — not a seat pack, not a personal org purchase.
+          </p>
           <p
             class="field-help"
             id="personal-org-status"
@@ -718,7 +721,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const STORAGE = 'rtmx.checkout';
   const SESSION = 'rtmx.session';
   const CTA = {
-    individual: 'Continue to Stripe · 1 seat',
+    individual: 'Continue with your RTMX account',
     team: 'Continue to Stripe Checkout',
     'self-hosted': 'Issue and download license',
   } as const;

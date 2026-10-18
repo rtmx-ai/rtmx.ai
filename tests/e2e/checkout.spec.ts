@@ -179,6 +179,18 @@ test.describe('hosted checkout page', () => {
     await expect(page.getByTestId('org-create-wrap')).toBeVisible();
   });
 
+  test('SITE-129: Individual copy is account-first without seat chrome', async ({ page }) => {
+    await page.goto('/checkout?tab=individual');
+    await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
+    await expect(page.getByTestId('individual-lede')).toContainText(/RTMX account/i);
+    await expect(page.getByTestId('individual-lede')).toContainText(/public/i);
+    await expect(page.getByTestId('individual-account-note')).toContainText(/not a seat/i);
+    await expect(page.getByTestId('checkout-panel-individual')).not.toContainText(/Seats locked/i);
+    await expect(page.getByTestId('checkout-panel-individual')).not.toContainText(/quantity 1/i);
+    await expect(page.getByTestId('checkout-cta')).toContainText(/RTMX account/i);
+    await expect(page.getByTestId('checkout-cta')).not.toContainText(/1 seat/i);
+  });
+
   test('SITE-125: Individual creates/reuses personal org and posts quantity 1', async ({
     page,
   }) => {
@@ -278,7 +290,7 @@ test.describe('hosted checkout page', () => {
       'true',
     );
     await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
-    await expect(page.getByTestId('checkout-cta')).toContainText(/1 seat/i);
+    await expect(page.getByTestId('checkout-cta')).toContainText(/RTMX account/i);
 
     await page.getByTestId('checkout-tab-self-hosted').click();
     await expect(page.getByTestId('checkout-panel-self-hosted')).toBeVisible();

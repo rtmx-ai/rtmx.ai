@@ -1,13 +1,13 @@
 # REQ-SITE-129: Individual Account-First Copy
 
-## Status: MISSING
+## Status: COMPLETE
 
 ## Metadata
 - **Category**: WEBSITE
 - **Subcategory**: CHECKOUT
 - **Priority**: P0
 - **Phase**: 14
-- **Status**: MISSING
+- **Status**: COMPLETE
 - **Dependencies**: REQ-SITE-123
 - **Blocks**: REQ-SITE-130
 - **External ID**: rtmx-ai/REQ-MONO-032a
