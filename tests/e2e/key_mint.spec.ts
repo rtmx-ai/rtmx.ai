@@ -24,6 +24,18 @@ test.describe('admin API key mint on checkout', () => {
         }),
       });
     });
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer Example',
+          tier: 'free',
+        }),
+      });
+    });
     await page.route('**/orgs', async (route) => {
       if (route.request().method() === 'GET') {
         await route.fulfill({

@@ -2,7 +2,26 @@ import { test, expect } from '@playwright/test';
 
 /**
  * REQ-SITE-114: header shows signed-in identity / Sign in / Sign out.
+ * REQ-SITE-134: validate token; clear on 401; soft checkout prompt.
  */
+
+async function mockAuthMeOk(
+  page: import('@playwright/test').Page,
+  body: { id?: string; email: string; display_name: string; tier?: string } = {
+    id: 'u1',
+    email: 'buyer@example.com',
+    display_name: 'Buyer Example',
+    tier: 'free',
+  },
+) {
+  await page.route('**/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(body),
+    });
+  });
+}
 
 test.describe('header session chrome', () => {
   test('signed-out visitors see Sign in', async ({ page }) => {
@@ -13,6 +32,7 @@ test.describe('header session chrome', () => {
   });
 
   test('signed-in visitors see identity and can Sign out', async ({ page }) => {
+    await mockAuthMeOk(page);
     await page.goto('/pricing');
     await page.evaluate(() => {
       sessionStorage.setItem(
@@ -38,6 +58,10 @@ test.describe('header session chrome', () => {
   });
 
   test('GitHub noreply email shows username only', async ({ page }) => {
+    await mockAuthMeOk(page, {
+      email: 'rhino11@users.noreply.github.com',
+      display_name: 'rhino11@users.noreply.github.com',
+    });
     await page.goto('/pricing');
     await page.evaluate(() => {
       sessionStorage.setItem(
@@ -54,6 +78,10 @@ test.describe('header session chrome', () => {
   });
 
   test('numeric GitHub noreply prefix is dropped', async ({ page }) => {
+    await mockAuthMeOk(page, {
+      email: '12345678+rhino11@users.noreply.github.com',
+      display_name: '12345678+rhino11@users.noreply.github.com',
+    });
     await page.goto('/checkout');
     await page.evaluate(() => {
       sessionStorage.setItem(
@@ -100,6 +128,10 @@ test.describe('header session chrome', () => {
   });
 
   test('checkout splash keeps identity at the top-right, not beside search', async ({ page }) => {
+    await mockAuthMeOk(page, {
+      email: 'rhino11@users.noreply.github.com',
+      display_name: 'rhino11@users.noreply.github.com',
+    });
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/checkout');
     await page.evaluate(() => {
@@ -121,5 +153,94 @@ test.describe('header session chrome', () => {
     expect(box).toBeTruthy();
     expect(box!.x + box!.width).toBeGreaterThan(1280 - 48);
     expect(box!.y).toBeLessThan(80);
+  });
+
+  test('SITE-134: stale token clears chrome to Sign in', async ({ page }) => {
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({ detail: 'Unauthorized' }),
+      });
+    });
+    await page.goto('/pricing');
+    await page.evaluate(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'expired-token',
+          email: 'stale@example.com',
+          display_name: 'Stale User',
+        }),
+      );
+    });
+    await page.reload();
+    const chrome = page.getByTestId('session-chrome');
+    await expect(chrome.getByRole('link', { name: 'Sign in' })).toBeVisible();
+    await expect(chrome.getByTestId('session-identity')).toBeHidden();
+    const remaining = await page.evaluate(() => sessionStorage.getItem('rtmx.session'));
+    expect(remaining).toBeNull();
+  });
+
+  test('SITE-134: checkout 401 soft-prompts Sign in without red sign-out-again copy', async ({
+    page,
+  }) => {
+    // auth/me stays valid long enough for chrome optimistic render; orgs 401 drives soft sign-out
+    let meCalls = 0;
+    await page.route('**/auth/me', async (route) => {
+      meCalls += 1;
+      // After soft sign-out, any re-validate must not resurrect
+      if (meCalls > 1) {
+        await route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ detail: 'Unauthorized' }),
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer Example',
+          tier: 'free',
+        }),
+      });
+    });
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ detail: 'Unauthorized' }),
+        });
+        return;
+      }
+      await route.continue();
+    });
+
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'stale-for-orgs',
+          email: 'buyer@example.com',
+          display_name: 'Buyer Example',
+        }),
+      );
+    });
+    await page.goto('/checkout?tab=team');
+
+    const message = page.locator('#checkout-message');
+    await expect(message).toContainText('Your session ended');
+    await expect(message.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login');
+    await expect(message).not.toContainText('Sign out and sign in again');
+    await expect(message).toHaveClass(/is-info/);
+
+    const chrome = page.getByTestId('session-chrome');
+    await expect(chrome.getByRole('link', { name: 'Sign in' })).toBeVisible({ timeout: 10000 });
+    await expect(chrome.getByTestId('session-identity')).toBeHidden();
   });
 });

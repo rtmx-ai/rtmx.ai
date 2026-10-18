@@ -726,7 +726,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   }
 
   .form-message.is-success,
-  .form-message.is-error {
+  .form-message.is-error,
+  .form-message.is-info {
     padding: 0.7rem 0.85rem;
   }
 
@@ -734,6 +735,16 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     color: var(--rtmx-emerald-light);
     background: color-mix(in srgb, var(--rtmx-emerald) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--rtmx-emerald) 35%, transparent);
+  }
+
+  .form-message.is-info {
+    color: var(--rtmx-text-muted);
+    background: color-mix(in srgb, var(--rtmx-text-muted) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rtmx-text-muted) 25%, transparent);
+  }
+
+  .form-message.is-info a {
+    color: var(--rtmx-emerald-light);
   }
 
   .form-message.is-error {
@@ -915,6 +926,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const initialTab = (new URLSearchParams(window.location.search).get('tab') || 'team') as TabId;
   void setTab(CTA[initialTab] ? initialTab : 'team');
 
+  // SITE-134: chrome may clear a stale token after validate; re-render honestly
+  window.addEventListener('rtmx:session-cleared', () => {
+    void setTab(currentTab());
+  });
+
   function show(text: string, kind: 'success' | 'error') {
     message.textContent = text;
     message.className = `form-message is-${kind}`;
@@ -988,13 +1004,43 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
+  function softSignOut(message: string) {
+    // REQ-SITE-134: honest signed-out — clear local state, no red "sign out again"
+    sessionStorage.removeItem(SESSION);
+    sessionStorage.removeItem('rtmx.oauth.next');
+    sessionStorage.removeItem('rtmx.oauth.provider');
+    // Update header chrome immediately (same-tab; storage events do not fire here)
+    const chromeSignIn = document.getElementById('rtmx-session-signin');
+    const chromeSignedIn = document.getElementById('rtmx-session-signed-in');
+    const chromeIdentity = document.getElementById('rtmx-session-identity');
+    if (chromeSignIn) chromeSignIn.hidden = false;
+    if (chromeSignedIn) chromeSignedIn.hidden = true;
+    if (chromeIdentity) chromeIdentity.textContent = '';
+    window.dispatchEvent(new CustomEvent('rtmx:session-cleared'));
+    messageElSoft(message);
+    orgSessionPanel.hidden = true;
+    orgManualField.hidden = false;
+    apiKeyField.hidden = false;
+  }
+
+  function messageElSoft(text: string) {
+    message.innerHTML = '';
+    message.className = 'form-message is-info';
+    message.appendChild(document.createTextNode(text + ' '));
+    const link = document.createElement('a');
+    link.href = '/login';
+    link.textContent = 'Sign in';
+    message.appendChild(link);
+    message.appendChild(document.createTextNode('.'));
+  }
+
   async function loadOrgs(server: string, token: string) {
     const resp = await fetch(`${server}/orgs`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!resp.ok) {
       if (resp.status === 401) {
-        show('Session expired or invalid. Sign out and sign in again.', 'error');
+        softSignOut('Your session ended.');
       } else {
         show(`Could not list organizations (${resp.status}).`, 'error');
       }
@@ -1286,7 +1332,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         }),
       });
       if (response.status === 401 || response.status === 400) {
-        show('Sign in or create an organization first.', 'error');
+        if (response.status === 401 && session?.token && !apiKey) {
+          softSignOut('Your session ended.');
+        } else {
+          show('Sign in or create an organization first.', 'error');
+        }
         return;
       }
       if (!response.ok) {

@@ -43,6 +43,19 @@ test.describe('hosted checkout page', () => {
     await page.route('**/auth/login/**', async (route) => {
       await route.fulfill({ status: 503, body: 'OAuth provider not configured' });
     });
+    // SITE-134: chrome validates session; keep fixture tokens alive.
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer Example',
+          tier: 'free',
+        }),
+      });
+    });
   });
 
   test('pins the managed sync host and explains the admin key path', async ({ page }) => {
