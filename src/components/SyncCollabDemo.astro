@@ -118,6 +118,18 @@
       <li data-caption="5">Claude Code takes the next item in parallel. WIP lives in Sync.</li>
     </ol>
   </div>
+
+  <!-- REQ-MONO-035e: recorded multi-client harness GIF (mock VHS; live tokens optional). -->
+  <figure class="sync-demo-recording" data-testid="sync-collab-recording">
+    <img
+      src="/demo/multi-agent-sync.gif"
+      alt="Terminal recording: You, Cursor, and Claude Code clients joining one Sync room and claiming work in parallel"
+      width="1100"
+      height="640"
+      loading="lazy"
+    />
+    <figcaption>Recorded from the multi-client harness (mock choreography).</figcaption>
+  </figure>
 </section>
 
 <style is:global>
@@ -125,6 +137,24 @@
     margin: 0;
     padding: var(--sync-pad-y, 2.5rem) 0;
     border-top: 1px solid rgba(110, 231, 183, 0.1);
+  }
+  .sync-demo-recording {
+    max-width: 56rem;
+    margin: 1.75rem auto 0;
+    padding: 0 1rem;
+  }
+  .sync-demo-recording img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(110, 231, 183, 0.15);
+  }
+  .sync-demo-recording figcaption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(226, 232, 240, 0.65);
   }
   .sync-demo-header {
     text-align: center;
