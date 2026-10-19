@@ -1,17 +1,18 @@
 ---
 /**
- * Animated dual-pane demo: human + agent collaborating in one Sync room.
- * Visual language matches AnimatedTerminal on the homepage.
+ * How it works — horizontal WIP across a human and heterogeneous agents.
+ * REQ-MONO-035a/b / SITE-137/138: not a You↔Cursor-only pair.
  */
 ---
 
-<section class="sync-demo" data-testid="sync-collab-demo" aria-label="Animated demo of Sync collaboration">
+<section class="sync-demo" data-testid="sync-collab-demo" aria-label="Animated demo of multi-agent Sync collaboration">
   <div class="sync-demo-header">
     <p class="sync-demo-kicker">How it works</p>
-    <h2>Watch the room converge</h2>
+    <h2>One backlog. Any agent stack.</h2>
     <p class="sync-demo-lede">
-      You and an agent join the same room. Claims and status land live — no ticket
-      board, no paste of who owns what.
+      Humans and agents from different systems — Cursor, Claude Code, Codex,
+      Gemini CLI, OpenCode, background subagents — join the same Sync room.
+      Claims and status are the project system; no ticket board in the middle.
     </p>
   </div>
 
@@ -19,19 +20,20 @@
     <div class="sync-demo-roombar" data-demo-roombar>
       <span class="sync-demo-live" aria-hidden="true"></span>
       <span class="sync-demo-room-label">acme / main</span>
-      <div class="sync-demo-presence" aria-label="People in the room">
+      <div class="sync-demo-presence" aria-label="Clients in the room">
         <span class="sync-demo-avatar you" data-presence="you" title="You">Y</span>
-        <span class="sync-demo-avatar agent" data-presence="agent" title="Cursor">C</span>
+        <span class="sync-demo-avatar cursor" data-presence="cursor" title="Cursor">Cu</span>
+        <span class="sync-demo-avatar claude" data-presence="claude" title="Claude Code">Cl</span>
       </div>
     </div>
 
-    <div class="sync-demo-panes">
+    <div class="sync-demo-panes" data-panes="3">
       <div class="sync-demo-pane" data-pane="you">
         <div class="sync-demo-pane-header">
           <div class="sync-demo-dots" aria-hidden="true">
             <span></span><span></span><span></span>
           </div>
-          <span class="sync-demo-pane-title">You</span>
+          <span class="sync-demo-pane-title you">You</span>
         </div>
         <div class="sync-demo-pane-body">
           <div class="sync-demo-line prompt" data-step="1">
@@ -39,31 +41,26 @@
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">Connecting to https://sync.rtmx.ai/sync/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
           <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
-          <div class="sync-demo-line dim" data-step="5">
+          <div class="sync-demo-line live" data-step="5">
             <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Cursor
           </div>
-          <div class="sync-demo-line ok" data-step="6">
-            Local database: 1 updated, 0 errors
-          </div>
-          <div class="sync-demo-line prompt" data-step="7">
-            <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx next --one"></span>
-            <span class="cursor late">▋</span>
+          <div class="sync-demo-line live" data-step="7">
+            <span class="tag">LIVE</span> REQ-API-003 claimed by Claude Code
           </div>
           <div class="sync-demo-line accent" data-step="8">
-            → REQ-API-003 ready (unblocked)
+            Matrix: 2 in flight · next unlocks as they complete
           </div>
         </div>
       </div>
 
-      <div class="sync-demo-pane" data-pane="agent">
+      <div class="sync-demo-pane" data-pane="cursor">
         <div class="sync-demo-pane-header">
           <div class="sync-demo-dots" aria-hidden="true">
             <span></span><span></span><span></span>
           </div>
-          <span class="sync-demo-pane-title">Cursor</span>
+          <span class="sync-demo-pane-title cursor">Cursor</span>
         </div>
         <div class="sync-demo-pane-body">
           <div class="sync-demo-line prompt" data-step="1">
@@ -71,31 +68,54 @@
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">Connecting to https://sync.rtmx.ai/sync/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
           <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
           <div class="sync-demo-line dim" data-step="4">Next unblocked: REQ-AUTH-012</div>
           <div class="sync-demo-line prompt" data-step="5">
             <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx claim REQ-AUTH-012 --agent-id cursor"></span>
+            <span class="typed" data-type="rtmx claim REQ-AUTH-012"></span>
             <span class="cursor mid">▋</span>
           </div>
           <div class="sync-demo-line ok" data-step="6">✓ claimed · publishing to room</div>
-          <div class="sync-demo-line accent" data-step="7">
-            Working… tests green · status COMPLETE
+          <div class="sync-demo-line dim" data-step="8">Working… tests green</div>
+        </div>
+      </div>
+
+      <div class="sync-demo-pane" data-pane="claude">
+        <div class="sync-demo-pane-header">
+          <div class="sync-demo-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
           </div>
-          <div class="sync-demo-line dim" data-step="8">
-            Local database: 1 updated, 0 errors
+          <span class="sync-demo-pane-title claude">Claude Code</span>
+        </div>
+        <div class="sync-demo-pane-body">
+          <div class="sync-demo-line prompt" data-step="1">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx sync"></span>
+            <span class="cursor">▋</span>
           </div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
+          <div class="sync-demo-line dim" data-step="6">
+            <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Cursor
+          </div>
+          <div class="sync-demo-line dim" data-step="7">Next unblocked: REQ-API-003</div>
+          <div class="sync-demo-line prompt" data-step="8">
+            <span class="prompt-sym">$</span>
+            <span class="typed" data-type="rtmx claim REQ-API-003"></span>
+            <span class="cursor late">▋</span>
+          </div>
+          <div class="sync-demo-line ok" data-step="9">✓ claimed · parallel WIP</div>
         </div>
       </div>
     </div>
 
     <ol class="sync-demo-captions" data-demo-captions aria-live="polite">
-      <li data-caption="1" class="active">Both clients join the same Sync room.</li>
-      <li data-caption="2">Presence shows who is live.</li>
-      <li data-caption="3">The agent claims the next unblocked requirement.</li>
-      <li data-caption="4">Your view updates instantly — no refresh, no Slack ping.</li>
-      <li data-caption="5">The matrix converges; the next item unlocks.</li>
+      <li data-caption="1" class="active">Isolated clients join one Sync room — any agent system.</li>
+      <li data-caption="2">Presence shows who is live across stacks.</li>
+      <li data-caption="3">Cursor claims the next unblocked requirement.</li>
+      <li data-caption="4">Everyone’s matrix updates live — no Slack ping.</li>
+      <li data-caption="5">Claude Code takes the next item in parallel. WIP lives in Sync.</li>
     </ol>
   </div>
 </section>
@@ -108,7 +128,7 @@
   }
   .sync-demo-header {
     text-align: center;
-    max-width: 36rem;
+    max-width: 40rem;
     margin: 0 auto 1.75rem;
   }
   .sync-demo-kicker {
@@ -159,6 +179,7 @@
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
     opacity: 0.35;
     transition: opacity 0.3s ease;
+    flex-shrink: 0;
   }
   .sync-demo-stage[data-phase="2"] .sync-demo-live,
   .sync-demo-stage[data-phase="3"] .sync-demo-live,
@@ -183,13 +204,14 @@
     gap: 0.35rem;
   }
   .sync-demo-avatar {
-    width: 1.5rem;
+    min-width: 1.5rem;
     height: 1.5rem;
+    padding: 0 0.35rem;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
     opacity: 0.25;
     transform: scale(0.85);
@@ -200,38 +222,42 @@
     color: #6ee7b7;
     border: 1px solid rgba(110, 231, 183, 0.4);
   }
-  .sync-demo-avatar.agent {
+  .sync-demo-avatar.cursor {
     background: #1c2433;
     color: #93c5fd;
     border: 1px solid rgba(147, 197, 253, 0.4);
   }
-  .sync-demo-stage[data-phase="2"] .sync-demo-avatar.you,
-  .sync-demo-stage[data-phase="3"] .sync-demo-avatar.you,
-  .sync-demo-stage[data-phase="4"] .sync-demo-avatar.you,
-  .sync-demo-stage[data-phase="5"] .sync-demo-avatar.you,
-  .sync-demo-stage[data-phase="2"] .sync-demo-avatar.agent,
-  .sync-demo-stage[data-phase="3"] .sync-demo-avatar.agent,
-  .sync-demo-stage[data-phase="4"] .sync-demo-avatar.agent,
-  .sync-demo-stage[data-phase="5"] .sync-demo-avatar.agent {
+  .sync-demo-avatar.claude {
+    background: #2a2218;
+    color: #fdba74;
+    border: 1px solid rgba(253, 186, 116, 0.45);
+  }
+  .sync-demo-stage[data-phase="2"] .sync-demo-avatar,
+  .sync-demo-stage[data-phase="3"] .sync-demo-avatar,
+  .sync-demo-stage[data-phase="4"] .sync-demo-avatar,
+  .sync-demo-stage[data-phase="5"] .sync-demo-avatar {
     opacity: 1;
     transform: scale(1);
   }
 
   .sync-demo-panes {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
+    align-items: stretch;
   }
-  @media (max-width: 40rem) {
+  @media (max-width: 56rem) {
     .sync-demo-panes { grid-template-columns: 1fr; }
   }
 
   .sync-demo-pane {
     min-width: 0;
     border-right: 1px solid rgba(110, 231, 183, 0.12);
+    display: flex;
+    flex-direction: column;
   }
   .sync-demo-pane:last-child { border-right: none; }
-  @media (max-width: 40rem) {
+  @media (max-width: 56rem) {
     .sync-demo-pane { border-right: none; border-bottom: 1px solid rgba(110, 231, 183, 0.12); }
     .sync-demo-pane:last-child { border-bottom: none; }
   }
@@ -243,6 +269,7 @@
     padding: 0.55rem 0.85rem;
     background: #1a1714;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
   }
   .sync-demo-dots {
     display: flex;
@@ -262,16 +289,21 @@
     color: #a8a29e;
     font-weight: 600;
   }
-  .sync-demo-pane[data-pane="agent"] .sync-demo-pane-title { color: #93c5fd; }
-  .sync-demo-pane[data-pane="you"] .sync-demo-pane-title { color: #6ee7b7; }
+  .sync-demo-pane-title.you { color: #6ee7b7; }
+  .sync-demo-pane-title.cursor { color: #93c5fd; }
+  .sync-demo-pane-title.claude { color: #fdba74; }
 
   .sync-demo-pane-body {
-    padding: 0.85rem 1rem 1.1rem;
+    padding: 0.85rem 0.85rem 1.1rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     line-height: 1.45;
-    min-height: 13.5rem;
+    min-height: 14.5rem;
     color: #d6d3d1;
+    flex: 1;
+  }
+  @media (max-width: 56rem) {
+    .sync-demo-pane-body { min-height: 10rem; font-size: 0.78rem; }
   }
 
   .sync-demo-line {
@@ -279,12 +311,13 @@
     transform: translateY(4px);
     transition: opacity 0.35s ease, transform 0.35s ease;
     margin-bottom: 0.35rem;
+    word-break: break-word;
   }
   .sync-demo-line.visible {
     opacity: 1;
     transform: none;
   }
-  .sync-demo-line.prompt { display: flex; align-items: center; gap: 0.4rem; }
+  .sync-demo-line.prompt { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
   .prompt-sym { color: #6ee7b7; font-weight: 700; }
   .sync-demo-line .cursor {
     color: #6ee7b7;
@@ -379,10 +412,11 @@
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
     async function typeEl(el, text) {
+      if (!el) return;
       el.textContent = '';
       for (let i = 0; i <= text.length; i++) {
         el.textContent = text.slice(0, i);
-        await sleep(28 + Math.random() * 22);
+        await sleep(22 + Math.random() * 18);
       }
     }
 
@@ -401,60 +435,55 @@
     }
 
     async function run() {
-      // reset
       root.querySelectorAll('.sync-demo-line').forEach((el) => el.classList.remove('visible'));
       root.querySelectorAll('.typed').forEach((el) => { el.textContent = ''; });
-      root.querySelectorAll('.cursor').forEach((el) => el.classList.remove('hidden'));
+      root.querySelectorAll('.sync-demo-line .cursor').forEach((el) => el.classList.remove('hidden'));
       setPhase(1);
       setCaption(0);
 
-      // Step 1: both type rtmx sync
       const prompts1 = root.querySelectorAll('.sync-demo-line[data-step="1"]');
       prompts1.forEach((el) => el.classList.add('visible'));
       await Promise.all(
         [...prompts1].map((line) => typeEl(line.querySelector('.typed'), 'rtmx sync'))
       );
       prompts1.forEach((line) => line.querySelector('.cursor')?.classList.add('hidden'));
-      await sleep(250);
+      await sleep(200);
 
-      // Step 2: joined
       showStep(2);
       setPhase(2);
       setCaption(1);
+      await sleep(450);
+
+      showStep(3);
       await sleep(550);
 
-      // Step 3: listening / next
-      showStep(3);
-      await sleep(700);
-
-      // Step 4: agent claims
-      const claimLine = root.querySelector('[data-pane="agent"] .sync-demo-line[data-step="4"]');
-      claimLine?.classList.add('visible');
+      showStep(4);
       setCaption(2);
       setPhase(3);
-      await typeEl(claimLine.querySelector('.typed'), 'rtmx claim REQ-AUTH-012');
-      claimLine?.querySelector('.cursor')?.classList.add('hidden');
-      await sleep(200);
+      const claimCursor = root.querySelector('[data-pane="cursor"] .sync-demo-line[data-step="5"]');
+      claimCursor?.classList.add('visible');
+      await typeEl(claimCursor?.querySelector('.typed'), 'rtmx claim REQ-AUTH-012');
+      claimCursor?.querySelector('.cursor')?.classList.add('hidden');
+      await sleep(150);
 
-      // Step 5: live update on both
       showStep(5);
       setCaption(3);
       setPhase(4);
-      await sleep(800);
+      await sleep(600);
 
-      // Step 6: status / working
       showStep(6);
-      await sleep(700);
+      await sleep(500);
 
-      // Step 7–8: next unlocked
-      const nextLine = root.querySelector('[data-pane="you"] .sync-demo-line[data-step="7"]');
-      nextLine?.classList.add('visible');
-      await typeEl(nextLine.querySelector('.typed'), 'rtmx next');
-      nextLine?.querySelector('.cursor')?.classList.add('hidden');
-      showStep(8);
+      showStep(7);
       setCaption(4);
       setPhase(5);
-      await sleep(4200);
+      const claimClaude = root.querySelector('[data-pane="claude"] .sync-demo-line[data-step="8"]');
+      claimClaude?.classList.add('visible');
+      await typeEl(claimClaude?.querySelector('.typed'), 'rtmx claim REQ-API-003');
+      claimClaude?.querySelector('.cursor')?.classList.add('hidden');
+      showStep(8);
+      showStep(9);
+      await sleep(4500);
       run();
     }
 
@@ -467,7 +496,7 @@
           }
         });
       },
-      { threshold: 0.35 }
+      { threshold: 0.3 }
     );
     observer.observe(root);
   });

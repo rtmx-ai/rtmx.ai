@@ -40,7 +40,6 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(page.getByTestId('sync-cta-checkout')).toHaveText(/14-day free trial/i);
     await expect(page.getByTestId('sync-trial-note')).toContainText(/14 days/i);
     await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/installation');
-    await expect(page.locator('body')).not.toContainText(/Claude/i);
 
     const install = page.getByTestId('sync-install');
     await expect(install).toContainText('rtmx login');
@@ -50,11 +49,16 @@ test.describe('Sync explainer (SITE-117)', () => {
 
     const demo = page.getByTestId('sync-collab-demo');
     await expect(demo).toBeVisible();
-    await expect(demo.getByRole('heading', { name: /Watch the room converge/i })).toBeVisible();
+    await expect(demo.getByRole('heading', { name: /One backlog\. Any agent stack/i })).toBeVisible();
+    await expect(demo).toContainText(/Cursor|Claude|Codex|Gemini|OpenCode/i);
+    await expect(demo).toContainText(/horizontal|any agent|different systems/i);
     await expect(demo.locator('[data-pane="you"]')).toBeVisible();
-    await expect(demo.locator('[data-pane="agent"]')).toBeVisible();
+    await expect(demo.locator('[data-pane="cursor"]')).toBeVisible();
+    await expect(demo.locator('[data-pane="claude"]')).toBeVisible();
+    await expect(demo.locator('[data-panes="3"]')).toBeVisible();
     await expect(demo).toContainText(/acme \/ main/);
-
+    // Not a You↔single-agent pair
+    await expect(demo.locator('[data-pane="agent"]')).toHaveCount(0);
     // Primary emerald CTA must use white label (Starlight link styles otherwise wash it out).
     const primaryColor = await page.getByTestId('sync-cta-checkout').evaluate((el) => getComputedStyle(el).color);
     expect(primaryColor.replace(/\s/g, '')).toMatch(/^rgb\(255,255,255\)$|^rgba\(255,255,255/);
@@ -78,7 +82,20 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(page.getByTestId('hero-cta-sync')).toHaveAttribute('href', '/sync');
     await expect(page.getByTestId('hero-cta-sync')).toHaveText(/Try Sync free/i);
     await expect(page.getByTestId('hero-funnel-note')).toContainText(/14-day/i);
-    await expect(page.locator('body')).not.toContainText(/Claude/i);
+  });
+
+  test('How it works is multi-agent horizontal WIP (SITE-137/138, MONO-035a/b)', async ({ page }) => {
+    await page.goto('/sync');
+    const demo = page.getByTestId('sync-collab-demo');
+    await expect(demo).toBeVisible();
+    await expect(demo).toContainText(/Claude Code/i);
+    await expect(demo).toContainText(/Cursor/i);
+    await expect(demo.getByText('You', { exact: true }).first()).toBeVisible();
+    const panes = demo.locator('.sync-demo-pane');
+    await expect(panes).toHaveCount(3);
+    const cols = await demo.locator('.sync-demo-panes').evaluate((el) => getComputedStyle(el).gridTemplateColumns);
+    // Desktop: three tracks (Playwright default viewport is wide enough)
+    expect(cols.split(' ').length).toBeGreaterThanOrEqual(3);
   });
 
   test('pricing defers product thesis to /sync', async ({ page }) => {
