@@ -95,4 +95,117 @@ test.describe('self-serve organization on checkout', () => {
     await expect(page.locator('#org-select')).toHaveValue('globex');
     expect(createdWithBearer).toBe('Bearer session-test');
   });
+
+  test('duplicate slug 409 shows actionable error and refreshes org list', async ({ page }) => {
+    let createPosted = false;
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            organizations: createPosted
+              ? [
+                  {
+                    id: 'o1',
+                    name: 'irregularchat',
+                    slug: 'irregularchat',
+                    tier: 'free',
+                    visibility: 'public',
+                  },
+                ]
+              : [],
+          }),
+        });
+        return;
+      }
+      if (route.request().method() === 'POST') {
+        createPosted = true;
+        await route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            detail: 'Organization slug already taken: irregularchat',
+          }),
+        });
+        return;
+      }
+      await route.fallback();
+    });
+
+    await page.goto('/checkout');
+    await expect(page.getByTestId('org-create-wrap')).toBeVisible();
+    await page.getByTestId('org-create-name').fill('irregularchat');
+    await page.getByTestId('org-create').click();
+    await expect(page.locator('#checkout-message')).toContainText(/already|taken|exists/i);
+    await expect(page.getByTestId('org-select')).toContainText('irregularchat');
+  });
+
+  test('network failure on create does not claim CORS/allowlist alone', async ({ page }) => {
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ organizations: [] }),
+        });
+        return;
+      }
+      if (route.request().method() === 'POST') {
+        await route.abort('failed');
+        return;
+      }
+      await route.fallback();
+    });
+
+    await page.goto('/checkout');
+    await page.getByTestId('org-create-name').fill('Globex');
+    await page.getByTestId('org-create').click();
+    await expect(page.locator('#checkout-message')).toContainText(/Could not reach/i);
+    await expect(page.locator('#checkout-message')).toContainText(/already be taken|another|refresh/i);
+  });
+
+  test('Individual public create handles 409 with list refresh', async ({ page }) => {
+    let createPosted = false;
+    await page.route('**/orgs', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            organizations: createPosted
+              ? [
+                  {
+                    id: 'p1',
+                    name: 'irregularchat',
+                    slug: 'irregularchat',
+                    visibility: 'public',
+                  },
+                ]
+              : [],
+          }),
+        });
+        return;
+      }
+      if (route.request().method() === 'POST') {
+        createPosted = true;
+        await route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            detail: 'Organization slug already taken: irregularchat',
+          }),
+        });
+        return;
+      }
+      await route.fallback();
+    });
+
+    await page.goto('/checkout?tab=individual');
+    await expect(page.getByTestId('individual-public-panel')).toBeVisible();
+    await page.getByTestId('individual-public-create-name').fill('irregularchat');
+    await page.getByTestId('individual-public-create').click();
+    await expect(page.locator('#checkout-message')).toContainText(/already|taken|exists/i);
+    await expect(page.getByTestId('individual-public-org')).toContainText('irregularchat');
+  });
 });

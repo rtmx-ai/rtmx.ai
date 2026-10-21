@@ -1142,7 +1142,23 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         body: JSON.stringify({ name, visibility: selectedVisibility() }),
       });
       if (!resp.ok) {
-        show(`Could not create organization (${resp.status}).`, 'error');
+        let detail = '';
+        try {
+          const errBody = (await resp.json()) as { detail?: string };
+          detail = (errBody.detail || '').trim();
+        } catch {
+          /* ignore */
+        }
+        if (resp.status === 409) {
+          show(
+            detail ||
+              `Organization “${name}” already exists. Select it from the list or choose another name.`,
+            'error',
+          );
+          await loadOrgs(server, session.token);
+          return;
+        }
+        show(detail || `Could not create organization (${resp.status}).`, 'error');
         return;
       }
       const org = await resp.json();
@@ -1154,7 +1170,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       updateOrgAdminLink(orgSelect.value);
       show(`Created organization ${org.name}.`, 'success');
     } catch {
-      show(`Could not reach ${server}.`, 'error');
+      show(
+        `Could not reach ${server}. If this persists, the name may already be taken — try another or refresh.`,
+        'error',
+      );
     } finally {
       orgCreateBtn.disabled = false;
     }
@@ -1281,7 +1300,24 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         body: JSON.stringify({ name, visibility: 'public' }),
       });
       if (!resp.ok) {
-        show(`Could not create public organization (${resp.status}).`, 'error');
+        let detail = '';
+        try {
+          const errBody = (await resp.json()) as { detail?: string };
+          detail = (errBody.detail || '').trim();
+        } catch {
+          /* ignore */
+        }
+        if (resp.status === 409) {
+          show(
+            detail ||
+              `Organization “${name}” already exists. Select it above or choose another name.`,
+            'error',
+          );
+          await loadOrgs(server, session.token);
+          fillIndividualPublicSelect(cachedOrgs);
+          return;
+        }
+        show(detail || `Could not create public organization (${resp.status}).`, 'error');
         return;
       }
       const org = await resp.json();
@@ -1291,7 +1327,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       individualPublicCreateName.value = '';
       show(`Created public organization ${org.name}.`, 'success');
     } catch {
-      show(`Could not reach ${server}.`, 'error');
+      show(
+        `Could not reach ${server}. If this persists, the name may already be taken — try another or refresh and select it.`,
+        'error',
+      );
     } finally {
       individualPublicCreateBtn.disabled = false;
     }

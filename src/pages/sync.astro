@@ -9,6 +9,16 @@ import SyncCollabDemo from '../components/SyncCollabDemo.astro';
       <section class="sync-hero">
         <p class="sync-kicker">What comes after Git</p>
         <h1>RTMX Sync</h1>
+        <p
+          class="sync-api-host-note"
+          id="sync-api-host-note"
+          data-testid="sync-api-host-note"
+          hidden
+        >
+          <code>sync.rtmx.ai</code> is the Sync API host for clients and agents —
+          not a product page. You are on the right place for humans:
+          start a trial or install the open source CLI below.
+        </p>
         <p class="sync-lede">
           Git versioned the file. Sync is the room — a live matrix of intent where
           humans and agents claim work, converge, and ship without a ticket board
@@ -25,6 +35,13 @@ import SyncCollabDemo from '../components/SyncCollabDemo.astro';
           Sync is the product.
         </p>
       </section>
+      <script>
+        // Landed from sync.rtmx.ai HTML redirect (?from=api-host).
+        if (new URLSearchParams(window.location.search).get('from') === 'api-host') {
+          const note = document.getElementById('sync-api-host-note');
+          if (note) note.hidden = false;
+        }
+      </script>
 
       <SyncCollabDemo />
 
@@ -105,6 +122,24 @@ rtmx sync</code></pre>
 </StarlightPage>
 
 <style is:global>
+  .sync-api-host-note {
+    margin: 0 auto 1.25rem;
+    max-width: 36rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    border-radius: 0.5rem;
+    background: rgba(16, 185, 129, 0.08);
+    color: rgba(226, 232, 240, 0.9);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    text-align: left;
+  }
+  .sync-api-host-note[hidden] {
+    display: none !important;
+  }
+  .sync-api-host-note code {
+    font-size: 0.9em;
+  }
   .sync-page {
     background:
       radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.14), transparent 55%),
