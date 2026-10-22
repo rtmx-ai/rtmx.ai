@@ -173,7 +173,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
               autocomplete="off"
             />
             <span class="field-help">
-              Prefer <a href="/login?next=/checkout">sign in</a> when OAuth is
+              Prefer <a href="/login?next=/checkout%3Ftab%3Dteam" id="hosted-sign-in-link">sign in</a> when OAuth is
               configured. Private beta: ops-issued
               <code>rtmx_ad_</code> key until self-serve mint is available.
               Never stored by rtmx.ai after you leave.
@@ -914,6 +914,11 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     const url = new URL(window.location.href);
     url.searchParams.set('tab', tab);
     history.replaceState({}, '', url.toString());
+    const signInLink = document.getElementById('hosted-sign-in-link') as HTMLAnchorElement | null;
+    if (signInLink) {
+      signInLink.href =
+        '/login?next=' + encodeURIComponent('/checkout?tab=' + tab);
+    }
   }
 
   document.querySelectorAll<HTMLButtonElement>('.checkout-tab').forEach((btn) => {
@@ -1197,7 +1202,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     } catch {
       return;
     }
-    window.location.replace('/login?next=' + encodeURIComponent('/checkout'));
+    const tab = currentTab();
+    window.location.replace(
+      '/login?next=' + encodeURIComponent('/checkout?tab=' + tab),
+    );
   }
 
   void gateSignIn();
