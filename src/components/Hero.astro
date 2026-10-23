@@ -1,23 +1,28 @@
 ---
 // Custom Hero component for RTMX landing page
-// Large hero illustration at top with closed-loop agent workflow
+// SITE-141: Sync is the product; open-source CLI is the access client.
 import TerminalCarousel from './TerminalCarousel.astro';
+import SyncCollabDemo from './SyncCollabDemo.astro';
 ---
 
 <!-- Hero Title at Very Top -->
 <div class="hero-header">
   <h1 class="hero-title">The Intent Layer for Agentic Engineering</h1>
   <p class="hero-subtitle">
-    The answer to AI building the wrong thing isn't better AI. It's better engineering discipline applied to AI.
-    RTMX is the contract between human intent and AI agent execution — requirements, tests, and traceability integrated directly into the agentic engineering lifecycle.
+    RTMX Sync is the live room where humans and agents claim work, converge on
+    requirements, and ship — without a ticket board in the middle. The open-source
+    <code>rtmx</code> CLI is how you enter that room.
   </p>
-  <p class="hero-ucp">The only tool that gives AI agents a queryable, verifiable, dependency-aware requirements model that lives in git.</p>
+  <p class="hero-ucp">
+    Multiplayer Sync for humans and agents. Queryable, verifiable, dependency-aware
+    requirements — live in the room, backed by the free open-source client.
+  </p>
   <div class="hero-buttons">
-    <a href="/installation" class="hero-button primary" data-testid="hero-cta-install">
-      Install the client
+    <a href="/checkout" class="hero-button primary" data-testid="hero-cta-sync">
+      Start 14-day free trial
     </a>
-    <a href="/sync" class="hero-button secondary" data-testid="hero-cta-sync">
-      Try Sync free — 14 days
+    <a href="/installation" class="hero-button secondary" data-testid="hero-cta-install">
+      Install the open source client
     </a>
     <a href="https://github.com/rtmx-ai/rtmx" class="github-button" target="_blank" rel="noopener">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -27,27 +32,34 @@ import TerminalCarousel from './TerminalCarousel.astro';
     </a>
   </div>
   <p class="hero-funnel-note" data-testid="hero-funnel-note">
-    Free forever client → sign in → 14-day hosted Sync trial. Card required; cancel anytime before day 14.
+    Start Sync trial → install the free client → sign in to the room.
+    Card required; cancel anytime before day 14.
+    <a href="/sync" data-testid="hero-cta-thesis">How Sync works</a>
   </p>
 </div>
 
 <!-- Full-width Hero Illustration -->
 <section class="hero-illustration-section">
   <div class="hero-illustration-container">
-    <img src="/hero-illustration.svg" alt="RTMX closed-loop workflow: AI Agent creates requirements, links to tests, reports status, agent queries via MCP" />
+    <img src="/hero-illustration.svg" alt="RTMX Sync closed-loop workflow: humans and agents claim requirements, link tests, and converge in a live room" />
   </div>
 </section>
 
-<!-- Animated Terminal Carousel -->
+<!-- SITE-141: Sync product proof elevated above client demos -->
+<div class="home-sync-demo" data-testid="home-sync-demo">
+  <SyncCollabDemo />
+</div>
+
+<!-- Animated Terminal Carousel (client access surface) -->
 <TerminalCarousel />
 
-<!-- REQ-SITE-018: product demo video (status/next/verify + MCP from vhs tapes) -->
+<!-- REQ-SITE-018: client demo video (status/next/verify + MCP) — not the product proof -->
 <section class="product-demo-section" data-testid="product-demo-section">
   <div class="product-demo-header">
-    <span class="vision-label">Product demo</span>
-    <h2>See the intent loop</h2>
+    <span class="vision-label">Client demo</span>
+    <h2>Enter the room from your terminal</h2>
     <p>
-      A short walkthrough of <code>rtmx status</code>, <code>next</code>, <code>verify</code>,
+      The open-source client: <code>rtmx status</code>, <code>next</code>, <code>verify</code>,
       and Cursor MCP setup — recorded in Docker so paths stay generic.
     </p>
   </div>
@@ -58,7 +70,7 @@ import TerminalCarousel from './TerminalCarousel.astro';
       controls
       playsinline
       preload="metadata"
-      aria-label="RTMX product demo: status, next, verify, and Cursor MCP setup"
+      aria-label="RTMX client demo: status, next, verify, and Cursor MCP setup"
     >
       <source src="/demo/rtmx-product-demo.mp4" type="video/mp4" />
     </video>
@@ -197,8 +209,8 @@ import TerminalCarousel from './TerminalCarousel.astro';
     <span class="badge">14-day free trial</span>
     <h3>RTMX Sync — After Git</h3>
     <p>
-      The live room for humans and agents. Install the open source client,
-      then try hosted Sync free for 14 days.
+      The product: a live room for humans and agents. Start a free trial, then
+      install the open-source client when you need the workspace.
     </p>
   </a>
 </section>
@@ -343,8 +355,8 @@ import TerminalCarousel from './TerminalCarousel.astro';
   </p>
 
   <div class="still-reading">
-    <a href="/installation" class="hero-button primary" data-testid="dogfood-cta-install">Install the client</a>
-    <a href="/sync" class="hero-button secondary" data-testid="dogfood-cta-sync">Try Sync free — 14 days</a>
+    <a href="/checkout" class="hero-button primary" data-testid="dogfood-cta-sync">Start 14-day free trial</a>
+    <a href="/installation" class="hero-button secondary" data-testid="dogfood-cta-install">Install the open source client</a>
   </div>
 </section>
 
@@ -534,6 +546,28 @@ import TerminalCarousel from './TerminalCarousel.astro';
     font-size: 0.9rem;
     color: var(--rtmx-text-muted);
     line-height: 1.5;
+  }
+
+  .hero-funnel-note a {
+    color: var(--rtmx-emerald-light, #6ee7b7);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .hero-funnel-note a:hover {
+    color: var(--rtmx-emerald, #10b981);
+  }
+
+  .hero-subtitle code {
+    font-size: 0.95em;
+    color: var(--rtmx-emerald-light, #6ee7b7);
+  }
+
+  /* SITE-141: Sync How-it-works on homepage */
+  .home-sync-demo {
+    max-width: 1100px;
+    margin: 2.5rem auto 3rem;
+    padding: 0 1.25rem;
   }
 
   .hero-buttons {

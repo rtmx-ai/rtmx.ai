@@ -1,7 +1,10 @@
 ---
 title: Quickstart
-description: Get up and running with RTMX in 5 minutes
+description: Install the RTMX client and join a Sync room in minutes
 ---
+
+Install the open-source client to enter Sync rooms. Local setup below gets you
+a workspace RTM; sign in with `rtmx login` when you are ready for hosted Sync.
 
 ## 1. Set up RTMX in your project
 

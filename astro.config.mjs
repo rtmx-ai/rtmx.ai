@@ -17,7 +17,7 @@ export default defineConfig({
 				// SITE-117 IA: demoted product links (About, Roadmap, aegis, …)
 				Footer: './src/components/StarlightFooter.astro',
 			},
-			description: 'The intent layer for agentic engineering. Requirements, tests, and traceability — integrated directly into the agentic engineering lifecycle.',
+			description: 'RTMX Sync — the live room for humans and agents. Multiplayer requirements, claims, and traceability. Open-source CLI is how you enter.',
 			expressiveCode: {
 				frames: false,
 				themes: ['github-dark'],
@@ -75,7 +75,7 @@ export default defineConfig({
 						'@context': 'https://schema.org',
 						'@type': 'SoftwareApplication',
 						name: 'RTMX',
-						description: 'The intent layer for agentic engineering — requirements, tests, and traceability for AI-driven development',
+						description: 'RTMX Sync — multiplayer requirements rooms for humans and agents. The open-source rtmx CLI is how you enter.',
 						url: 'https://rtmx.ai',
 						applicationCategory: 'DeveloperApplication',
 						operatingSystem: 'Linux, macOS, Windows',

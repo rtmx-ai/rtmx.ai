@@ -44,12 +44,14 @@ test.describe('Legal pages', () => {
 });
 
 test.describe('Homepage CTAs', () => {
-  test('primary hero buttons have readable (non-emerald) label color', async ({ page }) => {
+  test('primary trial CTA has readable (non-emerald) label color', async ({ page }) => {
     await page.goto('/');
-    const install = page.getByTestId('hero-cta-install');
-    await expect(install).toBeVisible();
-    await expect(install).toHaveText(/Install the client/i);
-    const color = await install.evaluate((el) => getComputedStyle(el).color);
+    // SITE-141: primary is Sync trial → /checkout
+    const trial = page.getByTestId('hero-cta-sync');
+    await expect(trial).toBeVisible();
+    await expect(trial).toHaveText(/Start 14-day free trial/i);
+    await expect(trial).toHaveAttribute('href', '/checkout');
+    const color = await trial.evaluate((el) => getComputedStyle(el).color);
     expect(color).toMatch(/rgb\(\s*(\d+)/);
     const m = color.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
     expect(m).toBeTruthy();

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * REQ-SITE-117: Sync explainer is the product thesis; Pricing is plans only.
+ * REQ-SITE-141: Homepage Sync-primary hierarchy (trial CTA → /checkout).
  * Open source CLI is positioned as how you access Sync.
  * Header is product-led: Sync · Docs · Blog · Pricing.
  */
@@ -71,17 +72,38 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(page.locator('.sync-shell')).toBeVisible();
   });
 
-  test('hero Sync card and CTA point at /sync, not /pricing', async ({ page }) => {
+  test('homepage Sync-primary hierarchy (SITE-141)', async ({ page }) => {
     await page.goto('/');
     const card = page.getByTestId('hero-sync-card');
     await expect(card).toHaveAttribute('href', '/sync');
     await expect(card).toContainText(/After Git|Sync/i);
-    await expect(card).toContainText(/14-day free trial/i);
+    await expect(card).toContainText(/14-day free trial|product/i);
     await expect(card).not.toContainText(/CRDT/i);
-    await expect(page.getByTestId('hero-cta-install')).toHaveAttribute('href', '/installation');
-    await expect(page.getByTestId('hero-cta-sync')).toHaveAttribute('href', '/sync');
-    await expect(page.getByTestId('hero-cta-sync')).toHaveText(/Try Sync free/i);
-    await expect(page.getByTestId('hero-funnel-note')).toContainText(/14-day/i);
+
+    // Primary = Sync trial; secondary = install client
+    const trial = page.getByTestId('hero-cta-sync');
+    await expect(trial).toHaveAttribute('href', '/checkout');
+    await expect(trial).toHaveText(/Start 14-day free trial/i);
+    await expect(trial).toHaveClass(/primary/);
+
+    const install = page.getByTestId('hero-cta-install');
+    await expect(install).toHaveAttribute('href', '/installation');
+    await expect(install).toHaveText(/Install the open source client/i);
+    await expect(install).toHaveClass(/secondary/);
+
+    const funnel = page.getByTestId('hero-funnel-note');
+    await expect(funnel).toContainText(/Start Sync trial/i);
+    await expect(funnel).toContainText(/install the free client/i);
+    await expect(page.getByTestId('hero-cta-thesis')).toHaveAttribute('href', '/sync');
+
+    // UCP names Sync as product
+    await expect(page.locator('.hero-ucp')).toContainText(/Sync/i);
+    await expect(page.locator('.hero-subtitle')).toContainText(/Sync is the live room|RTMX Sync/i);
+
+    // Sync How-it-works elevated on homepage (before client demo)
+    const homeDemo = page.getByTestId('home-sync-demo');
+    await expect(homeDemo.getByTestId('sync-collab-demo')).toBeVisible();
+    await expect(page.getByTestId('product-demo-section')).toContainText(/Client demo/i);
   });
 
   test('How it works is multi-agent horizontal WIP (SITE-137/138, MONO-035a/b)', async ({ page }) => {

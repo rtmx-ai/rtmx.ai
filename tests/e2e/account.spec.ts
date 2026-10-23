@@ -1,8 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 /**
  * REQ-SITE-115 / REQ-MONO-023c: /account management page.
+ * Left-tab layout: inactive panels use [hidden]; select a tab before asserting.
  */
+
+async function selectAccountTab(page: Page, tab: string) {
+  await page.locator(`.account-tab[data-tab="${tab}"]`).click();
+  await expect(page.locator(`#panel-${tab}`)).toBeVisible();
+}
 
 test.describe('account page', () => {
   test('unauthenticated visitors redirect to login', async ({ page }) => {
@@ -60,11 +66,15 @@ test.describe('account page', () => {
 
     await expect(page.locator('#account-display-name')).toHaveText('Buyer Example');
     await expect(page.locator('#account-email')).toHaveText('buyer@example.com');
+
+    await selectAccountTab(page, 'organizations');
     await expect(page.locator('#org-list')).toContainText('Acme');
     await expect(page.getByRole('link', { name: 'Admin' })).toHaveAttribute(
       'href',
       '/orgs/admin?slug=acme',
     );
+
+    await selectAccountTab(page, 'connections');
     await expect(page.locator('#connect-asana')).toBeVisible();
     await expect(page.getByTestId('github-fab')).toBeHidden();
   });
@@ -164,6 +174,7 @@ test.describe('account page', () => {
     });
     await page.goto('/account');
 
+    await selectAccountTab(page, 'connections');
     await expect(page.locator('.share-select')).toBeVisible();
     await page.locator('.share-select').selectOption('org-1');
     await expect(page.locator('#account-message')).toContainText(/shared/i);
@@ -262,12 +273,17 @@ test.describe('account page', () => {
     });
     await page.goto('/account');
 
+    await selectAccountTab(page, 'organizations');
+    await expect(page.getByTestId('org-membership-list')).toContainText('oss-lab');
+
+    await selectAccountTab(page, 'github');
     await expect(page.getByTestId('github-affiliation')).toBeVisible();
     await expect(page.getByTestId('github-org-candidates')).toContainText('rtmx-ai');
-    await expect(page.getByTestId('org-membership-list')).toContainText('oss-lab');
 
     await page.getByTestId('affiliate-gh-rtmx-ai').click();
     await expect(page.locator('#gh-affiliate-message')).toContainText(/Affiliated with rtmx-ai/i);
+
+    await selectAccountTab(page, 'organizations');
     await expect(page.getByTestId('org-membership-list')).toContainText('rtmx-ai');
     await expect(page.getByTestId('org-membership-list')).toContainText('oss-lab');
 
@@ -275,7 +291,7 @@ test.describe('account page', () => {
     await expect(page.getByTestId('org-membership-list')).toContainText('active');
   });
 
-  test('SITE-133: adoption recommendations show rtmx-ai/rtmx and affiliate CTA', async ({ page }) => {
+  test('SITE-133: adoption recommendations show rtmx-ai/rtmx and Join CTA', async ({ page }) => {
     let memberships: { id: string; name: string; slug: string; visibility: string }[] = [];
     await page.route('**/auth/me', async (route) => {
       await route.fulfill({
@@ -372,10 +388,13 @@ test.describe('account page', () => {
     });
     await page.goto('/account');
 
+    await selectAccountTab(page, 'adoption');
     await expect(page.getByTestId('adoption-recommendations')).toBeVisible();
     await expect(page.getByTestId('adoption-list')).toContainText('github.com/rtmx-ai/rtmx');
-    await page.getByTestId('adopt-affiliate-rtmx-ai').click();
-    await expect(page.locator('#adoption-message')).toContainText(/affiliated with rtmx-ai/i);
+    await page.getByTestId('adopt-join-rtmx-ai').click();
+    await expect(page.locator('#adoption-message')).toContainText(/joined public org rtmx-ai/i);
+
+    await selectAccountTab(page, 'organizations');
     await expect(page.getByTestId('org-membership-list')).toContainText('rtmx-ai');
   });
 });

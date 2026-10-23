@@ -17,13 +17,15 @@ you access Sync — not as the product itself.
 - [x] `/sync` splash page exists with after-Git thesis and CLI-as-client framing
 - [x] Header nav is Sync · Docs · Pricing (Sync first); aegis/Roadmap/About in product footer
 - [x] Docs sidebar Product group links to `/sync` and `/pricing`
-- [x] Hero primary CTA and Sync feature card link to `/sync` (not `/pricing`)
+- [x] Hero Sync feature card links to `/sync` (not `/pricing`)
 - [x] Pricing page links to `/sync` for the product story
 - [x] Playwright covers nav order, page copy, hero/pricing links, footer demotion
+- ~~Hero primary CTA links to `/sync`~~ — **superseded by REQ-SITE-141**
+  (homepage primary CTA is Sync trial → `/checkout`; secondary is install client)
 
 ## Test Cases
 
-- `tests/e2e/sync.spec.ts` — Sync explainer (SITE-117)
+- `tests/e2e/sync.spec.ts` — Sync explainer (SITE-117); homepage hierarchy (SITE-141)
 
 ## Dependencies
 
@@ -33,3 +35,4 @@ you access Sync — not as the product itself.
 ## Notes
 
 Sync is the thesis. Pricing is the SKU card. The CLI is the access client.
+Homepage button hierarchy: see REQ-SITE-141.
