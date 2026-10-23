@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Standalone rtmx.ai clone pre-push: full Deploy Website parity before push.
+# Install from this repo: make hooks
+
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+exec "$ROOT/scripts/ci-local.sh"

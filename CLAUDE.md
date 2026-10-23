@@ -22,7 +22,15 @@ npm install       # Install dependencies
 npm run dev       # Start development server
 npm run build     # Build for production
 npm run preview   # Preview production build
+make hooks        # Install pre-push (Deploy Website CI parity)
+make test-ci      # build + form-proxy + full Playwright (same as CI)
+npm run test:e2e  # Playwright only
 ```
+
+**CRITICAL:** Local pre-push must match remote Deploy Website. Run `make hooks`
+after cloning. Pre-push and monorepo `make sync-push PROJECT=rtmx.ai` both run
+`scripts/ci-local.sh` (Astro build, form-proxy unit tests, full Playwright).
+Do not push site changes without a green local gate — CI is not the first filter.
 
 ### Requirements Tracking
 
