@@ -490,10 +490,9 @@ test.describe('dashboard live updates (RT-004)', () => {
     await seedSession(page);
     const started = Date.now();
     await page.goto('/dashboard');
-    await expect(page.getByTestId('dashboard-overview-summary')).toContainText(/1 of 2 complete/);
 
-    // Reconnect can finish before the first poll; require a second socket and
-    // a final connected state within the SLA (reconnecting may be skipped).
+    // Reconnect can finish (and overview resync to 2/2) before the first paint
+    // settles on 1/2 — assert reconnect + final overview, not the intermediate.
     await expect
       .poll(async () => wsConnections, { timeout: 5000 })
       .toBeGreaterThanOrEqual(2);

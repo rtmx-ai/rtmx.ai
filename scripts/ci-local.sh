@@ -32,6 +32,8 @@ echo "=== rtmx.ai CI-local: form-proxy unit tests ==="
 npm run test:worker
 
 echo "=== rtmx.ai CI-local: Playwright (chromium) ==="
+# Match GitHub Actions: CI=1 enables workers=2, one retry, fresh webServer.
+export CI=1
 npx playwright install chromium
 npx playwright test
 
