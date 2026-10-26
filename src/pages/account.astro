@@ -295,6 +295,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       if (org.visibility) {
         label.textContent += ' · ' + org.visibility;
       }
+      const role = (org.role || 'member').toLowerCase();
+      label.textContent += ' · ' + role;
       if (org.slug === active) {
         const badge = document.createElement('span');
         badge.className = 'org-active-badge';
@@ -315,10 +317,14 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         });
         actions.appendChild(selectBtn);
       }
-      const admin = document.createElement('a');
-      admin.href = '/orgs/admin?slug=' + encodeURIComponent(org.slug || org.id);
-      admin.textContent = 'Admin';
-      actions.appendChild(admin);
+      // Org admin UI requires owner/admin — public join/affiliate is member only.
+      if (role === 'owner' || role === 'admin') {
+        const admin = document.createElement('a');
+        admin.href = '/orgs/admin?slug=' + encodeURIComponent(org.slug || org.id);
+        admin.textContent = 'Admin';
+        admin.setAttribute('data-testid', 'org-admin-' + (org.slug || org.id));
+        actions.appendChild(admin);
+      }
       li.appendChild(label);
       li.appendChild(actions);
       orgListEl.appendChild(li);

@@ -28,7 +28,7 @@ test.describe('account page', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          organizations: [{ id: '1', name: 'Acme', slug: 'acme' }],
+          organizations: [{ id: '1', name: 'Acme', slug: 'acme', role: 'owner' }],
         }),
       });
     });
@@ -69,7 +69,8 @@ test.describe('account page', () => {
 
     await selectAccountTab(page, 'organizations');
     await expect(page.locator('#org-list')).toContainText('Acme');
-    await expect(page.getByRole('link', { name: 'Admin' })).toHaveAttribute(
+    await expect(page.locator('#org-list')).toContainText('owner');
+    await expect(page.getByTestId('org-admin-acme')).toHaveAttribute(
       'href',
       '/orgs/admin?slug=acme',
     );
@@ -77,6 +78,73 @@ test.describe('account page', () => {
     await selectAccountTab(page, 'connections');
     await expect(page.locator('#connect-asana')).toBeVisible();
     await expect(page.getByTestId('github-fab')).toBeHidden();
+  });
+
+  test('member role does not show Admin link (public join)', async ({ page }) => {
+    await page.route(/\/orgs$/, async (route) => {
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          organizations: [
+            { id: '1', name: 'rtmx-ai', slug: 'rtmx-ai', visibility: 'public', role: 'member' },
+          ],
+        }),
+      });
+    });
+    await page.route('**/connections', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ connections: [] }),
+      });
+    });
+    await page.route('**/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'u1',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+          tier: 'free',
+        }),
+      });
+    });
+    await page.route('**/adoption', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ schema_version: 'adoption-v1', entries: [] }),
+      });
+    });
+    await page.route('**/auth/github/orgs', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ orgs: [] }),
+      });
+    });
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: 'buyer@example.com',
+          display_name: 'Buyer',
+        }),
+      );
+    });
+    await page.goto('/account');
+    await selectAccountTab(page, 'organizations');
+    await expect(page.locator('#org-list')).toContainText('rtmx-ai');
+    await expect(page.locator('#org-list')).toContainText('member');
+    await expect(page.getByTestId('org-admin-rtmx-ai')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Admin' })).toHaveCount(0);
   });
 
   test('owner can share a connection into an org', async ({ page }) => {
