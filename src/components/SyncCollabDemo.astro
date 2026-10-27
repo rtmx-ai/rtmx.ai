@@ -2,16 +2,8 @@
 /**
  * How it works — horizontal WIP across a human and heterogeneous agents.
  * REQ-MONO-035a/b / SITE-137/138: not a You↔Cursor-only pair.
- * REQ-MONO-045c: prefer live tape when present; mock GIF fallback.
+ * REQ-MONO-060a / SITE-184: stage only — CLI GIF lives in SyncCliRecording.
  */
-import fs from 'node:fs';
-import path from 'node:path';
-
-const liveRel = 'demo/multi-agent-sync-live.gif';
-const mockRel = 'demo/multi-agent-sync.gif';
-const liveAbs = path.join(process.cwd(), 'public', liveRel);
-const tapeKind = fs.existsSync(liveAbs) ? 'live' : 'mock';
-const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
 ---
 
 <section class="sync-demo not-content" data-testid="sync-collab-demo" aria-label="Animated demo of multi-agent Sync collaboration">
@@ -28,7 +20,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
   <div class="sync-demo-stage" data-demo-stage>
     <div class="sync-demo-roombar" data-demo-roombar>
       <span class="sync-demo-live" aria-hidden="true"></span>
-      <span class="sync-demo-room-label">acme / main</span>
+      <span class="sync-demo-room-label">demo / main</span>
       <div class="sync-demo-presence" aria-label="Clients in the room">
         <span class="sync-demo-avatar you" data-presence="you" title="You">Y</span>
         <span class="sync-demo-avatar cursor" data-presence="cursor" title="Cursor">Cu</span>
@@ -50,7 +42,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/sync/demo/main...</div>
           <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
           <div class="sync-demo-line live" data-step="5">
             <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Cursor
@@ -77,12 +69,12 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/sync/demo/main...</div>
           <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
           <div class="sync-demo-line dim" data-step="4">Next unblocked: REQ-AUTH-012</div>
           <div class="sync-demo-line prompt" data-step="5">
             <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx claim REQ-AUTH-012"></span>
+            <span class="typed" data-type="rtmx claim REQ-AUTH-012 --agent-id cursor"></span>
             <span class="cursor mid">▋</span>
           </div>
           <div class="sync-demo-line ok" data-step="6">✓ claimed · publishing to room</div>
@@ -103,7 +95,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
             <span class="typed" data-type="rtmx sync"></span>
             <span class="cursor">▋</span>
           </div>
-          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/acme/main...</div>
+          <div class="sync-demo-line ok" data-step="2">Connecting to sync.rtmx.ai/sync/demo/main...</div>
           <div class="sync-demo-line ok" data-step="3">  ✓ joined room</div>
           <div class="sync-demo-line dim" data-step="6">
             <span class="tag">LIVE</span> REQ-AUTH-012 claimed by Cursor
@@ -111,7 +103,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
           <div class="sync-demo-line dim" data-step="7">Next unblocked: REQ-API-003</div>
           <div class="sync-demo-line prompt" data-step="8">
             <span class="prompt-sym">$</span>
-            <span class="typed" data-type="rtmx claim REQ-API-003"></span>
+            <span class="typed" data-type="rtmx claim REQ-API-003 --agent-id claude"></span>
             <span class="cursor late">▋</span>
           </div>
           <div class="sync-demo-line ok" data-step="9">✓ claimed · parallel WIP</div>
@@ -127,25 +119,6 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
       <li data-caption="5">Claude Code takes the next item in parallel. WIP lives in Sync.</li>
     </ol>
   </div>
-
-  <!-- REQ-MONO-035e + REQ-MONO-045c: prefer live GIF when ops published it; else mock. -->
-  <figure class="sync-demo-recording" data-testid="sync-collab-recording">
-    <img
-      src={tapeSrc}
-      data-testid="sync-demo-tape"
-      data-tape={tapeKind}
-      alt="Terminal recording: You, Cursor, and Claude Code clients joining one Sync room and claiming work in parallel"
-      width="1100"
-      height="640"
-      loading="lazy"
-    />
-    <figcaption>
-      {tapeKind === 'live'
-        ? 'Live harness recording'
-        : 'Mock harness recording'}
-      {' '}— <code>rtmx sync</code> / <code>rtmx claim</code> across You, Cursor, and Claude Code.
-    </figcaption>
-  </figure>
 </section>
 
 <style is:global>
@@ -153,24 +126,6 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
     margin: 0;
     padding: var(--sync-pad-y, 2.5rem) 0;
     border-top: 1px solid rgba(110, 231, 183, 0.1);
-  }
-  .sync-demo-recording {
-    max-width: 56rem;
-    margin: 1.75rem auto 0;
-    padding: 0 1rem;
-  }
-  .sync-demo-recording img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    border: 1px solid rgba(110, 231, 183, 0.15);
-  }
-  .sync-demo-recording figcaption {
-    margin-top: 0.5rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: rgba(226, 232, 240, 0.65);
   }
   .sync-demo-header {
     text-align: center;
@@ -509,7 +464,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
       setPhase(3);
       const claimCursor = root.querySelector('[data-pane="cursor"] .sync-demo-line[data-step="5"]');
       claimCursor?.classList.add('visible');
-      await typeEl(claimCursor?.querySelector('.typed'), 'rtmx claim REQ-AUTH-012');
+      await typeEl(claimCursor?.querySelector('.typed'), 'rtmx claim REQ-AUTH-012 --agent-id cursor');
       claimCursor?.querySelector('.cursor')?.classList.add('hidden');
       await sleep(150);
 
@@ -526,7 +481,7 @@ const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
       setPhase(5);
       const claimClaude = root.querySelector('[data-pane="claude"] .sync-demo-line[data-step="8"]');
       claimClaude?.classList.add('visible');
-      await typeEl(claimClaude?.querySelector('.typed'), 'rtmx claim REQ-API-003');
+      await typeEl(claimClaude?.querySelector('.typed'), 'rtmx claim REQ-API-003 --agent-id claude');
       claimClaude?.querySelector('.cursor')?.classList.add('hidden');
       showStep(8);
       showStep(9);

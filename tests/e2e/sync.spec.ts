@@ -61,7 +61,7 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(demo.locator('[data-pane="cursor"]')).toBeVisible();
     await expect(demo.locator('[data-pane="claude"]')).toBeVisible();
     await expect(demo.locator('[data-panes="3"]')).toBeVisible();
-    await expect(demo).toContainText(/acme \/ main/);
+    await expect(demo).toContainText(/demo \/ main/);
     // Not a You↔single-agent pair
     await expect(demo.locator('[data-pane="agent"]')).toHaveCount(0);
     // Primary emerald CTA must use white label (Starlight link styles otherwise wash it out).
@@ -122,6 +122,22 @@ test.describe('Sync explainer (SITE-117)', () => {
     const cols = await demo.locator('.sync-demo-panes').evaluate((el) => getComputedStyle(el).gridTemplateColumns);
     // Desktop: three tracks (Playwright default viewport is wide enough)
     expect(cols.split(' ').length).toBeGreaterThanOrEqual(3);
+  });
+
+  test('stage has no nested VHS; CLI recording is separate (SITE-184/185, MONO-060a)', async ({ page }) => {
+    await page.goto('/sync');
+    const demo = page.getByTestId('sync-collab-demo');
+    await expect(demo.getByTestId('sync-collab-recording')).toHaveCount(0);
+    await expect(demo.getByTestId('sync-demo-tape')).toHaveCount(0);
+
+    const rec = page.getByTestId('sync-cli-recording');
+    await expect(rec).toBeVisible();
+    await expect(rec).toContainText(/Recorded from the CLI|What you type/i);
+    await expect(rec.getByTestId('sync-demo-tape')).toBeVisible();
+
+    await page.goto('/');
+    await expect(page.getByTestId('home-sync-demo').getByTestId('sync-collab-demo')).toBeVisible();
+    await expect(page.getByTestId('sync-cli-recording')).toHaveCount(0);
   });
 
   test('pricing defers product thesis to /sync', async ({ page }) => {

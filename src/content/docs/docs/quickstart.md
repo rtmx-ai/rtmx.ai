@@ -95,6 +95,6 @@ make health    # Run health checks
 ## Next Steps
 
 - [CLI Reference](/guides/cli-reference) — All available commands
-- [Test Markers](/guides/markers) — pytest integration
+- [Test Markers](/guides/markers) — language matrix (Go, Python, Rust, JS, …)
 - [Schema](/guides/schema) — RTM database schema
 - [MCP Server](/docs/adapters/mcp) — AI agent integration
