@@ -1,5 +1,17 @@
 # RTMX Infrastructure
 
+## Unknown-host Worker (REQ-SITE-153)
+
+Redirects non-allowlisted `*.rtmx.ai` labels to `https://rtmx.ai/?from_host=…`.
+See `workers/unknown-host/` and `docs/runbooks/rtmx-ai-hosts.md`.
+
+```bash
+cd infra/workers/unknown-host
+npm install && npm test
+# After DNS wildcard is ready:
+# npx wrangler deploy
+```
+
 ## Form Proxy Worker
 
 Cloudflare Worker that handles form submissions with reCAPTCHA v3 verification and HubSpot forwarding.

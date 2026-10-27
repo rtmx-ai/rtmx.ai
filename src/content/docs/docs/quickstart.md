@@ -5,28 +5,38 @@ description: Install the RTMX client and join a Sync room in minutes
 
 Install the open-source client to enter Sync rooms. Local setup below gets you
 a workspace RTM; sign in with `rtmx login` when you are ready for hosted Sync.
+If your managed session expires and you use Google or Microsoft, try
+`rtmx login --silent --provider google` before a full interactive login.
 
 ## 1. Set up RTMX in your project
 
 ```bash
-rtmx setup
+rtmx init
+# or: rtmx setup   # fuller scaffolding (Makefile, agent configs)
 ```
 
-This creates everything you need:
-- `rtmx.yaml` — Configuration file
-- `docs/rtm_database.csv` — Requirements database
-- `docs/requirements/` — Requirement specification files
-- Makefile targets (`make rtm`, `make backlog`)
-- AI agent configs (AGENTS.md, .cursorrules)
+`rtmx init` creates `.rtmx/` (database, config, requirements). On a TTY it can
+offer `rtmx link` next; use `--yes` to skip prompts.
 
-For existing projects, use `--branch` to review changes before merging:
+For existing projects with `rtmx setup`, use `--branch` to review changes before merging:
 
 ```bash
 rtmx setup --branch    # Creates a git branch for review
 rtmx setup --pr        # Creates branch + opens PR
 ```
 
-## 2. Check your status
+## 2. Link an issue store (tracker migrants)
+
+If you already track work in GitHub, Jira, Asana, Monday, or GitLab:
+
+```bash
+rtmx link              # Interactive picker (TTY); infers GitHub/GitLab from git remotes
+rtmx bootstrap --from-github   # CI / non-TTY
+```
+
+See [RTMX for Developers](/docs/guides/for-developers) for the three-step path.
+
+## 3. Check your status
 
 ```bash
 rtmx status -v    # Verbose output with category breakdown
@@ -34,7 +44,7 @@ rtmx status -vv   # Very verbose with requirement details
 rtmx status -vvv  # Maximum detail
 ```
 
-## 3. See what to work on next
+## 4. See what to work on next
 
 ```bash
 rtmx backlog
@@ -42,7 +52,7 @@ rtmx backlog
 
 The backlog shows requirements sorted by priority and phase, with dependency information.
 
-## 4. Run health checks
+## 5. Run health checks
 
 ```bash
 rtmx health
@@ -54,7 +64,7 @@ Health checks verify:
 - Dependencies reference existing requirements
 - Test files and functions exist
 
-## 5. Link tests to requirements
+## 6. Link tests to requirements
 
 ```python
 import pytest
@@ -87,4 +97,4 @@ make health    # Run health checks
 - [CLI Reference](/guides/cli-reference) — All available commands
 - [Test Markers](/guides/markers) — pytest integration
 - [Schema](/guides/schema) — RTM database schema
-- [MCP Server](/adapters/mcp) — AI agent integration
+- [MCP Server](/docs/adapters/mcp) — AI agent integration

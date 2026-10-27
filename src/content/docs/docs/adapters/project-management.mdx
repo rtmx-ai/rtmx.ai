@@ -1,0 +1,185 @@
+---
+title: Project Management Adapters
+description: Sync and bootstrap RTM requirements with GitHub, Jira, Asana, Monday, and GitLab
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+RTMX project-management adapters keep your CSV database in sync with issue trackers
+and boards. The **CLI shape is the same** for every provider — enable the adapter,
+set credentials, then:
+
+```bash
+rtmx sync --service <name> --import   # or --export / --bidirectional
+rtmx bootstrap --from-<name>          # import requirements from the tracker
+```
+
+Only **credentials and `rtmx.yaml` keys** change per provider. MCP is a separate
+adapter ([MCP Server](/docs/adapters/mcp)) — not a board sync target.
+
+## Shared workflow
+
+1. Put a token (or OAuth vault for Asana) in the environment.
+2. Enable the adapter under `adapters:` / provider key in `rtmx.yaml`.
+3. Sync or bootstrap with the matching `--service` / `--from-*` name.
+4. Keep CSV as the source of truth; review diffs in git.
+
+## Provider setup
+
+<Tabs>
+  <TabItem label="GitHub">
+
+### Credentials
+
+```bash
+export GITHUB_TOKEN=ghp_your_token_here
+```
+
+Scopes: `repo` (private) or `public_repo` (public only).
+
+On managed Sync, vaulted GitHub Issues OAuth via `rtmx connect github` can
+supply the token when `GITHUB_TOKEN` is unset. Connection owners always can;
+org owners/admins can after the connection is shared into their Sync org
+(Account → Connections → share). Ordinary members cannot fetch the secret.
+
+### Configuration
+
+```yaml
+adapters:
+  github:
+    enabled: true
+    repo: owner/repo
+    token_env: GITHUB_TOKEN
+```
+
+### Commands
+
+```bash
+rtmx sync --service github --import
+rtmx sync --service github --export --dry-run
+rtmx bootstrap --from-github --dry-run
+```
+
+  </TabItem>
+  <TabItem label="Jira">
+
+### Credentials
+
+```bash
+export JIRA_URL=https://your-org.atlassian.net
+export JIRA_EMAIL=you@company.com
+export JIRA_API_TOKEN=your_api_token
+```
+
+### Configuration
+
+```yaml
+adapters:
+  jira:
+    enabled: true
+    server: https://your-org.atlassian.net
+    project: PROJ
+    issue_type: Story
+    token_env: JIRA_API_TOKEN
+    email_env: JIRA_EMAIL
+```
+
+### Commands
+
+```bash
+rtmx sync --service jira --import
+rtmx bootstrap --from-jira --dry-run
+```
+
+  </TabItem>
+  <TabItem label="Asana">
+
+### Credentials
+
+Personal access token, or vault OAuth via `rtmx connect asana` when using managed Sync:
+
+```bash
+export ASANA_TOKEN=your_asana_pat
+# optional: rtmx connect asana   # stores vaulted OAuth on Sync
+```
+
+### Configuration
+
+```yaml
+adapters:
+  asana:
+    enabled: true
+    workspace_gid: "1234567890"
+    project_gid: "0987654321"
+    token_env: ASANA_TOKEN
+```
+
+### Commands
+
+```bash
+rtmx sync --service asana --import
+rtmx bootstrap --from-asana --dry-run
+rtmx connect asana   # optional vault path on Sync
+```
+
+  </TabItem>
+  <TabItem label="Monday">
+
+### Credentials
+
+```bash
+export MONDAY_TOKEN=your_monday_api_token
+```
+
+### Configuration
+
+```yaml
+adapters:
+  monday:
+    enabled: true
+    board_id: "1234567890"
+    token_env: MONDAY_TOKEN
+```
+
+### Commands
+
+```bash
+rtmx sync --service monday --import
+rtmx bootstrap --from-monday --dry-run
+```
+
+  </TabItem>
+  <TabItem label="GitLab">
+
+### Credentials
+
+```bash
+export GITLAB_TOKEN=glpat_your_token
+```
+
+### Configuration
+
+```yaml
+adapters:
+  gitlab:
+    enabled: true
+    server: https://gitlab.com
+    project: group/project
+    token_env: GITLAB_TOKEN
+```
+
+### Commands
+
+```bash
+rtmx sync --service gitlab --import
+rtmx bootstrap --from-gitlab --dry-run
+```
+
+  </TabItem>
+</Tabs>
+
+## See also
+
+- [Adapters overview](/docs/adapters)
+- [MCP Server](/docs/adapters/mcp) for agent tooling
+- [Configuration guide](/docs/guides/configuration)

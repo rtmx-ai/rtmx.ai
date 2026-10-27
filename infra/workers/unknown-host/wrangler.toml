@@ -1,0 +1,19 @@
+name = "rtmx-unknown-host"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# account_id: Set via CLOUDFLARE_ACCOUNT_ID env var or wrangler.toml.local
+# account_id = ""
+
+# Catch-all Worker route. Specific DNS for sync/www/forms/apex still required.
+# Allowlisted hosts that match *.rtmx.ai/* are passed through to origin.
+#
+# DNS (REQ-SITE-153):
+# 1. Prefer zone wildcard: AAAA name=* content=100:: proxied (orange cloud)
+# 2. Probe custom domains below create per-host DNS until wildcard exists
+# 3. Probe: curl -sI https://x.rtmx.ai/ | grep -i location
+routes = [
+	{ pattern = "*.rtmx.ai/*", zone_name = "rtmx.ai" },
+	{ pattern = "x.rtmx.ai", zone_name = "rtmx.ai", custom_domain = true },
+	{ pattern = "synck.rtmx.ai", zone_name = "rtmx.ai", custom_domain = true },
+]

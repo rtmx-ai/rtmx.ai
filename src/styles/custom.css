@@ -37,22 +37,76 @@
   }
 }
 
-/* Dark mode - true dark for contrast */
-:root[data-theme='dark'] {
-  --sl-color-bg: #0a0a0a;
-  --sl-color-bg-nav: #171717;
-  --sl-color-bg-sidebar: #171717;
-  --sl-color-hairline-light: #262626;
-  --sl-color-hairline: #404040;
-}
-
-/* Force dark mode globally -- site designed dark-first, light mode not supported */
+/*
+ * Dark-only site. Lock surfaces AND aside semantic tokens so callouts stay
+ * readable even if data-theme briefly becomes light (system preference).
+ * Starlight light theme uses pastel *-low backgrounds with dark titles;
+ * our --sl-color-white stays light → white-on-lavender asides.
+ */
+:root,
+:root[data-theme='dark'],
 :root[data-theme='light'] {
   --sl-color-bg: #0a0a0a;
   --sl-color-bg-nav: #171717;
   --sl-color-bg-sidebar: #171717;
   --sl-color-hairline-light: #262626;
   --sl-color-hairline: #404040;
+
+  --sl-color-white: #f9fafb;
+  --sl-color-gray-1: #f3f4f6;
+  --sl-color-gray-2: #e5e7eb;
+  --sl-color-gray-3: #d1d5db;
+  --sl-color-gray-4: #9ca3af;
+  --sl-color-gray-5: #6b7280;
+  --sl-color-gray-6: #374151;
+  --sl-color-black: #111111;
+
+  --sl-color-orange-low: hsl(32, 40%, 14%);
+  --sl-color-orange: hsl(32, 90%, 58%);
+  --sl-color-orange-high: hsl(36, 95%, 78%);
+  --sl-color-green-low: hsl(152, 35%, 12%);
+  --sl-color-green: hsl(152, 70%, 45%);
+  --sl-color-green-high: hsl(152, 70%, 72%);
+  --sl-color-blue-low: hsl(220, 40%, 14%);
+  --sl-color-blue: hsl(214, 90%, 62%);
+  --sl-color-blue-high: hsl(210, 100%, 82%);
+  --sl-color-purple-low: hsl(270, 30%, 14%);
+  --sl-color-purple: hsl(270, 70%, 68%);
+  --sl-color-purple-high: hsl(270, 85%, 84%);
+  --sl-color-red-low: hsl(350, 35%, 14%);
+  --sl-color-red: hsl(350, 80%, 62%);
+  --sl-color-red-high: hsl(350, 90%, 82%);
+}
+
+/* Asides: dark panels, light body copy, accent titles/links */
+.starlight-aside {
+  color: var(--rtmx-text, #f9fafb);
+  border-radius: 0.5rem;
+  background-color: color-mix(
+    in srgb,
+    var(--sl-color-asides-border) 14%,
+    var(--rtmx-bg-card, #171717)
+  ) !important;
+}
+
+.starlight-aside__title {
+  color: var(--sl-color-asides-text-accent);
+}
+
+.starlight-aside__content,
+.starlight-aside__content p {
+  color: var(--rtmx-text-muted, #a8a29e);
+}
+
+.starlight-aside__content a,
+.sl-markdown-content .starlight-aside a {
+  color: var(--rtmx-emerald-light, #6ee7b7) !important;
+  text-decoration-color: color-mix(in srgb, var(--rtmx-emerald-light, #6ee7b7) 45%, transparent);
+}
+
+.starlight-aside__content a:hover,
+.sl-markdown-content .starlight-aside a:hover {
+  color: var(--rtmx-text, #f9fafb) !important;
 }
 
 /* Inline code - high contrast pill style */
@@ -627,4 +681,20 @@ body:has(.rtmx-splash) main {
 
 .terminal-content .terminal-output {
   background: transparent;
+}
+
+/* REQ-SITE-149: After copy, show green checkmark feedback on code fences. */
+.expressive-code .copy .feedback {
+  color: var(--rtmx-emerald-light);
+  border-color: var(--rtmx-emerald);
+}
+.expressive-code .copy:has(.feedback.show) button {
+  background: color-mix(in srgb, var(--rtmx-emerald) 35%, transparent) !important;
+  opacity: 1 !important;
+}
+.expressive-code .copy:has(.feedback.show) button::before {
+  background-color: var(--rtmx-emerald) !important;
+  /* checkmark mask */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") !important;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") !important;
 }

@@ -1,21 +1,21 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * REQ-SITE-026: Show HN launch article published with frontmatter + diagrams.
- * REQ-SITE-027: Blog in nav; /blog index lists posts newest-first with dates.
+ * REQ-SITE-027: Blog in nav; /docs/blog index lists posts newest-first with dates.
+ * REQ-MONO-042: docs namespace under /docs (legacy /blog redirects).
  */
 
 test.describe('Blog navigation and index (SITE-027)', () => {
-  test('header Blog link reaches /blog index', async ({ page }) => {
+  test('header Blog link reaches /docs/blog index', async ({ page }) => {
     await page.goto('/');
     const navBlog = page.getByTestId('nav-blog');
     await expect(navBlog).toBeVisible();
     await navBlog.click();
-    await expect(page).toHaveURL(/\/blog\/?$/);
+    await expect(page).toHaveURL(/\/docs\/blog\/?$/);
   });
 
   test('blog index lists posts reverse-chronologically with dates', async ({ page }) => {
-    await page.goto('/blog');
+    await page.goto('/docs/blog');
     const list = page.getByTestId('blog-post-list');
     await expect(list).toBeVisible();
 
@@ -40,15 +40,20 @@ test.describe('Blog navigation and index (SITE-027)', () => {
   });
 
   test('sidebar Blog section is present', async ({ page }) => {
-    await page.goto('/blog');
+    await page.goto('/docs/blog');
     const sidebar = page.locator('nav.sidebar, .sidebar-content, starlight-menu').first();
     await expect(sidebar.getByText('Blog', { exact: true }).first()).toBeVisible();
+  });
+
+  test('SITE-151: legacy /blog redirects to /docs/blog', async ({ page }) => {
+    await page.goto('/blog');
+    await expect(page).toHaveURL(/\/docs\/blog\/?$/);
   });
 });
 
 test.describe('Show HN blog post (SITE-026)', () => {
   test('post is published with frontmatter signals and GitHub link', async ({ page }) => {
-    await page.goto('/blog/show-hn-rtmx');
+    await page.goto('/docs/blog/show-hn-rtmx');
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Show HN|RTMX/);
     await expect(

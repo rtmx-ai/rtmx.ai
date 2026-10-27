@@ -1,0 +1,15 @@
+{
+  "name": "rtmx-unknown-host",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/index.test.ts",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "dns:wildcard": "node scripts/ensure-wildcard-dns.mjs",
+    "probe": "bash scripts/probe.sh"
+  },
+  "devDependencies": {
+    "wrangler": "^4.14.0"
+  }
+}

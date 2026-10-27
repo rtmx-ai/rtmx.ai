@@ -30,7 +30,7 @@ test.describe('Show HN launch readiness (SITE-029)', () => {
   });
 
   test('blog post is published in content tree (029g)', async () => {
-    const blog = path.join(siteRoot, 'src/content/docs/blog/show-hn-rtmx.md');
+    const blog = path.join(siteRoot, 'src/content/docs/docs/blog/show-hn-rtmx.md');
     expect(fs.existsSync(blog)).toBeTruthy();
     const body = fs.readFileSync(blog, 'utf8');
     expect(body.length).toBeGreaterThan(500);

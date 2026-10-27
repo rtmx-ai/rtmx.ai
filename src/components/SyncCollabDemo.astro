@@ -2,10 +2,19 @@
 /**
  * How it works — horizontal WIP across a human and heterogeneous agents.
  * REQ-MONO-035a/b / SITE-137/138: not a You↔Cursor-only pair.
+ * REQ-MONO-045c: prefer live tape when present; mock GIF fallback.
  */
+import fs from 'node:fs';
+import path from 'node:path';
+
+const liveRel = 'demo/multi-agent-sync-live.gif';
+const mockRel = 'demo/multi-agent-sync.gif';
+const liveAbs = path.join(process.cwd(), 'public', liveRel);
+const tapeKind = fs.existsSync(liveAbs) ? 'live' : 'mock';
+const tapeSrc = tapeKind === 'live' ? `/${liveRel}` : `/${mockRel}`;
 ---
 
-<section class="sync-demo" data-testid="sync-collab-demo" aria-label="Animated demo of multi-agent Sync collaboration">
+<section class="sync-demo not-content" data-testid="sync-collab-demo" aria-label="Animated demo of multi-agent Sync collaboration">
   <div class="sync-demo-header">
     <p class="sync-demo-kicker">How it works</p>
     <h2>One backlog. Any agent stack.</h2>
@@ -119,16 +128,23 @@
     </ol>
   </div>
 
-  <!-- REQ-MONO-035e: recorded multi-client harness GIF (mock VHS; live tokens optional). -->
+  <!-- REQ-MONO-035e + REQ-MONO-045c: prefer live GIF when ops published it; else mock. -->
   <figure class="sync-demo-recording" data-testid="sync-collab-recording">
     <img
-      src="/demo/multi-agent-sync.gif"
+      src={tapeSrc}
+      data-testid="sync-demo-tape"
+      data-tape={tapeKind}
       alt="Terminal recording: You, Cursor, and Claude Code clients joining one Sync room and claiming work in parallel"
       width="1100"
       height="640"
       loading="lazy"
     />
-    <figcaption>Recorded from the multi-client harness (mock choreography).</figcaption>
+    <figcaption>
+      {tapeKind === 'live'
+        ? 'Live harness recording'
+        : 'Mock harness recording'}
+      {' '}— <code>rtmx sync</code> / <code>rtmx claim</code> across You, Cursor, and Claude Code.
+    </figcaption>
   </figure>
 </section>
 
@@ -282,6 +298,7 @@
 
   .sync-demo-pane {
     min-width: 0;
+    margin-top: 0; /* Starlight sibling gap must not stagger panes */
     border-right: 1px solid rgba(110, 231, 183, 0.12);
     display: flex;
     flex-direction: column;

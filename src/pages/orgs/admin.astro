@@ -22,6 +22,101 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           </thead>
           <tbody id="member-body"></tbody>
         </table>
+
+        <section class="scim-panel" id="scim-panel" data-testid="scim-token-panel" hidden>
+          <h2 class="scim-title">SCIM tokens</h2>
+          <p class="field-help">
+            Mint an org-scoped SCIM Bearer for your IdP. The plaintext token is
+            shown once. Ordinary members cannot mint or list these keys.
+          </p>
+          <div class="scim-mint-row">
+            <input type="text" id="scim-token-name" class="scim-name" placeholder="IdP name" value="SCIM IdP" aria-label="SCIM token name" />
+            <button type="button" class="secondary-button" id="scim-mint" data-testid="scim-mint">Mint SCIM token</button>
+          </div>
+          <p class="scim-once field-help" id="scim-once" data-testid="scim-once" hidden></p>
+          <table class="member-table" id="scim-table" hidden>
+            <thead>
+              <tr><th>Name</th><th>Prefix</th><th>Active</th><th></th></tr>
+            </thead>
+            <tbody id="scim-body"></tbody>
+          </table>
+          <p class="field-help" id="scim-empty" hidden>No SCIM tokens yet.</p>
+        </section>
+
+        <section class="scim-panel" id="audit-panel" data-testid="audit-admin-panel" hidden>
+          <h2 class="scim-title">Audit log</h2>
+          <p class="field-help">
+            Recent org events from Sync (SCIM, credential.issue, connections).
+            With a Sync database, rows persist for the configured TTL (default
+            30 days, <code>retention: sql</code>); otherwise process memory only.
+          </p>
+          <div class="audit-filters" data-testid="audit-filters">
+            <label class="field-help">
+              Type
+              <select id="audit-filter-type" data-testid="audit-filter-type" aria-label="Filter by event type">
+                <option value="">All types</option>
+                <option value="scim">scim</option>
+                <option value="connections">connections</option>
+              </select>
+            </label>
+            <label class="field-help">
+              Action
+              <select id="audit-filter-action" data-testid="audit-filter-action" aria-label="Filter by action">
+                <option value="">All actions</option>
+                <option value="credential.issue">credential.issue</option>
+                <option value="users.create">users.create</option>
+              </select>
+            </label>
+            <button type="button" class="secondary-button" id="audit-refresh" data-testid="audit-refresh">Refresh</button>
+          </div>
+          <table class="member-table" id="audit-table" hidden>
+            <thead>
+              <tr><th>When</th><th>Type</th><th>Action</th><th>User</th><th>Resource</th></tr>
+            </thead>
+            <tbody id="audit-body"></tbody>
+          </table>
+          <p class="field-help" id="audit-empty" hidden>No audit events yet for this organization.</p>
+          <p class="field-help" id="audit-more" hidden>
+            <button type="button" class="secondary-button" id="audit-load-more" data-testid="audit-load-more">Load older</button>
+          </p>
+        </section>
+
+        <section class="scim-panel" id="lbac-panel" data-testid="lbac-admin-panel" hidden>
+          <h2 class="scim-title">Label-based access (LBAC)</h2>
+          <p class="field-help">
+            Opt in to room label checks (close code 4410 when a subject cannot
+            dominate). Seed clearance and compartments per member for the pilot.
+          </p>
+          <label class="lbac-toggle">
+            <input type="checkbox" id="lbac-enabled" data-testid="lbac-enabled" />
+            <span>Enable LBAC for this organization</span>
+          </label>
+          <button type="button" class="secondary-button" id="lbac-save-toggle" data-testid="lbac-save-toggle">Save LBAC setting</button>
+
+          <h3 class="scim-title" style="margin-top:1.25rem;font-size:0.95rem;">Subject attributes</h3>
+          <p class="field-help">Pick a member, then set clearance / compartments (comma-separated).</p>
+          <div class="lbac-form">
+            <select id="lbac-subject-user" data-testid="lbac-subject-user" aria-label="Member for attributes"></select>
+            <input type="text" id="lbac-clearance" class="scim-name" placeholder="Clearance (e.g. SECRET)" data-testid="lbac-clearance" aria-label="Clearance" />
+            <input type="text" id="lbac-compartments" class="scim-name" placeholder="Compartments (comma-separated)" data-testid="lbac-compartments" aria-label="Compartments" />
+            <input type="text" id="lbac-citizenship" class="scim-name" placeholder="Citizenship (optional)" data-testid="lbac-citizenship" aria-label="Citizenship" />
+            <button type="button" class="secondary-button" id="lbac-save-attrs" data-testid="lbac-save-attrs">Save subject attributes</button>
+          </div>
+
+          <h3 class="scim-title" style="margin-top:1.25rem;font-size:0.95rem;">Room labels</h3>
+          <p class="field-help">
+            Set classification labels on a Sync room (slug:room). When LBAC is
+            enabled, subjects that cannot dominate are closed with code 4410.
+          </p>
+          <div class="lbac-form">
+            <select id="lbac-room-select" data-testid="lbac-room-select" aria-label="Org room" hidden></select>
+            <input type="text" id="lbac-room-name" class="scim-name" placeholder="Room name (e.g. main)" value="main" data-testid="lbac-room-name" aria-label="Room name" />
+            <input type="text" id="lbac-room-class" class="scim-name" placeholder="Classification (e.g. SECRET)" data-testid="lbac-room-class" aria-label="Room classification" />
+            <input type="text" id="lbac-room-comps" class="scim-name" placeholder="Compartments (comma-separated)" data-testid="lbac-room-comps" aria-label="Room compartments" />
+            <button type="button" class="secondary-button" id="lbac-save-room" data-testid="lbac-save-room">Save room labels</button>
+          </div>
+        </section>
+
         <p class="field-help">
           <a href="/billing/manage">Manage billing</a>
           ·
@@ -59,6 +154,44 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .form-message.is-error { color: #fecaca; }
   .form-message.is-success { color: var(--rtmx-emerald-light); }
   .form-message:empty { display: none; }
+  .scim-panel { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--rtmx-border); }
+  .scim-title { font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--rtmx-text); }
+  .scim-mint-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; align-items: center; }
+  .scim-name {
+    flex: 1 1 10rem; background: var(--rtmx-bg-elevated); color: var(--rtmx-text);
+    border: 1px solid var(--rtmx-border-hover); border-radius: 0.35rem; padding: 0.4rem 0.55rem; font: inherit;
+  }
+  .secondary-button {
+    background: transparent; color: var(--rtmx-emerald-light); border: 1px solid var(--rtmx-emerald);
+    border-radius: 0.4rem; padding: 0.4rem 0.75rem; font: inherit; cursor: pointer;
+  }
+  .secondary-button:hover { background: color-mix(in srgb, var(--rtmx-emerald) 18%, transparent); }
+  .scim-once {
+    font-family: ui-monospace, Menlo, monospace; word-break: break-all;
+    background: var(--rtmx-bg-elevated); border: 1px dashed var(--rtmx-border-hover);
+    border-radius: 0.4rem; padding: 0.6rem 0.75rem; color: var(--rtmx-emerald-light);
+  }
+  .scim-revoke {
+    background: transparent; color: #fecaca; border: 1px solid #7f1d1d;
+    border-radius: 0.35rem; padding: 0.2rem 0.5rem; font: inherit; cursor: pointer;
+  }
+  .lbac-toggle {
+    display: flex; align-items: center; gap: 0.5rem; color: var(--rtmx-text);
+    margin: 0.75rem 0; font-size: 0.9rem;
+  }
+  .lbac-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+  .lbac-form select {
+    background: var(--rtmx-bg-elevated); color: var(--rtmx-text); border: 1px solid var(--rtmx-border-hover);
+    border-radius: 0.35rem; padding: 0.4rem 0.55rem; font: inherit;
+  }
+  .audit-filters {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin: 0.75rem 0;
+  }
+  .audit-filters select {
+    display: block; margin-top: 0.25rem;
+    background: var(--rtmx-bg-elevated); color: var(--rtmx-text); border: 1px solid var(--rtmx-border-hover);
+    border-radius: 0.35rem; padding: 0.35rem 0.5rem; font: inherit; min-width: 9rem;
+  }
 </style>
 
 <script define:vars={{ defaultServer }}>
@@ -69,6 +202,39 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   const body = document.getElementById('member-body');
   const message = document.getElementById('admin-message');
   const slugEl = document.getElementById('org-slug');
+  const scimPanel = document.getElementById('scim-panel');
+  const scimTable = document.getElementById('scim-table');
+  const scimBody = document.getElementById('scim-body');
+  const scimEmpty = document.getElementById('scim-empty');
+  const scimOnce = document.getElementById('scim-once');
+  const scimMint = document.getElementById('scim-mint');
+  const scimName = document.getElementById('scim-token-name');
+  const lbacPanel = document.getElementById('lbac-panel');
+  const lbacEnabled = document.getElementById('lbac-enabled');
+  const lbacSaveToggle = document.getElementById('lbac-save-toggle');
+  const lbacSubjectUser = document.getElementById('lbac-subject-user');
+  const lbacClearance = document.getElementById('lbac-clearance');
+  const lbacCompartments = document.getElementById('lbac-compartments');
+  const lbacCitizenship = document.getElementById('lbac-citizenship');
+  const lbacSaveAttrs = document.getElementById('lbac-save-attrs');
+  const lbacRoomSelect = document.getElementById('lbac-room-select');
+  const lbacRoomName = document.getElementById('lbac-room-name');
+  const lbacRoomClass = document.getElementById('lbac-room-class');
+  const lbacRoomComps = document.getElementById('lbac-room-comps');
+  const lbacSaveRoom = document.getElementById('lbac-save-room');
+  const auditPanel = document.getElementById('audit-panel');
+  const auditTable = document.getElementById('audit-table');
+  const auditBody = document.getElementById('audit-body');
+  const auditEmpty = document.getElementById('audit-empty');
+  const auditMore = document.getElementById('audit-more');
+  const auditRefresh = document.getElementById('audit-refresh');
+  const auditLoadMore = document.getElementById('audit-load-more');
+  const auditFilterType = document.getElementById('audit-filter-type');
+  const auditFilterAction = document.getElementById('audit-filter-action');
+  let activeOrgId = '';
+  let activeToken = '';
+  let activeOrgSlug = '';
+  let auditNextCursor = null;
 
   function resolveSlug() {
     const params = new URLSearchParams(window.location.search);
@@ -111,6 +277,91 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     return orgs.find((o) => o.slug === slug || o.id === slug) || null;
   }
 
+  async function loadScimKeys(token, orgId) {
+    const resp = await fetch(
+      server + '/keys?org_id=' + encodeURIComponent(orgId) + '&scope=scim',
+      { headers: { Authorization: 'Bearer ' + token } },
+    );
+    if (resp.status === 403) {
+      scimPanel.hidden = true;
+      return;
+    }
+    if (!resp.ok) {
+      show('Could not list SCIM tokens (' + resp.status + ').', 'error');
+      return;
+    }
+    scimPanel.hidden = false;
+    const data = await resp.json();
+    const keys = data.keys || [];
+    scimBody.innerHTML = '';
+    scimEmpty.hidden = keys.length > 0;
+    scimTable.hidden = keys.length === 0;
+    for (const k of keys) {
+      const tr = document.createElement('tr');
+      const nameTd = document.createElement('td');
+      nameTd.textContent = k.name || k.id;
+      const prefixTd = document.createElement('td');
+      prefixTd.textContent = k.prefix || '';
+      const activeTd = document.createElement('td');
+      activeTd.textContent = k.is_active ? 'yes' : 'no';
+      const actionTd = document.createElement('td');
+      if (k.is_active) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'scim-revoke';
+        btn.textContent = 'Revoke';
+        btn.dataset.testid = 'scim-revoke';
+        btn.addEventListener('click', async () => {
+          const del = await fetch(server + '/keys/' + k.id, {
+            method: 'DELETE',
+            headers: { Authorization: 'Bearer ' + token },
+          });
+          if (!del.ok) {
+            show('Could not revoke token (' + del.status + ').', 'error');
+            return;
+          }
+          show('SCIM token revoked.', 'success');
+          scimOnce.hidden = true;
+          await loadScimKeys(token, orgId);
+        });
+        actionTd.appendChild(btn);
+      }
+      tr.appendChild(nameTd);
+      tr.appendChild(prefixTd);
+      tr.appendChild(activeTd);
+      tr.appendChild(actionTd);
+      scimBody.appendChild(tr);
+    }
+  }
+
+  async function mintScimToken() {
+    if (!activeOrgId || !activeToken) return;
+    const name = (scimName.value || 'SCIM IdP').trim() || 'SCIM IdP';
+    const resp = await fetch(server + '/keys', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + activeToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: name, scope: 'scim', org_id: activeOrgId }),
+    });
+    if (!resp.ok) {
+      show('Could not mint SCIM token (' + resp.status + ').', 'error');
+      return;
+    }
+    const body = await resp.json();
+    scimOnce.hidden = false;
+    scimOnce.textContent = 'Copy now (shown once): ' + body.key;
+    show('SCIM token minted. Copy it now — it will not be shown again.', 'success');
+    await loadScimKeys(activeToken, activeOrgId);
+  }
+
+  if (scimMint) {
+    scimMint.addEventListener('click', () => {
+      mintScimToken().catch((err) => show(String(err), 'error'));
+    });
+  }
+
   async function loadMembers(token, orgId) {
     const resp = await fetch(server + '/orgs/' + orgId + '/members', {
       headers: { Authorization: 'Bearer ' + token },
@@ -129,12 +380,20 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     if (me && me.role !== 'owner' && me.role !== 'admin') {
       statusEl.textContent = 'Access denied. Organization admin role required.';
       table.hidden = true;
+      scimPanel.hidden = true;
+      lbacPanel.hidden = true;
+      auditPanel.hidden = true;
       return;
     }
     statusEl.textContent = 'Members';
     table.hidden = false;
     body.innerHTML = '';
+    lbacSubjectUser.innerHTML = '';
     for (const m of data.members || []) {
+      const opt = document.createElement('option');
+      opt.value = m.user_id;
+      opt.textContent = m.user_id + ' (' + m.role + ')';
+      lbacSubjectUser.appendChild(opt);
       const tr = document.createElement('tr');
       const userTd = document.createElement('td');
       userTd.textContent = m.user_id;
@@ -168,6 +427,233 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       tr.appendChild(document.createElement('td'));
       body.appendChild(tr);
     }
+    activeOrgId = orgId;
+    activeToken = token;
+    await loadScimKeys(token, orgId);
+    await loadLbacPanel(token, orgId);
+    await loadAudit(token, orgId, { reset: true });
+  }
+
+  function formatAuditWhen(ts) {
+    if (!ts) return '';
+    try {
+      return new Date(ts).toISOString().replace('T', ' ').replace(/\.\d+Z$/, 'Z');
+    } catch {
+      return String(ts);
+    }
+  }
+
+  async function loadAudit(token, orgId, opts) {
+    const reset = !!(opts && opts.reset);
+    let url = server + '/orgs/' + orgId + '/audit?limit=50';
+    if (!reset && auditNextCursor != null) {
+      url += '&cursor=' + encodeURIComponent(String(auditNextCursor));
+    }
+    const typeFilter = (auditFilterType && auditFilterType.value) || '';
+    const actionFilter = (auditFilterAction && auditFilterAction.value) || '';
+    if (typeFilter) url += '&event_type=' + encodeURIComponent(typeFilter);
+    if (actionFilter) url += '&action=' + encodeURIComponent(actionFilter);
+    const resp = await fetch(url, {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (resp.status === 403) {
+      auditPanel.hidden = true;
+      return;
+    }
+    if (!resp.ok) {
+      // Match LBAC: hide quietly when Sync is unreachable (e2e mocks omit audit).
+      if (opts && opts.userInitiated) {
+        show('Could not load audit log (' + resp.status + ').', 'error');
+      } else {
+        auditPanel.hidden = true;
+      }
+      return;
+    }
+    auditPanel.hidden = false;
+    const data = await resp.json();
+    const events = data.events || [];
+    if (reset) {
+      auditBody.innerHTML = '';
+    }
+    for (const e of events) {
+      const tr = document.createElement('tr');
+      tr.dataset.testid = 'audit-row';
+      const whenTd = document.createElement('td');
+      whenTd.textContent = formatAuditWhen(e.timestamp);
+      const typeTd = document.createElement('td');
+      typeTd.textContent = e.event_type || '';
+      const actionTd = document.createElement('td');
+      actionTd.textContent = e.action || '';
+      const userTd = document.createElement('td');
+      userTd.textContent = e.user_id || '';
+      const resourceTd = document.createElement('td');
+      resourceTd.textContent = e.resource_id || '';
+      tr.appendChild(whenTd);
+      tr.appendChild(typeTd);
+      tr.appendChild(actionTd);
+      tr.appendChild(userTd);
+      tr.appendChild(resourceTd);
+      auditBody.appendChild(tr);
+    }
+    const totalRows = auditBody.children.length;
+    auditEmpty.hidden = totalRows > 0;
+    auditTable.hidden = totalRows === 0;
+    auditNextCursor = data.next_cursor;
+    auditMore.hidden = auditNextCursor == null;
+  }
+
+  function refreshAuditFilters() {
+    if (!activeOrgId || !activeToken) return;
+    auditNextCursor = null;
+    loadAudit(activeToken, activeOrgId, { reset: true, userInitiated: true }).catch(
+      (err) => show(String(err), 'error'),
+    );
+  }
+  if (auditRefresh) {
+    auditRefresh.addEventListener('click', refreshAuditFilters);
+  }
+  if (auditFilterType) {
+    auditFilterType.addEventListener('change', refreshAuditFilters);
+  }
+  if (auditFilterAction) {
+    auditFilterAction.addEventListener('change', refreshAuditFilters);
+  }
+  if (auditLoadMore) {
+    auditLoadMore.addEventListener('click', () => {
+      if (!activeOrgId || !activeToken || auditNextCursor == null) return;
+      loadAudit(activeToken, activeOrgId, {
+        reset: false,
+        userInitiated: true,
+      }).catch((err) => show(String(err), 'error'));
+    });
+  }
+
+  async function loadLbacPanel(token, orgId) {
+    const resp = await fetch(server + '/orgs/' + orgId, {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) {
+      lbacPanel.hidden = true;
+      return;
+    }
+    const org = await resp.json();
+    lbacPanel.hidden = false;
+    activeOrgSlug = org.slug || activeOrgSlug;
+    lbacEnabled.checked = !!org.lbac_enabled;
+
+    const roomsResp = await fetch(server + '/orgs/' + orgId + '/rooms', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (roomsResp.ok) {
+      const roomsBody = await roomsResp.json();
+      const rooms = roomsBody.rooms || [];
+      lbacRoomSelect.innerHTML = '';
+      if (rooms.length > 0) {
+        lbacRoomSelect.hidden = false;
+        for (const r of rooms) {
+          const name = typeof r === 'string' ? r : (r.name || r.room || '');
+          if (!name) continue;
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          lbacRoomSelect.appendChild(opt);
+        }
+        lbacRoomName.value = lbacRoomSelect.value || lbacRoomName.value || 'main';
+        lbacRoomSelect.onchange = () => {
+          lbacRoomName.value = lbacRoomSelect.value;
+        };
+      } else {
+        lbacRoomSelect.hidden = true;
+      }
+    }
+  }
+
+  if (lbacSaveToggle) {
+    lbacSaveToggle.addEventListener('click', async () => {
+      if (!activeOrgId || !activeToken) return;
+      const resp = await fetch(server + '/orgs/' + activeOrgId, {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bearer ' + activeToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ lbac_enabled: !!lbacEnabled.checked }),
+      });
+      if (!resp.ok) {
+        show('Could not update LBAC setting (' + resp.status + ').', 'error');
+        return;
+      }
+      const org = await resp.json();
+      lbacEnabled.checked = !!org.lbac_enabled;
+      show(org.lbac_enabled ? 'LBAC enabled.' : 'LBAC disabled.', 'success');
+    });
+  }
+
+  if (lbacSaveRoom) {
+    lbacSaveRoom.addEventListener('click', async () => {
+      if (!activeOrgId || !activeToken) return;
+      const room = (lbacRoomName.value || '').trim() || 'main';
+      const compartments = (lbacRoomComps.value || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const resp = await fetch(
+        server + '/orgs/' + activeOrgId + '/rooms/' + encodeURIComponent(room) + '/labels',
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: 'Bearer ' + activeToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            classification: (lbacRoomClass.value || '').trim() || null,
+            compartments: compartments,
+          }),
+        },
+      );
+      if (!resp.ok) {
+        show('Could not save room labels (' + resp.status + ').', 'error');
+        return;
+      }
+      show('Room labels saved for ' + room + '.', 'success');
+    });
+  }
+
+  if (lbacSaveAttrs) {
+    lbacSaveAttrs.addEventListener('click', async () => {
+      if (!activeOrgId || !activeToken) return;
+      const userId = lbacSubjectUser.value;
+      if (!userId) {
+        show('Select a member for subject attributes.', 'error');
+        return;
+      }
+      const compartments = (lbacCompartments.value || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const payload = {
+        clearance: (lbacClearance.value || '').trim() || null,
+        compartments: compartments,
+        citizenship: (lbacCitizenship.value || '').trim() || null,
+        groups: [],
+      };
+      const resp = await fetch(
+        server + '/orgs/' + activeOrgId + '/subjects/' + encodeURIComponent(userId) + '/attributes',
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: 'Bearer ' + activeToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      if (!resp.ok) {
+        show('Could not save subject attributes (' + resp.status + ').', 'error');
+        return;
+      }
+      show('Subject attributes saved for ' + userId + '.', 'success');
+    });
   }
 
   (async () => {
@@ -186,6 +672,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         statusEl.textContent = 'Organization not found or you are not a member.';
         return;
       }
+      activeOrgSlug = org.slug || '';
       await loadMembers(session.token, org.id);
     } catch (err) {
       statusEl.textContent = 'Could not load organization admin.';

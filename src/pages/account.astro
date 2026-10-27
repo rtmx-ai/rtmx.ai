@@ -18,10 +18,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       <nav class="account-tabs" role="tablist" aria-label="Account sections">
         <button type="button" class="account-tab is-active" role="tab" id="tab-profile" data-tab="profile" aria-selected="true" aria-controls="panel-profile">Profile</button>
         <button type="button" class="account-tab" role="tab" id="tab-organizations" data-tab="organizations" aria-selected="false" aria-controls="panel-organizations">Organizations</button>
-        <button type="button" class="account-tab" role="tab" id="tab-adoption" data-tab="adoption" aria-selected="false" aria-controls="panel-adoption">Already on Sync</button>
-        <button type="button" class="account-tab" role="tab" id="tab-github" data-tab="github" aria-selected="false" aria-controls="panel-github">GitHub</button>
         <button type="button" class="account-tab" role="tab" id="tab-connections" data-tab="connections" aria-selected="false" aria-controls="panel-connections">Connections</button>
-        <a class="account-tab-link" href="/billing/manage">Billing</a>
+        <a class="account-tab-link" href="/billing/manage" data-testid="account-billing-link">Billing</a>
       </nav>
 
       <div class="account-panels">
@@ -32,67 +30,91 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           <p class="field-help" id="account-identity" data-testid="account-identity"></p>
           <p class="field-help account-governance">
             RTMX accounts are keyed by email. Signing in with Google or GitHub
-            that share an email lands on the same user. Linking GitHub (GitHub
-            tab) vaults a GitHub token onto <em>this</em> session so org
-            affiliation can prove GitHub membership — it must not replace your
-            Google session with a noreply GitHub-only account.
+            that share an email lands on the same user. Linking GitHub under
+            Organizations → Prove with GitHub vaults a token onto <em>this</em>
+            session so affiliation can prove GitHub membership — it must not
+            replace your Google session with a noreply GitHub-only account.
           </p>
           <button type="button" class="ghost-danger" id="account-signout">Sign out</button>
         </div>
 
         <div class="account-card account-tab-panel" id="panel-organizations" role="tabpanel" aria-labelledby="tab-organizations" hidden>
           <h2 class="account-section-title">Organizations</h2>
-          <p class="field-help">
-            All Sync memberships appear here. Select an active org for subsequent
-            collaboration (multi-org accounts are first-class).
+          <p class="field-help" data-testid="org-provenance-help">
+            A Sync organization is a Sync tenant — not necessarily a GitHub (or
+            other forge) org.
+            <strong>Join</strong> a public Sync org with only a signed-in RTMX
+            account (no forge membership proof).
+            <strong>Prove with GitHub</strong> verifies GitHub organization
+            membership via linked OAuth (<code>read:org</code>).
           </p>
-          <ul class="org-list" id="org-list" data-testid="org-membership-list"></ul>
-          <p class="field-help" id="org-empty" hidden>No organizations yet. Create one on Checkout, join a public org, or affiliate from a linked GitHub org.</p>
-          <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
-        </div>
 
-        <div class="account-card account-tab-panel" id="panel-adoption" role="tabpanel" aria-labelledby="tab-adoption" hidden data-testid="adoption-recommendations">
-          <h2 class="account-section-title">Already on Sync</h2>
-          <p class="field-help">
-            Public Sync orgs in the adoption registry (dogfood: <code>rtmx-ai/rtmx</code>).
-            <strong>Join</strong> here only requires a signed-in RTMX account — it does
-            <em>not</em> prove GitHub org membership. Use the GitHub tab to affiliate
-            with proof of <code>read:org</code> membership.
-          </p>
-          <ul class="org-list" id="adoption-list" data-testid="adoption-list"></ul>
-          <p class="field-help" id="adoption-empty" hidden>No public adoption entries yet.</p>
-          <div class="form-message" id="adoption-message" role="status" aria-live="polite"></div>
-        </div>
+          <section class="account-subsection" aria-labelledby="org-memberships-heading">
+            <h3 class="account-subsection-title" id="org-memberships-heading">Your Sync orgs</h3>
+            <p class="field-help">
+              Select an active org for subsequent collaboration (multi-org accounts are first-class).
+            </p>
+            <ul class="org-list" id="org-list" data-testid="org-membership-list"></ul>
+            <p class="field-help" id="org-empty" hidden>No organizations yet. Join a public org below, prove with GitHub, or create one on Checkout.</p>
+            <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
+          </section>
 
-        <div class="account-card account-tab-panel" id="panel-github" role="tabpanel" aria-labelledby="tab-github" hidden data-testid="github-affiliation">
-          <h2 class="account-section-title">GitHub organizations</h2>
-          <p class="field-help">
-            Link GitHub with <code>read:org</code> to list orgs you belong to, then
-            <strong>Affiliate</strong> to join or create a matching <em>public</em>
-            Sync org. Private Sync orgs stay on the Team path.
-          </p>
-          <ul class="org-list" id="gh-org-list" data-testid="github-org-candidates"></ul>
-          <p class="field-help" id="gh-org-empty" hidden>No GitHub organizations returned.</p>
-          <p class="field-help" id="gh-org-reauth" hidden>
-            GitHub is not linked on this account (or needs re-auth).
-            <button type="button" class="linkish" id="link-github" data-testid="link-github">Link GitHub</button>
-          </p>
-          <label class="gh-create-public">
-            <input type="checkbox" id="gh-create-public" checked data-testid="gh-create-public" />
-            Create a public Sync org when no matching slug exists
-          </label>
-          <div class="form-message" id="gh-affiliate-message" role="status" aria-live="polite"></div>
+          <section class="account-subsection" aria-labelledby="org-join-heading" data-testid="adoption-recommendations">
+            <h3 class="account-subsection-title" id="org-join-heading">Join a public Sync org</h3>
+            <p class="field-help">
+              Projects already on Sync (dogfood: <code>rtmx-ai/rtmx</code>).
+              Join does <em>not</em> require linking GitHub.
+            </p>
+            <ul class="org-list" id="adoption-list" data-testid="adoption-list"></ul>
+            <p class="field-help" id="adoption-empty" hidden>No public adoption entries yet.</p>
+            <div class="form-message" id="adoption-message" role="status" aria-live="polite"></div>
+          </section>
+
+          <section class="account-subsection" aria-labelledby="org-prove-heading" data-testid="github-affiliation">
+            <h3 class="account-subsection-title" id="org-prove-heading">Prove with GitHub</h3>
+            <p class="field-help">
+              Optional. Link GitHub with <code>read:org</code>, then
+              <strong>Affiliate</strong> to join or create a matching
+              <em>public</em> Sync org. Private Sync orgs stay on the Team path.
+            </p>
+            <ul class="org-list" id="gh-org-list" data-testid="github-org-candidates"></ul>
+            <p class="field-help" id="gh-org-empty" hidden>No GitHub organizations returned.</p>
+            <p class="field-help" id="gh-org-reauth" hidden>
+              GitHub is not linked on this account (or needs re-auth).
+              <button type="button" class="linkish" id="link-github" data-testid="link-github">Link GitHub</button>
+            </p>
+            <label class="gh-create-public">
+              <input type="checkbox" id="gh-create-public" checked data-testid="gh-create-public" />
+              Create a public Sync org when no matching slug exists
+            </label>
+            <div class="form-message" id="gh-affiliate-message" role="status" aria-live="polite"></div>
+          </section>
         </div>
 
         <div class="account-card account-tab-panel" id="panel-connections" role="tabpanel" aria-labelledby="tab-connections" hidden>
           <h2 class="account-section-title">Connections</h2>
-          <p class="field-help">
-            Project-management SaaS OAuth (Asana first). Connect from the CLI with
-            <code>rtmx connect asana</code>, or start here when configured.
+          <p class="field-help" data-testid="connections-vault-help">
+            Vaulted project-tool OAuth on Sync (Asana, Jira, Monday, GitLab, and GitHub Issues).
+            Tokens can be shared into orgs without exposing secrets. This is not forge
+            affiliation — use Organizations to join Sync orgs or Prove with GitHub.
+            Connect from the CLI with <code>rtmx connect asana</code>,
+            <code>rtmx connect jira</code>, <code>rtmx connect monday</code>,
+            <code>rtmx connect gitlab</code>, or <code>rtmx connect github</code>,
+            or start here when configured.
+            After Connect GitHub Issues, <code>rtmx sync --service github</code>
+            can use the vault when <code>GITHUB_TOKEN</code> is unset — as the
+            connection owner, or as an org owner/admin after the connection is
+            shared into your Sync org (secrets stay on Sync; members cannot fetch).
           </p>
           <ul class="connection-list" id="connection-list"></ul>
           <p class="field-help" id="connection-empty" hidden>No connections yet.</p>
-          <button type="button" class="secondary-button" id="connect-asana">Connect Asana</button>
+          <div class="connections-actions">
+            <button type="button" class="secondary-button" id="connect-asana" data-testid="connect-asana">Connect Asana</button>
+            <button type="button" class="secondary-button" id="connect-jira" data-testid="connect-jira">Connect Jira</button>
+            <button type="button" class="secondary-button" id="connect-monday" data-testid="connect-monday">Connect Monday</button>
+            <button type="button" class="secondary-button" id="connect-gitlab" data-testid="connect-gitlab">Connect GitLab</button>
+            <button type="button" class="secondary-button" id="connect-github" data-testid="connect-github">Connect GitHub Issues</button>
+          </div>
           <div class="form-message" id="account-message" role="status" aria-live="polite"></div>
         </div>
       </div>
@@ -141,6 +163,13 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   .field-help { color: var(--rtmx-text-dim); font-size: 0.9rem; line-height: 1.5; margin: 0.45rem 0 0; }
   .account-governance { margin-top: 1rem; max-width: 40rem; }
   .account-section-title { margin: 0 0 0.5rem; font-size: 1.15rem; color: var(--rtmx-text); }
+  .account-subsection {
+    margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rtmx-border);
+  }
+  .account-subsection:first-of-type { margin-top: 1rem; padding-top: 0; border-top: none; }
+  .account-subsection-title {
+    margin: 0 0 0.35rem; font-size: 1rem; font-weight: 650; color: var(--rtmx-text);
+  }
   .linkish {
     background: none; border: none; padding: 0; color: var(--rtmx-emerald-light); font: inherit;
     text-decoration: underline; cursor: pointer;
@@ -226,8 +255,12 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   document.querySelectorAll('.account-tab').forEach((btn) => {
     btn.addEventListener('click', () => setAccountTab(btn.dataset.tab));
   });
-  const initialAccountTab =
+  const tabAliases = { adoption: 'organizations', github: 'organizations' };
+  let initialAccountTab =
     new URLSearchParams(window.location.search).get('tab') || 'profile';
+  if (tabAliases[initialAccountTab]) {
+    initialAccountTab = tabAliases[initialAccountTab];
+  }
   if (document.getElementById('panel-' + initialAccountTab)) {
     setAccountTab(initialAccountTab);
   }
@@ -332,7 +365,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   }
 
   async function joinPublicFromAdoption(token, orgSlug, externalRef) {
-    // Public self-join only — does not prove GitHub membership (see GitHub tab).
+    // Public self-join only — does not prove GitHub membership (see Prove with GitHub).
     showAdoption('Joining public Sync org ' + orgSlug + '…', 'success');
     const resp = await fetch(server + '/orgs/' + encodeURIComponent(orgSlug) + '/join', {
       method: 'POST',
@@ -340,7 +373,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     });
     if (resp.status === 404) {
       showAdoption(
-        'No public Sync org "' + orgSlug + '". Link GitHub and Affiliate from the GitHub tab to create one.',
+        'No public Sync org "' + orgSlug + '". Use Prove with GitHub below to Affiliate and create one.',
         'error',
       );
       return;
@@ -363,7 +396,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     showGh('Starting GitHub link for this account…', 'success');
     try {
       const url = new URL(server + '/auth/login/github');
-      url.searchParams.set('next', '/account?tab=github');
+      url.searchParams.set('next', '/account?tab=organizations');
       url.searchParams.set('link', '1');
       url.searchParams.set('redirect_uri', window.location.origin + '/auth/callback');
       const resp = await fetch(url.toString(), {
@@ -374,7 +407,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         return;
       }
       const body = await resp.json();
-      sessionStorage.setItem('rtmx.oauth.next', body.next || '/account?tab=github');
+      sessionStorage.setItem('rtmx.oauth.next', body.next || '/account?tab=organizations');
       sessionStorage.setItem('rtmx.oauth.provider', 'github');
       window.location.assign(body.authorization_url);
     } catch {
@@ -604,19 +637,22 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   }
 
-  async function completeAsanaIfPresent(token) {
+  async function completeConnectionIfPresent(token) {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const state = params.get('state');
     const err = params.get('error');
+    const provider = (sessionStorage.getItem('rtmx.connection.provider') || 'asana').toLowerCase();
     if (err) {
-      show('Asana authorization was canceled or denied.', 'error');
+      show(connectionProviderLabel(provider) + ' authorization was canceled or denied.', 'error');
+      sessionStorage.removeItem('rtmx.connection.provider');
       return;
     }
     if (!code || !state) return;
-    show('Completing Asana connection...', 'success');
+    const label = connectionProviderLabel(provider);
+    show('Completing ' + label + ' connection...', 'success');
     try {
-      const resp = await fetch(server + '/connections/asana/callback', {
+      const resp = await fetch(server + '/connections/' + provider + '/callback', {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + token,
@@ -626,11 +662,12 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       });
       // Clear OAuth params from the URL without a reload.
       window.history.replaceState({}, '', '/account');
+      sessionStorage.removeItem('rtmx.connection.provider');
       if (!resp.ok) {
-        show('Could not complete Asana OAuth (' + resp.status + ').', 'error');
+        show('Could not complete ' + label + ' OAuth (' + resp.status + ').', 'error');
         return;
       }
-      show('Asana connected.', 'success');
+      show(label + ' connected.', 'success');
       await loadConnections(token);
     } catch {
       show('Could not reach ' + server + '.', 'error');
@@ -677,7 +714,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     if (!session.github_linked) {
       ghReauthEl.hidden = false;
     }
-    await completeAsanaIfPresent(session.token);
+    await completeConnectionIfPresent(session.token);
     await loadOrgs(session.token);
     await loadAdoption(session.token);
     await loadGithubOrgs(session.token);
@@ -696,12 +733,29 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     });
   }
 
-  document.getElementById('connect-asana').addEventListener('click', async () => {
+  function connectionProviderLabel(provider) {
+    if (provider === 'jira') return 'Jira';
+    if (provider === 'monday') return 'Monday';
+    if (provider === 'gitlab') return 'GitLab';
+    if (provider === 'github') return 'GitHub Issues';
+    return 'Asana';
+  }
+
+  function connectionProviderEnvHint(provider) {
+    if (provider === 'jira') return 'RTMX_JIRA_CLIENT_ID';
+    if (provider === 'monday') return 'RTMX_MONDAY_CLIENT_ID';
+    if (provider === 'gitlab') return 'RTMX_GITLAB_CLIENT_ID';
+    if (provider === 'github') return 'RTMX_GITHUB_ISSUES_CLIENT_ID';
+    return 'RTMX_ASANA_CLIENT_ID';
+  }
+
+  async function startConnectionOAuth(provider) {
     const s = readSession();
     if (!s) return;
-    show('Starting Asana OAuth...', 'success');
+    const label = connectionProviderLabel(provider);
+    show('Starting ' + label + ' OAuth...', 'success');
     try {
-      const resp = await fetch(server + '/connections/asana/start', {
+      const resp = await fetch(server + '/connections/' + provider + '/start', {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + s.token,
@@ -712,17 +766,38 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         }),
       });
       if (resp.status === 503) {
-        show('Asana OAuth is not configured on the sync host yet. Use rtmx connect asana when ready.', 'error');
+        const envHint = connectionProviderEnvHint(provider);
+        show(
+          label + ' OAuth is not configured on the sync host yet (set ' + envHint + ').',
+          'error',
+        );
         return;
       }
       if (!resp.ok) {
-        show('Could not start Asana OAuth (' + resp.status + ').', 'error');
+        show('Could not start ' + label + ' OAuth (' + resp.status + ').', 'error');
         return;
       }
       const body = await resp.json();
+      sessionStorage.setItem('rtmx.connection.provider', provider);
       window.location.assign(body.authorization_url);
     } catch {
       show('Could not reach ' + server + '.', 'error');
     }
+  }
+
+  document.getElementById('connect-asana').addEventListener('click', () => {
+    void startConnectionOAuth('asana');
+  });
+  document.getElementById('connect-jira').addEventListener('click', () => {
+    void startConnectionOAuth('jira');
+  });
+  document.getElementById('connect-monday').addEventListener('click', () => {
+    void startConnectionOAuth('monday');
+  });
+  document.getElementById('connect-gitlab').addEventListener('click', () => {
+    void startConnectionOAuth('gitlab');
+  });
+  document.getElementById('connect-github').addEventListener('click', () => {
+    void startConnectionOAuth('github');
   });
 </script>

@@ -1,0 +1,79 @@
+---
+/**
+ * REQ-SITE-153: Show recovery copy when edge redirected an unknown subdomain
+ * to apex with ?from_host=<label>.rtmx.ai
+ *
+ * Index is statically prerendered, so query params are read on the client.
+ */
+---
+
+<div
+  class="from-host-banner"
+  data-testid="from-host-banner"
+  role="status"
+  hidden
+  id="from-host-banner"
+>
+  <p>
+    <strong id="from-host-label"></strong> is not an RTMX service hostname. You
+    were redirected here — continue with Docs, Sync, or Account below.
+  </p>
+  <nav class="from-host-links" aria-label="Unknown host recovery">
+    <a href="/docs" data-testid="from-host-docs">Docs</a>
+    <a href="/sync" data-testid="from-host-sync">Sync</a>
+    <a href="/account" data-testid="from-host-account">Account</a>
+    <a href="/login" data-testid="from-host-signin">Sign in</a>
+  </nav>
+</div>
+
+<script>
+  (() => {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('from_host') ?? '';
+    const fromHost = raw.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    const show =
+      fromHost.length > 0 &&
+      fromHost.endsWith('.rtmx.ai') &&
+      fromHost !== 'rtmx.ai' &&
+      fromHost !== 'www.rtmx.ai';
+    if (!show) return;
+    const root = document.getElementById('from-host-banner');
+    const label = document.getElementById('from-host-label');
+    if (!root || !label) return;
+    label.textContent = fromHost;
+    root.hidden = false;
+  })();
+</script>
+
+<style>
+  .from-host-banner {
+    margin: 0 auto 1.25rem;
+    max-width: 42rem;
+    padding: 0.85rem 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--rtmx-emerald) 35%, transparent);
+    background: color-mix(in srgb, var(--rtmx-emerald) 12%, var(--rtmx-bg));
+    color: var(--rtmx-text);
+    text-align: center;
+    border-radius: 0.35rem;
+  }
+  .from-host-banner[hidden] {
+    display: none !important;
+  }
+  .from-host-banner p {
+    margin: 0 0 0.65rem;
+    line-height: 1.45;
+    font-size: 0.95rem;
+  }
+  .from-host-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.1rem;
+    justify-content: center;
+  }
+  .from-host-links a {
+    color: var(--rtmx-emerald-light, var(--rtmx-emerald));
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>

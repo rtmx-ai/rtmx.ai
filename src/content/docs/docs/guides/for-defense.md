@@ -35,7 +35,7 @@ The RTMX CLI is a statically compiled binary. No runtime dependencies, no packag
 | **FedRAMP** | On roadmap for RTMX Sync managed service |
 
 :::note
-Full compliance documentation and authorization packages will be available with the launch of RTMX Sync. Contact us for current compliance posture details.
+Authorization packages (FedRAMP, DoD IL) are on the Sync compliance roadmap. [Contact us](/contact) for the current posture and available documentation for self-hosted and air-gapped deployments.
 :::
 
 ## Deployment Options
@@ -73,7 +73,7 @@ For classified and disconnected environments:
 
 - Role-based access control (RBAC) with least-privilege defaults
 - Immutable audit logs for all operations
-- SSO/SAML integration (coming with RTMX Sync)
+- SSO/SAML integration (Enterprise Sync roadmap; OAuth on managed Sync today)
 
 ### Supply Chain
 
@@ -86,8 +86,8 @@ For classified and disconnected environments:
 RTMX integrates with existing defense and government development workflows:
 
 - **CI/CD pipelines** — `rtmx status` and `rtmx diff` in your build pipeline
-- **GitHub / Jira** — sync with [GitHub Issues](/adapters/github) or [Jira](/adapters/jira)
-- **AI Agents** — [MCP server](/adapters/mcp) for AI-assisted requirements management
+- **Project management** — sync with [PM adapters](/docs/adapters/project-management) (GitHub, Jira, Asana, Monday, GitLab)
+- **AI Agents** — [MCP server](/docs/adapters/mcp) for AI-assisted requirements management
 - **Make** — first-class Makefile integration for reproducible builds
 
 ## Why Defense Teams Choose RTMX

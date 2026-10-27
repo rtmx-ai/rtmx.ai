@@ -78,6 +78,9 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
         handoff.searchParams.set('session_token', body.session_token);
         handoff.searchParams.set('email', body.email || '');
         handoff.searchParams.set('display_name', body.display_name || body.email || '');
+        if (body.refresh_token) {
+          handoff.searchParams.set('refresh_token', body.refresh_token);
+        }
         window.location.replace(handoff.toString());
         return;
       }

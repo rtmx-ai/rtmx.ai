@@ -1184,31 +1184,26 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     }
   });
 
-  async function gateSignIn() {
+  /** Restore session org UI when already signed in — do NOT bounce anonymous
+   * visitors to /login on load. Auth happens on CTA (SITE-112 revised). */
+  async function hydrateSessionUi() {
     const session = readSession();
     const server = serverInput.value.trim().replace(/\/+$/, '');
-    if (session?.token) {
-      if (currentTab() === 'individual') {
-        await applyIndividualPath();
-      } else if (currentTab() === 'team') {
-        await enableSessionOrgUi(server, session.token);
-      }
-      return;
+    if (!session?.token) return;
+    if (currentTab() === 'individual') {
+      await applyIndividualPath();
+    } else if (currentTab() === 'team') {
+      await enableSessionOrgUi(server, session.token);
     }
-    try {
-      const probe = await fetch(`${server}/auth/login/github?next=/checkout`);
-      // 503 = IdP not configured yet → keep private-beta key paste path.
-      if (probe.status === 503) return;
-    } catch {
-      return;
-    }
-    const tab = currentTab();
-    window.location.replace(
+  }
+
+  function requireSignIn(tab: TabId = currentTab()) {
+    window.location.assign(
       '/login?next=' + encodeURIComponent('/checkout?tab=' + tab),
     );
   }
 
-  void gateSignIn();
+  void hydrateSessionUi();
 
   function downloadLicense(envelope: unknown) {
     const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
@@ -1268,7 +1263,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
     const session = readSession();
     if (!session?.token) {
       show('Sign in with your RTMX account to continue.', 'error');
-      window.location.assign('/login?next=' + encodeURIComponent('/checkout?tab=individual'));
+      requireSignIn('individual');
       return;
     }
     const selected = individualPublicOrg.value.trim();
@@ -1349,11 +1344,16 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       await submitIndividualAccount();
       return;
     }
+    const session = readSession();
+    const apiKey = keyInput.value.trim();
+    if (!session?.token && !apiKey) {
+      show('Sign in to continue Team Checkout.', 'error');
+      requireSignIn('team');
+      return;
+    }
     const server = serverInput.value.trim().replace(/\/+$/, '');
     if (orgSelect.value) orgInput.value = orgSelect.value;
     const org = orgInput.value.trim();
-    const apiKey = keyInput.value.trim();
-    const session = readSession();
     const bearer = apiKey || session?.token || '';
     const quantity = Number(quantityInput.value);
     if (!org || !bearer || !Number.isInteger(quantity) || quantity < 1) {

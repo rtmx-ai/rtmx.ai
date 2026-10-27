@@ -1,8 +1,10 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import FromHostBanner from '../components/FromHostBanner.astro';
 import Hero from '../components/Hero.astro';
 ---
 
 <StarlightPage frontmatter={{ title: 'RTMX', template: 'splash', hero: { tagline: '' } }}>
+  <FromHostBanner />
   <Hero />
 </StarlightPage>

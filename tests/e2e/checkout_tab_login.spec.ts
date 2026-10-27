@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Unsigned Individual checkout must send buyers to login with tab preserved
- * so post-OAuth return does not drop them on Team.
+ * Unsigned checkout: browse tabs first; sign-in only when continuing (CTA).
+ * Login next= must preserve the selected tab.
  */
 test.describe('checkout tab preserved through login gate', () => {
-  test('individual tab gate uses next=/checkout?tab=individual', async ({ page }) => {
+  test('individual CTA uses next=/checkout?tab=individual', async ({ page }) => {
     await page.route('**/auth/login/**', async (route) => {
       await route.fulfill({
         status: 200,
@@ -30,6 +30,9 @@ test.describe('checkout tab preserved through login gate', () => {
     });
 
     await page.goto('/checkout?tab=individual');
+    await expect(page).toHaveURL(/\/checkout\?tab=individual/);
+    await expect(page.getByTestId('checkout-panel-individual')).toBeVisible();
+    await page.getByTestId('checkout-cta').click();
     await page.waitForURL(/\/login/);
     const next = new URL(page.url()).searchParams.get('next');
     expect(next).toBe('/checkout?tab=individual');

@@ -13,12 +13,12 @@ test.describe('Sync explainer (SITE-117)', () => {
     const nav = page.getByTestId('header-nav');
     await expect(nav.getByTestId('nav-sync')).toBeVisible();
     await expect(nav.getByTestId('nav-sync')).toHaveAttribute('href', '/sync');
-    await expect(nav.getByTestId('nav-docs')).toHaveAttribute('href', '/quickstart');
+    await expect(nav.getByTestId('nav-docs')).toHaveAttribute('href', '/docs');
     await expect(nav.getByTestId('nav-pricing')).toHaveAttribute('href', '/pricing');
 
     const links = nav.locator('a.header-nav-link');
     const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute('href')));
-    expect(hrefs).toEqual(['/sync', '/quickstart', '/blog', '/pricing']);
+    expect(hrefs).toEqual(['/sync', '/docs', '/docs/blog', '/pricing']);
     expect(hrefs.indexOf('/sync')).toBeLessThan(hrefs.indexOf('/pricing'));
 
     // Demoted links live in the product footer, not the header.
@@ -28,19 +28,23 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(page.getByTestId('product-footer').getByRole('link', { name: 'aegis' })).toBeVisible();
   });
 
-  test('Sync page leads after-Git thesis without pricing-only framing', async ({ page }) => {
+  test('Sync page leads after-Agile thesis without pricing-only framing', async ({ page }) => {
     await page.goto('/sync');
     const root = page.getByTestId('sync-explainer');
     await expect(root).toBeVisible();
     await expect(root.locator('h1')).toHaveText('RTMX Sync');
-    await expect(root).toContainText(/after Git/i);
+    const kicker = page.getByTestId('sync-kicker');
+    await expect(kicker).toContainText(/What comes after/i);
+    await expect(kicker).toContainText(/Agile/i);
+    await expect(kicker.locator('.sync-kicker-words')).toContainText(/Kanban|Jira|Asana|Monday/i);
+    await expect(root).toContainText(/Git versioned|Git stopped/i);
     await expect(root).toContainText(/open source/i);
     await expect(root).toContainText(/client is open source|no URL pasting/i);
     await expect(root).not.toContainText(/\$9/);
     await expect(page.getByTestId('sync-cta-checkout')).toBeVisible();
     await expect(page.getByTestId('sync-cta-checkout')).toHaveText(/14-day free trial/i);
     await expect(page.getByTestId('sync-trial-note')).toContainText(/14 days/i);
-    await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/installation');
+    await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/docs/installation');
 
     const install = page.getByTestId('sync-install');
     await expect(install).toContainText('rtmx login');
@@ -87,7 +91,7 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(trial).toHaveClass(/primary/);
 
     const install = page.getByTestId('hero-cta-install');
-    await expect(install).toHaveAttribute('href', '/installation');
+    await expect(install).toHaveAttribute('href', '/docs/installation');
     await expect(install).toHaveText(/Install the open source client/i);
     await expect(install).toHaveClass(/secondary/);
 

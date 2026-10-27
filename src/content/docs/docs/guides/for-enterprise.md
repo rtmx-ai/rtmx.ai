@@ -11,12 +11,17 @@ RTMX gives engineering organizations a lightweight, auditable requirements trace
 
 ### Identity and Access
 
-- **SSO/SAML** — coming with RTMX Sync
-- **Role-based access control (RBAC)** — scoped permissions for teams and projects
-- **Immutable audit logs** — every change tracked with full provenance
+- **OAuth sign-in** — GitHub and Google on managed Sync today
+- **SSO / SAML** — enterprise IdP (Okta, Azure AD, and similar) on the Enterprise Sync roadmap
+- **SCIM 2.0 provisioning** — mint org-scoped Bearers from organization admin; register your IdP with the [SCIM IdP runbook](/docs/guides/scim-idp)
+- **Role-based access control (RBAC)** — org- and room-scoped roles on Sync
+- **Immutable audit logs** — every change tracked with full provenance; org
+  admins review recent SCIM and `credential.issue` events on the
+  [organization audit log](/docs/guides/audit-admin) panel (process-lifetime
+  retention on Sync today)
 
 :::note
-Full enterprise identity and access management capabilities will be available with the launch of RTMX Sync. Contact us for early access details.
+SAML/OIDC SSO and advanced IAM ship with Enterprise Sync. Managed Sync already supports OAuth sign-in, org isolation, and SCIM Bearer minting. [Contact sales](/contact) for IdP setup and enterprise access.
 :::
 
 ### Compliance
@@ -32,7 +37,7 @@ RTMX is designed to support compliance frameworks common in regulated industries
 
 | Model | Description |
 |-------|-------------|
-| **Cloud Managed** | RTMX Sync hosted service (coming soon) |
+| **Cloud Managed** | Hosted RTMX Sync (`sync.rtmx.ai`) — trial and Team plans |
 | **Self-Hosted** | Deploy on your infrastructure |
 | **GovCloud** | AWS, Azure, or GCP government regions |
 | **Air-Gapped** | Fully offline with no external dependencies |
@@ -45,9 +50,8 @@ Your requirements database is a file in your repository. For organizations with 
 
 RTMX connects to the tools your teams already use:
 
-- **GitHub** — sync requirements with [GitHub Issues](/adapters/github), diff RTMs in pull requests
-- **Jira** — bidirectional sync via the [Jira adapter](/adapters/jira)
-- **MCP for AI Agents** — enable AI-assisted development with the [MCP server](/adapters/mcp)
+- **Project management** — sync via the [PM adapters hub](/docs/adapters/project-management) (GitHub, Jira, Asana, Monday, GitLab); diff RTMs in pull requests
+- **MCP for AI Agents** — enable AI-assisted development with the [MCP server](/docs/adapters/mcp)
 - **CI/CD** — integrate `rtmx status` and `rtmx diff` into your pipeline
 - **Make** — first-class Makefile targets for build automation
 

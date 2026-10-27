@@ -3,10 +3,55 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightClientMermaid from '@pasqal-io/starlight-client-mermaid';
 
+// Docs live under /docs/* (REQ-MONO-042). Product pages stay at site root
+// (/account, /checkout, …). Do NOT set Astro `base: '/docs'` — that would
+// prefix product routes too. Content is nested at src/content/docs/docs/.
+const docsRedirects = Object.fromEntries(
+	[
+		'adapters',
+		'adapters/mcp',
+		'adapters/project-management',
+		'aegis',
+		'aegis/evaluate',
+		'aegis/getting-started',
+		'aegis/operator',
+		'aegis/reference',
+		'aegis/security',
+		'aegis/using',
+		'blog',
+		'blog/back-to-basics',
+		'blog/show-hn-rtmx',
+		'guides/cli-reference',
+		'guides/compare',
+		'guides/configuration',
+		'guides/dependencies',
+		'guides/for-defense',
+		'guides/for-developers',
+		'guides/for-enterprise',
+		'guides/markers',
+		'guides/patterns',
+		'guides/schema',
+		'guides/scim-idp',
+		'guides/audit-admin',
+		'installation',
+		'quickstart',
+		'reference/architecture',
+		'reference/lifecycle',
+	].map((slug) => [`/${slug}`, `/docs/${slug}`]),
+);
+
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://rtmx.ai',
 	base: '/',
+	redirects: {
+		...docsRedirects,
+		// REQ-MONO-039: collapse standalone GH/Jira docs into the PM hub
+		'/docs/adapters/github': '/docs/adapters/project-management',
+		'/docs/adapters/jira': '/docs/adapters/project-management',
+		'/adapters/github': '/docs/adapters/project-management',
+		'/adapters/jira': '/docs/adapters/project-management',
+	},
 	integrations: [
 		starlight({
 			plugins: [starlightClientMermaid()],
@@ -16,10 +61,13 @@ export default defineConfig({
 				Header: './src/components/Header.astro',
 				// SITE-117 IA: demoted product links (About, Roadmap, aegis, …)
 				Footer: './src/components/StarlightFooter.astro',
+				// Dark-only: prevent prefers-color-scheme:light pastel asides
+				ThemeProvider: './src/components/ThemeProvider.astro',
+				ThemeSelect: './src/components/ThemeSelect.astro',
 			},
 			description: 'RTMX Sync — the live room for humans and agents. Multiplayer requirements, claims, and traceability. Open-source CLI is how you enter.',
+			// REQ-MONO-041 / SITE-149: copy control on fenced code (frames enable copy).
 			expressiveCode: {
-				frames: false,
 				themes: ['github-dark'],
 				styleOverrides: {
 					codeBackground: '#161b22',
@@ -63,7 +111,7 @@ export default defineConfig({
 					// Site is dark-only (theme selector removed from header).
 					tag: 'script',
 					content: `document.documentElement.setAttribute("data-theme","dark");
-						try { localStorage.removeItem('starlight-theme'); } catch (e) {}
+						try { localStorage.setItem('starlight-theme', 'dark'); } catch (e) {}
 						if (!document.title.includes('Intent for AI')) {
 							document.title = document.title.replace(/RTMX/, 'RTMX | Intent for AI');
 						}`,
@@ -120,60 +168,61 @@ export default defineConfig({
 				{
 					label: 'Getting Started',
 					items: [
-						{ label: 'Introduction', slug: 'index' },
-						{ label: 'Installation', slug: 'installation' },
-						{ label: 'Quickstart', slug: 'quickstart' },
+						{ label: 'Introduction', slug: 'docs' },
+						{ label: 'Installation', slug: 'docs/installation' },
+						{ label: 'Quickstart', slug: 'docs/quickstart' },
 					],
 				},
 				{
 					label: 'aegis (air-gapped agent)',
 					items: [
-						{ label: 'Overview', slug: 'aegis' },
-						{ label: 'Getting Started', slug: 'aegis/getting-started' },
-						{ label: 'Using aegis', slug: 'aegis/using' },
-						{ label: 'Operator & Air-Gap', slug: 'aegis/operator' },
-						{ label: 'Security & Compliance', slug: 'aegis/security' },
-						{ label: 'Reference', slug: 'aegis/reference' },
-						{ label: 'Evaluate', slug: 'aegis/evaluate' },
+						{ label: 'Overview', slug: 'docs/aegis' },
+						{ label: 'Getting Started', slug: 'docs/aegis/getting-started' },
+						{ label: 'Using aegis', slug: 'docs/aegis/using' },
+						{ label: 'Operator & Air-Gap', slug: 'docs/aegis/operator' },
+						{ label: 'Security & Compliance', slug: 'docs/aegis/security' },
+						{ label: 'Reference', slug: 'docs/aegis/reference' },
+						{ label: 'Evaluate', slug: 'docs/aegis/evaluate' },
 					],
 				},
 				{
 					label: 'For Your Team',
 					items: [
-						{ label: 'For Developers', slug: 'guides/for-developers' },
-						{ label: 'For Enterprise', slug: 'guides/for-enterprise' },
-						{ label: 'For Defense & Gov', slug: 'guides/for-defense' },
+						{ label: 'For Developers', slug: 'docs/guides/for-developers' },
+						{ label: 'For Enterprise', slug: 'docs/guides/for-enterprise' },
+						{ label: 'For Defense & Gov', slug: 'docs/guides/for-defense' },
+						{ label: 'SCIM IdP registration', slug: 'docs/guides/scim-idp' },
+						{ label: 'Organization audit log', slug: 'docs/guides/audit-admin' },
 					],
 				},
 				{
 					label: 'Guides',
 					items: [
-						{ label: 'CLI Reference', slug: 'guides/cli-reference' },
-						{ label: 'Test Markers', slug: 'guides/markers' },
-						{ label: 'Dependencies', slug: 'guides/dependencies' },
-						{ label: 'Schema', slug: 'guides/schema' },
-						{ label: 'Configuration', slug: 'guides/configuration' },
+						{ label: 'CLI Reference', slug: 'docs/guides/cli-reference' },
+						{ label: 'Test Markers', slug: 'docs/guides/markers' },
+						{ label: 'Dependencies', slug: 'docs/guides/dependencies' },
+						{ label: 'Schema', slug: 'docs/guides/schema' },
+						{ label: 'Configuration', slug: 'docs/guides/configuration' },
 					],
 				},
 				{
 					label: 'Adapters',
 					items: [
-						{ label: 'Overview', slug: 'adapters' },
-						{ label: 'GitHub', slug: 'adapters/github' },
-						{ label: 'Jira', slug: 'adapters/jira' },
-						{ label: 'MCP Server', slug: 'adapters/mcp' },
+						{ label: 'Overview', slug: 'docs/adapters' },
+						{ label: 'Project Management', slug: 'docs/adapters/project-management' },
+						{ label: 'MCP Server', slug: 'docs/adapters/mcp' },
 					],
 				},
 				{
 					label: 'Reference',
 					items: [
-						{ label: 'Lifecycle', slug: 'reference/lifecycle' },
-						{ label: 'Architecture', slug: 'reference/architecture' },
+						{ label: 'Lifecycle', slug: 'docs/reference/lifecycle' },
+						{ label: 'Architecture', slug: 'docs/reference/architecture' },
 					],
 				},
 				{
 					label: 'Blog',
-					autogenerate: { directory: 'blog' },
+					autogenerate: { directory: 'docs/blog' },
 				},
 				{
 					label: 'Community',

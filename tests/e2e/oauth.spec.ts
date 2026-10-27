@@ -72,7 +72,9 @@ test.describe('OAuth login chrome', () => {
 });
 
 test.describe('checkout sign-in gate', () => {
-  test('redirects unauthenticated visitors when OAuth is configured (AC3)', async ({ page }) => {
+  test('anonymous visitors browse /checkout; CTA sends them to login (AC3)', async ({
+    page,
+  }) => {
     await mockProviders(page, ['github']);
     await page.route('**/auth/login/github**', async (route) => {
       await route.fulfill({
@@ -88,7 +90,13 @@ test.describe('checkout sign-in gate', () => {
     });
 
     await page.goto('/checkout');
+    await expect(page).toHaveURL(/\/checkout/);
+    await expect(page.getByTestId('checkout-hub')).toBeVisible();
+    await expect(page.getByTestId('checkout-tabs')).toBeVisible();
+    await page.getByTestId('checkout-cta').click();
     await page.waitForURL(/\/login\?next=/);
+    const next = new URL(page.url()).searchParams.get('next');
+    expect(next).toMatch(/\/checkout\?tab=team/);
     await expect(page.getByRole('button', { name: /Continue with GitHub/i })).toBeVisible();
   });
 

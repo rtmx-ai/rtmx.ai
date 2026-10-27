@@ -16,11 +16,12 @@ brew install rtmx-ai/tap/rtmx
 # 2. Initialize in your project
 rtmx init
 
-# 3. See where you stand
-rtmx status
+# 3. Link an issue store (GitHub, Jira, Asana, Monday, GitLab, or Tests)
+rtmx link
+# Same picker: rtmx bootstrap   # TTY, no --from-* flags
 ```
 
-That's it. Your requirements database is now a file in your repo, versioned with git.
+Migrating from a tracker? `rtmx link` (or flagless `rtmx bootstrap` on a TTY) imports issues into your RTM. Prefer flags in CI: `rtmx bootstrap --from-github`. Verify anytime with `rtmx status`.
 
 :::tip
 See the full [Installation guide](/installation) for Debian/Ubuntu and direct binary options.
@@ -60,7 +61,7 @@ See [Test Markers](/guides/markers) for supported languages and marker syntax.
 
 ### MCP for AI Agents
 
-RTMX includes a [Model Context Protocol server](/adapters/mcp) so AI agents can query your project status, view blockers, and update requirements directly.
+RTMX includes a [Model Context Protocol server](/docs/adapters/mcp) so AI agents can query your project status, view blockers, and update requirements directly.
 
 ```bash
 rtmx mcp-server         # Start MCP server for AI agent integration
@@ -68,10 +69,11 @@ rtmx mcp-server         # Start MCP server for AI agent integration
 
 ### Adapters
 
-Sync requirements with [GitHub Issues](/adapters/github) or [Jira](/adapters/jira). Bootstrap your RTM from existing project artifacts.
+Sync requirements with [project-management adapters](/docs/adapters/project-management) (GitHub, Jira, Asana, Monday, GitLab). Bootstrap your RTM from existing project artifacts.
 
 ```bash
-rtmx bootstrap          # Generate RTM from tests, GitHub, or Jira
+rtmx link               # Guided picker → bootstrap from an issue store
+rtmx bootstrap --from-github   # Non-interactive / CI
 rtmx sync               # Sync with external trackers
 ```
 

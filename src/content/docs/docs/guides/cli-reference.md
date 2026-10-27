@@ -13,6 +13,9 @@ description: Complete command reference for RTMX CLI
 | `rtmx backlog` | Show prioritized incomplete requirements |
 | `rtmx health` | Run integration health checks |
 | `rtmx config` | Show or validate configuration |
+| `rtmx login` | Sign in to managed Sync (browser + localhost loopback) |
+| `rtmx auth status` | Show stored managed/OIDC session |
+| `rtmx auth logout` | Clear stored tokens |
 
 ## Dashboard Commands
 
@@ -165,6 +168,29 @@ Generate documentation:
 rtmx docs schema                   # Show schema documentation
 rtmx docs config                   # Show configuration documentation
 ```
+
+### rtmx login
+
+Managed Sync browser OAuth with localhost loopback (default host
+`https://sync.rtmx.ai`):
+
+```bash
+rtmx login
+rtmx login --provider google
+rtmx login --silent --provider google    # prompt=none restore when IdP SSO is alive
+rtmx login --silent --provider microsoft
+```
+
+Silent restore (`--silent`) uses Sync `prompt=none` (same contract as the
+website). **Google** and **Microsoft** support it; **GitHub** fails closed —
+use interactive `rtmx login` instead.
+
+Managed login also stores a Sync `refresh_token` (`rtmx_rt_…`) when the
+OAuth callback includes a CLI loopback. On vault **401**, the CLI first
+tries `POST /auth/refresh` (no browser); if that fails, it falls back to
+silent OAuth for Google/Microsoft, then retries the vault call once.
+Revoke with Sync `DELETE /auth/refresh` or by deleting
+`~/.rtmx/auth/tokens.json` and signing in again.
 
 ## Global Options
 

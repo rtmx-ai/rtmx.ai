@@ -1,0 +1,85 @@
+---
+/**
+ * REQ-SITE-152 / REQ-MONO-043a: Branded path 404 for missing URLs on rtmx.ai.
+ * Unknown subdomains (x.rtmx.ai) are DNS/edge (SITE-153) — not this page.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Page not found', template: 'splash', hero: { tagline: '' } }}>
+  <div class="not-found-page rtmx-splash" data-testid="branded-404">
+    <section class="not-found-header">
+      <p class="not-found-code">404</p>
+      <h1>Page not found</h1>
+      <p class="not-found-lede">
+        That path is not part of RTMX Sync or the docs. Use a link below to get
+        back on track.
+      </p>
+    </section>
+    <nav class="not-found-links" aria-label="Recovery links">
+      <a href="/" class="not-found-primary" data-testid="404-home">Home</a>
+      <a href="/docs" class="not-found-secondary" data-testid="404-docs">Docs</a>
+      <a href="/sync" class="not-found-secondary" data-testid="404-sync">Sync</a>
+      <a href="/account" class="not-found-secondary" data-testid="404-account">Account</a>
+      <a href="/login" class="not-found-secondary" data-testid="404-signin">Sign in</a>
+    </nav>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .not-found-page {
+    background: var(--rtmx-bg);
+    min-height: 70vh;
+    width: 100%;
+    padding: 3rem 1.5rem 4rem;
+    text-align: center;
+  }
+  .not-found-code {
+    margin: 0;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--rtmx-emerald) 0%, var(--rtmx-emerald-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .not-found-header h1 {
+    margin: 0.35rem 0 0.75rem;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: var(--rtmx-text);
+  }
+  .not-found-lede {
+    margin: 0 auto;
+    max-width: 32rem;
+    color: var(--rtmx-text-muted);
+    line-height: 1.55;
+    font-size: 1.05rem;
+  }
+  .not-found-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  .not-found-primary,
+  .not-found-secondary {
+    display: inline-block;
+    padding: 0.65rem 1.1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .not-found-primary {
+    background: var(--rtmx-emerald);
+    color: var(--rtmx-bg);
+    border: none;
+  }
+  .not-found-secondary {
+    border: 1px solid var(--rtmx-border-hover);
+    color: var(--rtmx-text);
+    background: transparent;
+  }
+</style>

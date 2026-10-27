@@ -346,8 +346,41 @@ test.describe('hosted checkout page', () => {
     await expect(page).toHaveURL(/tab=self-hosted/);
   });
 
-  test('does not call the server until the org credential is present', async ({ page }) => {
+  test('anonymous CTA redirects to sign-in before calling billing', async ({ page }) => {
     let called = false;
+    await page.route('**/billing/checkout', async (route) => {
+      called = true;
+      await route.abort();
+    });
+    await page.route('**/auth/providers', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ providers: ['github'] }),
+      });
+    });
+
+    await page.goto('/checkout');
+    await page.locator('#checkout-submit').click();
+    await page.waitForURL(/\/login\?next=/);
+    expect(called).toBe(false);
+  });
+
+  test('signed-in Team path requires org before calling billing', async ({ page }) => {
+    let called = false;
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session-token', email: 'buyer@example.com' }),
+      );
+    });
+    await page.route('**/orgs**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
     await page.route('**/billing/checkout', async (route) => {
       called = true;
       await route.abort();
@@ -444,7 +477,7 @@ test.describe('checkout success and cancel', () => {
 });
 
 test.describe('customer billing portal', () => {
-  test('unauthenticated visitors cannot open a portal session', async ({ page }) => {
+  test('unauthenticated visitors see sign-in, not API-key form primary', async ({ page }) => {
     let called = false;
     await page.route('**/billing/portal', async (route) => {
       called = true;
@@ -452,13 +485,15 @@ test.describe('customer billing portal', () => {
     });
 
     await page.goto('/billing/manage');
-    await expect(page.locator('body')).toContainText('period end');
-    await page.locator('#portal-submit').click();
-    await expect(page.locator('#portal-message')).toContainText('required');
+    await expect(page.getByTestId('billing-signed-out')).toBeVisible();
+    await expect(
+      page.getByTestId('billing-signed-out').getByRole('link', { name: /Sign in/i }),
+    ).toBeVisible();
+    await expect(page.locator('#org-ref')).toBeHidden();
     expect(called).toBe(false);
   });
 
-  test('redirects to the Stripe portal URL the server returned', async ({ page }) => {
+  test('advanced API-key path still opens Stripe portal URL', async ({ page }) => {
     await page.route('**/billing/portal', async (route) => {
       expect(route.request().method()).toBe('POST');
       await route.fulfill({
@@ -473,9 +508,131 @@ test.describe('customer billing portal', () => {
     });
 
     await page.goto('/billing/manage');
+    await page.getByTestId('billing-advanced').locator('summary').click();
     await page.locator('#org-ref').fill('acme');
     await page.locator('#api-key').fill('rtmx_ad_testkey');
     await page.locator('#portal-submit').click();
     await page.waitForURL('**/billing/success?from=portal');
+  });
+
+  test('SITE-145/146: signed-in billing home shows plan, history, muted CTAs', async ({
+    page,
+  }) => {
+    await page.route(/\/orgs$/, async (route) => {
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          organizations: [
+            { id: 'org-1', name: 'Acme', slug: 'acme', role: 'owner', visibility: 'private' },
+          ],
+        }),
+      });
+    });
+    await page.route('**/billing/summary**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          schema_version: 'billing-summary-v1',
+          org_id: 'org-1',
+          org_slug: 'acme',
+          entitlement_source: 'hosted_subscription',
+          status: 'active',
+          team_active: true,
+          tier: 'team',
+          offering: 'managed_sync',
+          quantity: 3,
+          stripe_status: 'active',
+          subscription_id: 'sub_test',
+          current_period_end: '2026-12-01T00:00:00+00:00',
+          cancel_at_period_end: false,
+          invoices: [
+            {
+              id: 'in_1',
+              created: '2026-10-01T00:00:00+00:00',
+              amount_paid: 4900,
+              currency: 'usd',
+              status: 'paid',
+              hosted_invoice_url: 'https://invoice.stripe.com/i/test',
+            },
+          ],
+        }),
+      });
+    });
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({
+          token: 'test-session',
+          email: 'owner@example.com',
+          display_name: 'Owner',
+        }),
+      );
+    });
+
+    await page.goto('/billing/manage');
+    await expect(page.getByTestId('billing-home')).toBeVisible();
+    await expect(page.getByTestId('billing-plan-card')).toContainText('team');
+    await expect(page.getByTestId('billing-plan-card')).toContainText('active');
+    await expect(page.getByTestId('billing-history')).toContainText('paid');
+    await expect(page.getByTestId('open-stripe-portal')).toBeVisible();
+    await expect(page.getByTestId('upgrade-team-cta')).toBeHidden();
+    await expect(page.getByTestId('self-host-cta')).toBeVisible();
+    await expect(page.getByTestId('self-host-cta')).toHaveAttribute(
+      'href',
+      '/checkout?tab=self-hosted',
+    );
+    // API key fields stay collapsed under Advanced
+    await expect(page.locator('#api-key')).toBeHidden();
+  });
+
+  test('SITE-146: free path shows muted Upgrade to Team CTA', async ({ page }) => {
+    await page.route(/\/orgs$/, async (route) => {
+      if (route.request().url().includes('/auth/github')) {
+        await route.fallback();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          organizations: [
+            { id: 'org-p', name: 'OSS', slug: 'oss', role: 'owner', visibility: 'public' },
+          ],
+        }),
+      });
+    });
+    await page.route('**/billing/summary**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          schema_version: 'billing-summary-v1',
+          org_id: 'org-p',
+          org_slug: 'oss',
+          entitlement_source: 'public_org',
+          status: 'public_org',
+          team_active: false,
+          tier: null,
+          quantity: null,
+          invoices: [],
+        }),
+      });
+    });
+    await page.addInitScript(() => {
+      sessionStorage.setItem(
+        'rtmx.session',
+        JSON.stringify({ token: 'test-session', email: 'free@example.com' }),
+      );
+    });
+    await page.goto('/billing/manage');
+    await expect(page.getByTestId('upgrade-team-cta')).toBeVisible();
+    await expect(page.getByTestId('upgrade-team-cta')).toHaveAttribute('href', /tab=team/);
+    await expect(page.getByTestId('self-host-cta')).toBeVisible();
   });
 });

@@ -1,0 +1,21 @@
+---
+/**
+ * Dark-only ThemeProvider — Starlight's default ThemeSelect still runs from
+ * MobileMenuFooter and calls onThemeChange(loadTheme()). Persist "dark" so
+ * that path cannot flip to pastel light-mode aside tokens.
+ */
+---
+
+<script is:inline>
+	window.StarlightThemeProvider = (() => {
+		try {
+			localStorage.setItem('starlight-theme', 'dark');
+		} catch (e) {}
+		document.documentElement.dataset.theme = 'dark';
+		return {
+			updatePickers() {
+				/* theme selector removed; no-op */
+			},
+		};
+	})();
+</script>
