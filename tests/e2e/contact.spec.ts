@@ -77,9 +77,9 @@ test.describe('sales contact form', () => {
 
   test('about enterprise contact is the form', async ({ page }) => {
     await page.goto('/about');
-    await expect(page.getByRole('link', { name: /Contact sales/i })).toHaveAttribute(
-      'href',
-      '/contact?intent=enterprise',
-    );
+    // About body + product footer both say Contact sales; pin the enterprise CTA.
+    await expect(
+      page.locator('a[href="/contact?intent=enterprise"]').filter({ hasText: /Contact sales/i }),
+    ).toHaveAttribute('href', '/contact?intent=enterprise');
   });
 });

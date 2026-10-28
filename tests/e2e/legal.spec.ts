@@ -16,7 +16,7 @@ test.describe('Legal pages', () => {
     const privacy = await page.getByTestId('privacy-page').innerText();
     for (const phrase of [
       'Limited Liability Company (LLC)',
-      'Requirements Traceability Matrix',
+      'RTMX Sync',
       'command-line interface (CLI)',
       'Open Authorization (OAuth)',
       'identity providers (IdPs)',
@@ -33,7 +33,7 @@ test.describe('Legal pages', () => {
     const terms = await page.getByTestId('terms-page').innerText();
     for (const phrase of [
       'Limited Liability Company (LLC)',
-      'Requirements Traceability Matrix',
+      'RTMX Sync',
       'command-line interface (CLI)',
       'Application Programming Interface (API)',
       'identity providers (IdPs)',

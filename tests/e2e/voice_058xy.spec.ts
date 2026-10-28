@@ -30,12 +30,9 @@ test.describe('Site voice HIGH (SITE-182–183)', () => {
     );
   });
 
-  test('account checkout CTA mentions trial (SITE-183)', async ({ page }) => {
-    await page.goto('/account');
-    // CTA lives on Organizations tab (hidden by default).
-    await page.getByRole('tab', { name: /Organizations/i }).click();
-    await expect(page.getByTestId('account-checkout-cta')).toBeVisible();
-    await expect(page.getByTestId('account-checkout-cta')).toContainText(
+  test('dashboard checkout CTA mentions trial (SITE-183)', async ({ page }) => {
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('dashboard-checkout-cta')).toContainText(
       /14-day free trial/i,
     );
   });
