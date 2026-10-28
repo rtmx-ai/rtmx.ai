@@ -28,12 +28,12 @@ test.describe('pricing hosted vs self-managed CTAs', () => {
     await expect(enterprise.locator('.cta-button')).not.toHaveAttribute('href', /checkout/);
     await expect(enterprise.locator('.cta-button')).not.toHaveAttribute('href', /mailto:/);
 
-    const onPrem = page.locator('.pricing-card', { hasText: 'On-Prem' }).first();
-    await expect(onPrem.locator('.cta-button')).toHaveAttribute(
+    const airGapped = page.locator('.pricing-card', { hasText: 'Air-gapped' }).first();
+    await expect(airGapped.locator('.cta-button')).toHaveAttribute(
       'href',
       '/contact?intent=on-prem',
     );
-    await expect(onPrem.locator('.cta-button')).not.toHaveAttribute('href', /mailto:/);
+    await expect(airGapped.locator('.cta-button')).not.toHaveAttribute('href', /mailto:/);
   });
 });
 

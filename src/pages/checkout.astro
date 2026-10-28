@@ -7,12 +7,12 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
 <StarlightPage frontmatter={{ title: 'Get RTMX Sync', template: 'splash', hero: { tagline: '' } }}>
   <div class="license-page rtmx-splash" data-testid="checkout-hub">
     <section class="license-header">
-      <p class="checkout-kicker">Purchase</p>
+      <p class="checkout-kicker" data-testid="checkout-kicker">Start Sync trial</p>
       <h1>Get RTMX Sync</h1>
       <p class="license-subtitle">
-        Individual or Team on
+        Start a 14-day Team trial on
         <code class="server-fixed">{defaultServer}</code>,
-        or a self-hosted license for your node. One checkout path.
+        buy seats after trial, or issue a self-managed license for your node.
         The RTMX CLI stays free under Apache 2.0.
       </p>
     </section>
@@ -21,7 +21,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       <div
         class="checkout-tabs"
         role="tablist"
-        aria-label="Purchase path"
+        aria-label="Checkout path"
         data-testid="checkout-tabs"
       >
         <button
@@ -58,7 +58,7 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
           aria-selected="false"
           aria-controls="panel-self-hosted"
         >
-          Self-hosted
+          Self-managed
         </button>
       </div>
 
@@ -338,8 +338,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
       </form>
 
       <p class="checkout-alt">
-        Enterprise and On-Prem stay <a href="/contact">sales-assisted</a>.
-        Legacy <a href="/license">/license</a> redirects here (Self-hosted).
+        Enterprise and air-gapped stay <a href="/contact">sales-assisted</a>.
+        Legacy <a href="/license">/license</a> redirects here (Self-managed).
       </p>
     </section>
   </div>

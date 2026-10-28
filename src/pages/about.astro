@@ -47,13 +47,14 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
       </blockquote>
     </section>
 
-    <section class="about-section">
-      <h2>Open Source</h2>
+    <section class="about-section" data-testid="about-oss">
+      <h2>Open Source and Sync</h2>
       <p>
-        RTMX is licensed under <strong>Apache 2.0</strong> and built in public. Our
-        requirements traceability matrix is managed by RTMX itself — we use the tool to build
-        the tool. You can follow our progress on the
-        <a href="/roadmap">Roadmap</a> or browse the source on
+        The <strong>rtmx CLI</strong> is open source under <strong>Apache 2.0</strong> and
+        built in public. Managed <strong>RTMX Sync</strong> is a commercial multiplayer
+        service on top of that client. Our requirements matrix is managed by RTMX itself —
+        we use the tool to build the tool. Follow progress on the
+        <a href="/roadmap">Roadmap</a> or browse the CLI source on
         <a href="https://github.com/rtmx-ai/rtmx">GitHub</a>.
       </p>
     </section>
@@ -69,7 +70,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
         <div class="contact-item">
           <h3>Enterprise</h3>
           <a href="/contact?intent=enterprise">Contact sales</a>
-          <p>On-prem deployment, compliance, and volume licensing.</p>
+          <p>Self-managed / air-gapped Sync, compliance, and volume licensing.</p>
         </div>
         <div class="contact-item">
           <h3>Support</h3>

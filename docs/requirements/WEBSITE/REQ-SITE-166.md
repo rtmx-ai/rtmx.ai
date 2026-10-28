@@ -1,6 +1,6 @@
 # REQ-SITE-166: Standardize deploy-mode vocabulary
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058h

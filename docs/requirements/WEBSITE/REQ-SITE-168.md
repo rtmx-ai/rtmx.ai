@@ -1,6 +1,6 @@
 # REQ-SITE-168: Clarify Pricing FAQ Sync vs CLI
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058j

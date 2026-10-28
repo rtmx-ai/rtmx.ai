@@ -46,8 +46,8 @@ test.describe('pricing entitlement CTA', () => {
 
   test('negotiated tiers route to the sales contact form', async ({ page }) => {
     await page.goto('/pricing');
-    const onPrem = page.locator('.pricing-card', { hasText: 'On-Prem' }).first();
-    await expect(onPrem.locator('.cta-button')).toHaveAttribute(
+    const airGapped = page.locator('.pricing-card', { hasText: 'Air-gapped' }).first();
+    await expect(airGapped.locator('.cta-button')).toHaveAttribute(
       'href',
       '/contact?intent=on-prem',
     );

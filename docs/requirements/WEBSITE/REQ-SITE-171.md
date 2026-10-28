@@ -1,6 +1,6 @@
 # REQ-SITE-171: Enterprise H1 names Sync
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058m

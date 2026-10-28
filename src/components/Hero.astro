@@ -140,7 +140,21 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
 </section>
 
 
-<section class="feature-grid not-content">
+<section class="feature-grid not-content" data-testid="home-feature-grid">
+  <p class="feature-grid-lede" data-testid="home-feature-lede">
+    <strong>RTMX Sync</strong> is the product surface. Below: the open-source client
+    that powers the room.
+  </p>
+
+  <a href="/sync" class="feature-card" data-testid="hero-sync-card">
+    <span class="badge">14-day free trial</span>
+    <h3>RTMX Sync — After Git</h3>
+    <p>
+      The product: a live room for humans and agents. Start a free trial, then
+      install the open-source client when you need the workspace.
+    </p>
+  </a>
+
   <a href="/docs/guides/cli-reference" class="feature-card">
     <h3>One Command to See Everything</h3>
     <p>
@@ -192,8 +206,8 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
   <a href="/docs/guides/for-defense" class="feature-card">
     <h3>Your Data Stays Yours</h3>
     <p>
-      No cloud required. Open source and auditable.
-      Git-native audit trail for compliance.
+      Self-managed and air-gapped Sync keep data on your infra.
+      Open-source client; git-native audit trail for compliance.
     </p>
   </a>
 
@@ -202,15 +216,6 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
     <p>
       Full Go API and MCP server. Query, filter, and automate from any agent or script.
       Build custom workflows.
-    </p>
-  </a>
-
-  <a href="/sync" class="feature-card" data-testid="hero-sync-card">
-    <span class="badge">14-day free trial</span>
-    <h3>RTMX Sync — After Git</h3>
-    <p>
-      The product: a live room for humans and agents. Start a free trial, then
-      install the open-source client when you need the workspace.
     </p>
   </a>
 </section>
@@ -656,6 +661,15 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
     max-width: 1200px;
     margin: 0 auto;
     background: #0f0f0f;
+  }
+
+  .feature-grid-lede {
+    grid-column: 1 / -1;
+    margin: 0 0 0.5rem;
+    color: var(--rtmx-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: center;
   }
 
   .feature-card {

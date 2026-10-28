@@ -1,6 +1,6 @@
 # REQ-SITE-169: About page OSS vs commercial Sync carve-out
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058k

@@ -3,7 +3,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 const deploymentOptions = [
   {
-    name: 'Cloud Managed Service',
+    name: 'Managed Sync',
     badge: 'sync.rtmx.ai',
     status: 'Private beta',
     description: 'Fully managed RTMX Sync with real-time collaboration. Zero infrastructure management.',
@@ -12,6 +12,30 @@ const deploymentOptions = [
       'TLS in transit; optional client E2E',
       'Team Checkout self-serve; Enterprise via sales',
       'Custom availability terms via MSA',
+    ],
+  },
+  {
+    name: 'Self-managed',
+    badge: 'Your Infrastructure',
+    status: 'Available',
+    description: 'Run Sync on your own infrastructure (self-hosted synonym) with full control over the environment.',
+    features: [
+      'Complete data sovereignty',
+      'Custom security policies',
+      'Integration with existing identity providers',
+      'Dedicated engineering support',
+    ],
+  },
+  {
+    name: 'Air-gapped',
+    badge: 'Disconnected',
+    status: 'Available',
+    description: 'Fully disconnected Sync via Zarf packages for classified environments (On-Prem synonym).',
+    features: [
+      'No external network dependencies',
+      'Cryptographically verified packages',
+      'Offline license validation',
+      'SCIF/classified network compatible',
     ],
   },
   {
@@ -24,30 +48,6 @@ const deploymentOptions = [
       'Partner-operated or self-managed',
       'ITAR/EAR packaging on request',
       'Not a current self-serve ATO',
-    ],
-  },
-  {
-    name: 'Self-Hosted Enterprise',
-    badge: 'Your Infrastructure',
-    status: 'Available',
-    description: 'Deploy RTMX in your own data center with full control over your environment.',
-    features: [
-      'Complete data sovereignty',
-      'Custom security policies',
-      'Integration with existing identity providers',
-      'Dedicated engineering support',
-    ],
-  },
-  {
-    name: 'Air-Gap (Zarf)',
-    badge: 'Disconnected',
-    status: 'Available',
-    description: 'Fully disconnected deployment using Zarf packages for classified environments.',
-    features: [
-      'No external network dependencies',
-      'Cryptographically verified packages',
-      'Offline license validation',
-      'SCIF/classified network compatible',
     ],
   },
 ];
@@ -158,10 +158,11 @@ const cmmcSupport = [
     <!-- Hero Section -->
     <section class="enterprise-hero">
       <span class="enterprise-badge">Enterprise & Government</span>
-      <h1>Secure Requirements Management for Defense & Government</h1>
+      <h1>RTMX Sync for Defense & Government</h1>
       <p class="hero-subtitle">
-        RTMX delivers enterprise-grade requirements traceability with the security, compliance,
-        and deployment flexibility that defense contractors and government agencies require.
+        Enterprise-grade Sync rooms with the security, compliance, and deployment
+        flexibility defense contractors and government agencies require — managed,
+        self-managed, or air-gapped.
       </p>
       <div class="hero-cta">
         <a href="/contact?intent=enterprise" class="cta-button primary">

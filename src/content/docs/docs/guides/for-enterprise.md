@@ -3,9 +3,11 @@ title: RTMX for Enterprise
 description: Requirements traceability that lives in your codebase, not a separate SaaS
 ---
 
-Requirements traceability that lives in your codebase, not a separate SaaS.
+Requirements traceability that lives in your codebase — with optional hosted Sync.
 
-RTMX gives engineering organizations a lightweight, auditable requirements traceability system that integrates directly into existing development workflows. No separate tool to maintain, no data migration, no SaaS dependency.
+RTMX gives engineering organizations a lightweight, auditable requirements system
+in git, plus managed / self-managed / air-gapped Sync rooms when teams need live
+multiplayer. Local CLI work needs no hosted account.
 
 ## Enterprise Features
 
@@ -37,14 +39,14 @@ RTMX is designed to support compliance frameworks common in regulated industries
 
 | Model | Description |
 |-------|-------------|
-| **Cloud Managed** | Hosted RTMX Sync (`sync.rtmx.ai`) — trial and Team plans |
-| **Self-Hosted** | Deploy on your infrastructure |
-| **GovCloud** | AWS, Azure, or GCP government regions |
-| **Air-Gapped** | Fully offline with no external dependencies |
+| **Managed Sync** | Hosted RTMX Sync (`sync.rtmx.ai`) — trial and Team plans |
+| **Self-managed** | Sync on your infrastructure (self-hosted synonym) |
+| **Air-gapped** | Fully offline / On-Prem with no external dependencies |
+| **GovCloud** | AWS, Azure, or GCP government regions (sales-assisted) |
 
 ### Data Residency
 
-Your requirements database is a file in your repository. For organizations with strict data residency requirements, self-hosted and air-gapped deployments ensure data never leaves your infrastructure.
+Your requirements database is a file in your repository. For organizations with strict data residency requirements, self-managed and air-gapped Sync keep data on your infrastructure.
 
 ## Integration
 
@@ -65,17 +67,18 @@ rtmx bootstrap          # Generate RTM from tests, GitHub, or Jira
 
 ## Why Enterprise Teams Choose RTMX
 
-- **No SaaS lock-in** — Apache 2.0 open source, data stays in your repo
+- **CLI stays free** — Apache 2.0 client; data stays in your repo
+- **Optional Sync** — managed, self-managed, or air-gapped multiplayer rooms
 - **Developer adoption** — CLI-first tool developers actually want to use
 - **Git-native audit trail** — every change versioned, branched, and reviewable
-- **Low overhead** — no dedicated admin, no separate infrastructure for the core tool
+- **Low overhead** — no dedicated admin for local RTM
 - **Scalable** — works for a single repo or across an organization
 
 ## Next Steps
 
-- [Installation](/installation) — deploy RTMX across your organization
-- [CLI Reference](/guides/cli-reference) — full command documentation
-- [Configuration](/guides/configuration) — customize for your workflows
+- [Installation](/docs/installation) — deploy RTMX across your organization
+- [CLI Reference](/docs/guides/cli-reference) — full command documentation
+- [Configuration](/docs/guides/configuration) — customize for your workflows
 - [Architecture](/reference/architecture) — understand the system design
 
 :::tip[Enterprise Inquiries]
