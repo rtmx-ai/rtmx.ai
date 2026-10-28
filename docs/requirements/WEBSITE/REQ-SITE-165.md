@@ -1,6 +1,6 @@
 # REQ-SITE-165: Rewrite for-developers Sync framing and /docs links
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: P0
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058g

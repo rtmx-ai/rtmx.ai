@@ -6,10 +6,10 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
   <div class="license-page rtmx-splash">
     <section class="license-header">
       <h1>Payment received</h1>
-      <p class="license-subtitle">
-        This page does not mark you paid. Stripe tells rtmx-sync over a signed
-        webhook. When that lands, your managed room URL appears below. No card
-        numbers are shown or stored here.
+      <p class="license-subtitle" data-testid="billing-success-copy">
+        Thanks — we are confirming your Sync entitlement. When it is ready, your
+        managed room details appear below. Then run <code>rtmx login</code> and
+        <code>rtmx sync</code>. Card numbers are never shown or stored on this page.
       </p>
     </section>
     <section class="license-form-section not-content">
@@ -72,7 +72,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
             null,
             2,
           );
-          message.textContent = 'Your org is entitled. Run rtmx login then rtmx sync.';
+          message.textContent = 'Your Sync room is entitled. Run rtmx login then rtmx sync.';
           return;
         }
       } catch {

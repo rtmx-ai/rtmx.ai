@@ -1,6 +1,6 @@
 # REQ-SITE-163: Mark CMMC and FIPS as roadmap on Enterprise/Security
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: P0
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058e

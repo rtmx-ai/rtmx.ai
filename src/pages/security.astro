@@ -36,16 +36,16 @@ const shippedSecurityFeatures = [
 
 const fipsFeatures = [
   {
-    title: 'OpenSSL FIPS Provider',
-    description: 'Native integration with OpenSSL 3.x FIPS provider for FIPS 140-3 validated cryptographic operations.',
+    title: 'OpenSSL FIPS Provider (roadmap)',
+    description: 'Target: OpenSSL 3.x FIPS provider for FIPS 140-3 validated crypto in self-managed and air-gapped builds.',
   },
   {
-    title: 'AWS-LC FIPS Alternative',
-    description: 'Support for AWS-LC (libcrypto) as an alternative FIPS-validated cryptographic library for AWS deployments.',
+    title: 'AWS-LC FIPS Alternative (roadmap)',
+    description: 'Target: AWS-LC as an alternative FIPS-validated library for AWS / GovCloud-oriented deployments.',
   },
   {
-    title: 'Air-Gap Deployment Ready',
-    description: 'Deploy in fully disconnected environments using Zarf packages. No external network dependencies required.',
+    title: 'Air-gap packaging (available)',
+    description: 'Zarf air-gap packages ship today for disconnected installs; FIPS mode inside those packages remains roadmap.',
   },
 ];
 
@@ -205,11 +205,12 @@ const supplyChainFeatures = [
       </div>
     </section>
 
-    <!-- FIPS 140-3 Section -->
-    <section class="fips-section">
-      <h2>FIPS 140-3 Compliance</h2>
+    <!-- FIPS 140-3 — roadmap, aligns with complianceStandards (MONO-058e) -->
+    <section class="fips-section" data-testid="fips-roadmap">
+      <h2>FIPS 140-3 (roadmap)</h2>
       <p class="section-subtitle">
-        Deploy with confidence in regulated environments requiring FIPS-validated cryptography.
+        Planned FIPS-validated crypto modes for self-managed and air-gapped Sync.
+        Not a default managed Team claim — see “What ships today” above.
       </p>
       <div class="fips-grid not-content">
         {fipsFeatures.map((feature) => (

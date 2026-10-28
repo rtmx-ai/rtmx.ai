@@ -1,11 +1,13 @@
 ---
 title: RTMX for Developers
-description: Track what you've built, what's tested, and what's next — from the terminal
+description: Track what you've built, what's tested, and what's next — from the terminal, with optional Sync multiplayer
 ---
 
 Track what you've built, what's tested, and what's next — from the terminal.
 
-RTMX is a CLI-first requirements traceability tool that lives in your repository alongside your code. No browser tabs, no SaaS logins, no context switching.
+The open-source **rtmx** CLI keeps requirements in git beside your code. Work fully
+local when you want; add hosted **RTMX Sync** when humans and agents need a live
+multiplayer room. Local RTM never requires a SaaS login.
 
 ## Get Started in 3 Steps
 
@@ -24,14 +26,14 @@ rtmx link
 Migrating from a tracker? `rtmx link` (or flagless `rtmx bootstrap` on a TTY) imports issues into your RTM. Prefer flags in CI: `rtmx bootstrap --from-github`. Verify anytime with `rtmx status`.
 
 :::tip
-See the full [Installation guide](/installation) for Debian/Ubuntu and direct binary options.
+See the full [Installation guide](/docs/installation) for Debian/Ubuntu and direct binary options.
 :::
 
 ## Key Features
 
 ### CLI-First Workflow
 
-Everything runs from your terminal. Check status, view the backlog, analyze dependencies — no GUI required.
+Everything runs from your terminal. Check status, view the backlog, analyze dependencies — no GUI required for local RTM.
 
 ```bash
 rtmx status -vv        # Detailed progress
@@ -39,7 +41,7 @@ rtmx backlog            # What's next
 rtmx deps               # Dependency graph
 ```
 
-See the full [CLI Reference](/guides/cli-reference) for all available commands.
+See the full [CLI Reference](/docs/guides/cli-reference) for all available commands.
 
 ### Git-Native
 
@@ -57,7 +59,7 @@ Link tests directly to requirements with markers in your test files. RTMX scans 
 rtmx from-tests         # Scan tests for requirement markers
 ```
 
-See [Test Markers](/guides/markers) for supported languages and marker syntax.
+See [Test Markers](/docs/guides/markers) for supported languages and marker syntax.
 
 ### MCP for AI Agents
 
@@ -67,27 +69,28 @@ RTMX includes a [Model Context Protocol server](/docs/adapters/mcp) so AI agents
 rtmx mcp-server         # Start MCP server for AI agent integration
 ```
 
-### Adapters
+### Adapters and Sync rooms
 
-Sync requirements with [project-management adapters](/docs/adapters/project-management) (GitHub, Jira, Asana, Monday, GitLab). Bootstrap your RTM from existing project artifacts.
+Connect [project-management adapters](/docs/adapters/project-management) (GitHub, Jira, Asana, Monday, GitLab), or join a managed Sync room for live collaboration.
 
 ```bash
 rtmx link               # Guided picker → bootstrap from an issue store
 rtmx bootstrap --from-github   # Non-interactive / CI
-rtmx sync               # Sync with external trackers
+rtmx sync               # Join a Sync room (after rtmx login)
 ```
 
 ## Why Developers Choose RTMX
 
-- **No SaaS dependency** — your data stays in your repo, under your control
-- **Works offline** — no network required for any core operation
-- **Open source** — Apache 2.0 license, no vendor lock-in
+- **Local by default** — CSV in git; core CLI works offline without a hosted account
+- **Optional Sync** — multiplayer rooms when the team (and agents) need a shared live backlog
+- **Open source client** — Apache 2.0 CLI, no vendor lock-in for local RTM
 - **Zero configuration** — `rtmx init` and you're running
 - **Composable** — integrates with Make, CI/CD, and AI agents
 
 ## Next Steps
 
-- [Installation](/installation) — full install instructions for all platforms
-- [Quickstart](/quickstart) — end-to-end walkthrough
-- [Configuration](/guides/configuration) — customize RTMX for your project
-- [Schema](/guides/schema) — understand the requirements data model
+- [Installation](/docs/installation) — full install instructions for all platforms
+- [Quickstart](/docs/quickstart) — end-to-end walkthrough
+- [Configuration](/docs/guides/configuration) — customize RTMX for your project
+- [Schema](/docs/guides/schema) — understand the requirements data model
+- [RTMX Sync](/sync) — hosted multiplayer rooms and trial

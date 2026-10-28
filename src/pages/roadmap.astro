@@ -1,7 +1,9 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
-// Phase data - synced from rtmx v1.0.0 RTM database (230/230 COMPLETE)
+// Source of truth for public progress counts (MONO-058c / SITE-161):
+// static phase seed below + live overlay via data-sync on this page.
+// Homepage dogfood uses soft language and links here — do not hardcode totals on /.
 const phases = [
   { phase: 1, name: 'Foundation', complete: 3, total: 3, status: 'complete' },
   { phase: 2, name: 'Core Data Model', complete: 6, total: 6, status: 'complete' },
@@ -60,8 +62,9 @@ function getStatusLabel(status: string): string {
   <div class="roadmap-page">
     <section class="roadmap-header">
       <h1>Project Roadmap</h1>
-      <p class="roadmap-subtitle">
-        Track our progress as we build the complete requirements traceability platform.
+      <p class="roadmap-subtitle" data-testid="roadmap-sot-note">
+        Live progress for the open-source CLI roadmap. Counts below are the public
+        source of truth (seeded phases, refreshed when Sync is connected).
       </p>
 
       <div class="overall-progress">

@@ -52,10 +52,11 @@ const deploymentOptions = [
   },
 ];
 
+// Honest labels: Complete / Target / Planned. Not a FedRAMP ATO claim for Team Sync.
 const complianceTimeline = [
   {
     quarter: 'Q1 2026',
-    status: 'in-progress',
+    status: 'complete',
     title: 'Foundation',
     items: [
       'SBOM generation (SPDX/CycloneDX)',
@@ -65,47 +66,36 @@ const complianceTimeline = [
     ],
   },
   {
-    quarter: 'Q2 2026',
-    status: 'planned',
-    title: 'FedRAMP 20x Pilot',
+    quarter: 'Q2–Q4 2026',
+    status: 'target',
+    title: 'FedRAMP 20x Pilot path',
     items: [
-      'FedRAMP 20x pilot application',
+      'FedRAMP 20x pilot application (target)',
       'System Security Plan (SSP)',
       'Plan of Action & Milestones (POA&M)',
       'Initial security assessment',
     ],
   },
   {
-    quarter: 'Q3 2026',
-    status: 'planned',
-    title: '3PAO Assessment',
-    items: [
-      'Third-party assessment organization engagement',
-      'Security Assessment Report (SAR)',
-      'Penetration testing',
-      'Continuous monitoring implementation',
-    ],
-  },
-  {
-    quarter: 'Q4 2026',
-    status: 'planned',
-    title: 'FedRAMP Moderate',
-    items: [
-      'FedRAMP Moderate authorization',
-      'FedRAMP Marketplace listing',
-      'Agency ATO support',
-      'Continuous monitoring active',
-    ],
-  },
-  {
     quarter: '2027',
     status: 'planned',
-    title: 'DoD Authorization',
+    title: 'FedRAMP Moderate (target)',
     items: [
-      'DoD IL4 provisional authorization',
-      'DoD IL5 provisional authorization',
-      'DISA STIG compliance',
-      'DoD CIO sponsorship',
+      '3PAO assessment engagement',
+      'FedRAMP Moderate authorization (target — not shipped)',
+      'FedRAMP Marketplace listing (target)',
+      'Agency ATO support packages',
+    ],
+  },
+  {
+    quarter: '2027+',
+    status: 'planned',
+    title: 'DoD Authorization (target)',
+    items: [
+      'DoD IL4 provisional authorization (target)',
+      'DoD IL5 provisional authorization (target)',
+      'DISA STIG compliance packaging',
+      'DoD CIO sponsorship (sales-assisted)',
     ],
   },
 ];
@@ -145,20 +135,20 @@ const atoArtifacts = [
 
 const cmmcSupport = [
   {
-    title: 'CUI Handling',
-    description: 'RTMX supports Controlled Unclassified Information (CUI) handling with proper marking, storage, and transmission controls.',
+    title: 'CUI Handling (roadmap)',
+    description: 'Target: CUI marking, storage, and transmission controls for self-managed and air-gapped Sync — not a default Team entitlement today.',
   },
   {
-    title: 'Evidence Collection',
-    description: 'Built-in audit logging and compliance reporting to support CMMC assessment evidence collection.',
+    title: 'Evidence Collection (roadmap)',
+    description: 'Target: audit logging and compliance reporting packages to support CMMC assessment evidence collection.',
   },
   {
-    title: 'Access Control',
-    description: 'Role-based access control (RBAC) and multi-factor authentication to meet CMMC access control requirements.',
+    title: 'Access Control (shipped baseline)',
+    description: 'Org RBAC and OAuth MFA on managed Sync today; CMMC-specific control mapping remains roadmap / sales-assisted.',
   },
   {
-    title: 'Incident Response',
-    description: 'Immutable audit logs and security event monitoring to support incident response and forensic capabilities.',
+    title: 'Incident Response (roadmap)',
+    description: 'Target: immutable audit logs and security event monitoring suitable for CMMC incident-response evidence.',
   },
 ];
 ---
@@ -216,16 +206,23 @@ const cmmcSupport = [
     <!-- Compliance Timeline Section -->
     <section class="timeline-section">
       <h2>FedRAMP Authorization Roadmap</h2>
-      <p class="section-subtitle">
-        Our path to FedRAMP Moderate authorization and DoD IL4/IL5 support.
+      <p class="section-subtitle" data-testid="fedramp-honesty-note">
+        Target path toward FedRAMP Moderate and DoD IL4/IL5. Team Sync is not
+        FedRAMP authorized today — contact sales for current status.
       </p>
-      <div class="compliance-timeline not-content">
-        {complianceTimeline.map((phase, index) => (
+      <div class="compliance-timeline not-content" data-testid="fedramp-timeline">
+        {complianceTimeline.map((phase) => (
           <div class={`timeline-phase ${phase.status}`}>
             <div class="phase-marker">
               <span class="phase-quarter">{phase.quarter}</span>
-              {phase.status === 'in-progress' && (
-                <span class="phase-badge">In Progress</span>
+              {phase.status === 'complete' && (
+                <span class="phase-badge complete">Complete</span>
+              )}
+              {phase.status === 'target' && (
+                <span class="phase-badge target">Target</span>
+              )}
+              {phase.status === 'planned' && (
+                <span class="phase-badge planned">Planned</span>
               )}
             </div>
             <div class="phase-content">
@@ -266,11 +263,12 @@ const cmmcSupport = [
       </div>
     </section>
 
-    <!-- CMMC Section -->
-    <section class="cmmc-section">
-      <h2>CMMC 2.0 Support</h2>
+    <!-- CMMC Section — roadmap, not a default Team entitlement (MONO-058e) -->
+    <section class="cmmc-section" data-testid="cmmc-roadmap">
+      <h2>CMMC 2.0 (roadmap)</h2>
       <p class="section-subtitle">
-        Help defense contractors meet CMMC 2.0 Level 2 requirements for protecting CUI.
+        Planned capabilities to help defense contractors pursue CMMC 2.0 Level 2
+        for CUI — not a present-tense certification claim for managed Team Sync.
       </p>
       <div class="cmmc-grid not-content">
         {cmmcSupport.map((item) => (
@@ -283,8 +281,8 @@ const cmmcSupport = [
       <div class="cmmc-note">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <p>
-          RTMX helps contractors manage their requirements traceability in a compliant manner.
-          Contact us to discuss how RTMX fits into your CMMC compliance strategy.
+          See <a href="/security">Security</a> for what ships today. Contact sales to
+          discuss how RTMX Sync fits a CMMC compliance strategy.
         </p>
       </div>
     </section>
@@ -555,9 +553,33 @@ const cmmcSupport = [
     position: relative;
   }
 
-  .timeline-phase.in-progress {
+  .timeline-phase.complete {
+    border-color: #10b981;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, #171717 100%);
+  }
+
+  .timeline-phase.target {
     border-color: #3b82f6;
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, #171717 100%);
+  }
+
+  .timeline-phase.planned {
+    border-color: #525252;
+  }
+
+  .phase-badge.complete {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+  }
+
+  .phase-badge.target {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+  }
+
+  .phase-badge.planned {
+    background: rgba(115, 115, 115, 0.25);
+    color: #a3a3a3;
   }
 
   .phase-marker {

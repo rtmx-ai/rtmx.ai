@@ -226,7 +226,7 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
   <div class="social-proof-metrics">
     <span class="social-proof-item">Used to build RTMX itself</span>
     <span class="social-proof-divider">/</span>
-    <span class="social-proof-item">328 requirements tracked</span>
+    <span class="social-proof-item">Requirements tracked in git</span>
     <span class="social-proof-divider">/</span>
     <span class="social-proof-item">Apache 2.0 Licensed</span>
   </div>
@@ -322,22 +322,23 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
     The requirements traceability matrix for RTMX is managed by RTMX.
   </p>
 
-  <div class="dogfood-grid not-content">
+  <!-- Counts: soft language here; live totals live on /roadmap (data-sync). MONO-058c / SITE-161 -->
+  <div class="dogfood-grid not-content" data-testid="dogfood-stats">
     <div class="dogfood-card">
-      <span class="dogfood-stat">328</span>
-      <span class="dogfood-label">requirements tracked</span>
-      <p>Every feature, from CLI commands to schema plugins, is a formal requirement with an ID, spec, and linked tests.</p>
+      <span class="dogfood-stat">CSV</span>
+      <span class="dogfood-label">requirements in git</span>
+      <p>Every feature, from CLI commands to schema plugins, is a formal requirement with an ID, spec, and linked tests. Live totals are on the <a href="/roadmap">roadmap</a>.</p>
     </div>
 
     <div class="dogfood-card">
-      <span class="dogfood-stat">100%</span>
-      <span class="dogfood-label">complete and verified</span>
-      <p>Status is derived from test results, not opinions. When tests pass, requirements are complete. 328 of 328 requirements verified.</p>
+      <span class="dogfood-stat">Tests</span>
+      <span class="dogfood-label">derive status</span>
+      <p>Status comes from linked test results, not opinions. When tests pass, requirements close — the same loop the public roadmap syncs.</p>
     </div>
 
     <div class="dogfood-card">
-      <span class="dogfood-stat">31</span>
-      <span class="dogfood-label">development phases</span>
+      <span class="dogfood-stat">Graph</span>
+      <span class="dogfood-label">phased roadmap</span>
       <p>From foundation through Sync, TUI, and multi-agent orchestration — the full roadmap is a dependency graph, not a wish list.</p>
     </div>
 
