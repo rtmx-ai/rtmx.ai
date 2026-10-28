@@ -63,11 +63,14 @@ See [Test Markers](/docs/guides/markers) for supported languages and marker synt
 
 ### MCP for AI Agents
 
-RTMX includes a [Model Context Protocol server](/docs/adapters/mcp) so AI agents can query your project status, view blockers, and update requirements directly.
+The **rtmx** CLI includes a [Model Context Protocol server](/docs/adapters/mcp) so agents can query status, claim work, and verify requirements. Prefer marketplace / one-click install:
 
 ```bash
-rtmx mcp-server         # Start MCP server for AI agent integration
+claude plugin marketplace add rtmx-ai/rtmx && claude plugin install rtmx@rtmx
+codex mcp add rtmx -- rtmx mcp-server --stdio
 ```
+
+Cursor: use the [MCP deeplink on the adapters page](/docs/adapters/mcp). Fallback: `rtmx plugin emit --agents cursor`.
 
 ### Adapters and Sync rooms
 

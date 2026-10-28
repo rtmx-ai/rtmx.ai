@@ -1,217 +1,80 @@
 ---
 title: MCP Server
-description: AI agent integration via Model Context Protocol
+description: Add the open-source rtmx CLI to Claude, Cursor, Codex, and other agents via Model Context Protocol
 ---
 
-RTMX includes an MCP (Model Context Protocol) server that enables AI agents to interact with your requirements database.
+The open-source **rtmx** CLI exposes a local MCP server (`rtmx mcp-server --stdio`)
+so agents can query status, claim work, and verify requirements. This is the
+client side of RTMX — not **RTMX Sync** (the multiplayer room).
 
-## What is MCP?
+Prerequisite: install the CLI (`brew install rtmx-ai/tap/rtmx`, scoop, or
+`go install`).
 
-[Model Context Protocol](https://modelcontextprotocol.io/) is an open standard for connecting AI assistants to external data sources and tools.
+## Add RTMX to your agent (preferred)
 
-With RTMX MCP, agents can:
-- Query project status
-- View backlog and blockers
-- Update requirement status
-- Analyze dependencies
+Marketplace / one-click install first. Raw JSON is a fallback below.
 
-## Quick Start
-
-### Start the MCP Server
+### Claude Code
 
 ```bash
-rtmx mcp-server
+claude plugin marketplace add rtmx-ai/rtmx
+claude plugin install rtmx@rtmx
 ```
 
-This starts the server on stdio (standard input/output), the default MCP transport.
+Or: `/plugin marketplace add rtmx-ai/rtmx` then `/plugin install rtmx@rtmx`.
 
-### Configure Your MCP Client
+### Cursor
 
-Add the RTMX server to your MCP client configuration. For example, in a typical MCP config file:
+One-click MCP install (opens Cursor):
+
+[Add RTMX MCP in Cursor](https://cursor.com/link/mcp?name=rtmx&config=eyJjb21tYW5kIjoicnRteCIsImFyZ3MiOlsibWNwLXNlcnZlciIsIi0tc3RkaW8iXX0%3D)
+
+Local plugin dogfood: symlink `plugins/cursor-rtmx` into `~/.cursor/plugins/local/rtmx`
+(see the [rtmx Cursor plugin README](https://github.com/rtmx-ai/rtmx/tree/main/plugins/cursor-rtmx)).
+Marketplace listing may lag; the deeplink works now.
+
+### Codex
+
+```bash
+codex mcp add rtmx -- rtmx mcp-server --stdio
+```
+
+Or emit a TOML snippet: `rtmx plugin emit --agents codex`
+
+### Any agent (`rtmx plugin emit`)
+
+```bash
+rtmx plugin emit --list
+rtmx plugin emit --agents claude,cursor,codex
+```
+
+## Fallback: paste MCP config
+
+Only if marketplace / deeplink / emit are unavailable:
 
 ```json
 {
   "mcpServers": {
     "rtmx": {
       "command": "rtmx",
-      "args": ["mcp-server"],
-      "cwd": "/path/to/your/project"
+      "args": ["mcp-server", "--stdio"]
     }
   }
 }
 ```
 
-## Available Tools
+Claude Code alternative: `claude mcp add rtmx -- rtmx mcp-server --stdio`
 
-### rtmx_status
+## What agents get
 
-Get project completion status.
+Tools from `tools/list` include `status`, `backlog`, `next`, `claim`, `verify`,
+`loop_tick`, and related scientific workflow tools. Full contract:
+[MCP public contract](https://github.com/rtmx-ai/rtmx/blob/main/docs/MCP_PUBLIC_CONTRACT.md).
 
-```json
-{
-  "name": "rtmx_status",
-  "description": "Get RTM completion status",
-  "parameters": {
-    "verbose": {
-      "type": "boolean",
-      "description": "Include detailed breakdown"
-    }
-  }
-}
-```
+Mutations require an `agent_id`. Prefer MCP tools over shelling arbitrary CLI.
 
-### rtmx_backlog
+## Security
 
-Get prioritized incomplete requirements.
-
-```json
-{
-  "name": "rtmx_backlog",
-  "parameters": {
-    "phase": {
-      "type": "integer",
-      "description": "Filter by phase number"
-    },
-    "limit": {
-      "type": "integer",
-      "description": "Maximum items to return"
-    }
-  }
-}
-```
-
-### rtmx_get_requirement
-
-Get details for a specific requirement.
-
-```json
-{
-  "name": "rtmx_get_requirement",
-  "parameters": {
-    "req_id": {
-      "type": "string",
-      "description": "Requirement ID (e.g., REQ-AUTH-001)"
-    }
-  }
-}
-```
-
-### rtmx_update_status
-
-Update a requirement's status.
-
-```json
-{
-  "name": "rtmx_update_status",
-  "parameters": {
-    "req_id": {
-      "type": "string",
-      "description": "Requirement ID"
-    },
-    "status": {
-      "type": "string",
-      "enum": ["COMPLETE", "PARTIAL", "MISSING", "WIP", "BLOCKED"]
-    }
-  }
-}
-```
-
-### rtmx_deps
-
-Get dependency information.
-
-```json
-{
-  "name": "rtmx_deps",
-  "parameters": {
-    "req_id": {
-      "type": "string",
-      "description": "Requirement ID"
-    },
-    "direction": {
-      "type": "string",
-      "enum": ["upstream", "downstream", "both"]
-    }
-  }
-}
-```
-
-### rtmx_search
-
-Search requirements by text or filters.
-
-```json
-{
-  "name": "rtmx_search",
-  "parameters": {
-    "query": {
-      "type": "string",
-      "description": "Search text"
-    },
-    "category": {
-      "type": "string",
-      "description": "Filter by category"
-    },
-    "status": {
-      "type": "string",
-      "description": "Filter by status"
-    }
-  }
-}
-```
-
-## Configuration
-
-Enable/disable specific tools in `rtmx.yaml`:
-
-```yaml
-rtmx:
-  mcp:
-    enabled: true
-    tools:
-      - status
-      - backlog
-      - get_requirement
-      - update_status
-      - deps
-      - search
-```
-
-## Use Cases
-
-### Agent-Assisted Development
-
-Your AI agent can help implement requirements:
-
-```
-User: "What should I work on next?"
-Agent: [calls rtmx_backlog] "The highest priority item is REQ-AUTH-002:
-       Add password reset flow. It has no blockers."
-
-User: "I finished implementing it"
-Agent: [calls rtmx_update_status with status=COMPLETE]
-       "Updated REQ-AUTH-002 to COMPLETE. 3 requirements are now unblocked."
-```
-
-### Progress Reporting
-
-```
-User: "How's the project going?"
-Agent: [calls rtmx_status] "Phase 1 is 95% complete with 2 remaining items.
-       Overall progress is 67% across all phases."
-```
-
-### Dependency Analysis
-
-```
-User: "What's blocking REQ-DATA-005?"
-Agent: [calls rtmx_deps] "REQ-DATA-005 is blocked by REQ-DB-001 (MISSING)
-       and REQ-AUTH-001 (COMPLETE). You need to complete REQ-DB-001 first."
-```
-
-## Security Considerations
-
-- MCP server runs locally with your project permissions
-- No network exposure by default (stdio transport)
-- Status updates are saved to your local CSV
-- Review changes before git commits
+- Stdio MCP runs locally with your project permissions (no public network by default).
+- RTM updates land in your local CSV / git; review before commit.
+- Hosted Sync rooms are separate — see [RTMX Sync](/sync).
