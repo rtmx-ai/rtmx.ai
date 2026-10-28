@@ -28,7 +28,7 @@ test.describe('Site voice P0 (SITE-161–165)', () => {
     await expect(timeline).toBeVisible();
     await expect(timeline).not.toContainText(/In Progress/i);
     await expect(page.getByTestId('fedramp-honesty-note')).toContainText(
-      /not FedRAMP authorized/i,
+      /not\s+FedRAMP\s+authorized/i,
     );
   });
 

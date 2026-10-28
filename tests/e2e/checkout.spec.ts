@@ -469,9 +469,12 @@ test.describe('checkout success and cancel', () => {
   test('cancel explains nothing was charged', async ({ page }) => {
     await page.goto('/billing/cancel');
     await expect(page.locator('body')).toContainText('Nothing was charged');
-    await expect(page.getByRole('link', { name: /hosted Team Checkout/ })).toHaveAttribute(
+    await expect(page.getByTestId('cancel-checkout-cta')).toHaveAttribute(
       'href',
       '/checkout',
+    );
+    await expect(page.getByTestId('cancel-checkout-cta')).toContainText(
+      /14-day free trial/i,
     );
   });
 });
