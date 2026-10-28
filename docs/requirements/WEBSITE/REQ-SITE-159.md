@@ -1,6 +1,6 @@
 # REQ-SITE-159: Unify trial funnel order
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: P0
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058a

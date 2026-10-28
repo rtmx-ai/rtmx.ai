@@ -1,6 +1,6 @@
 # REQ-SITE-160: Remove dashboard requirement-ID leak
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: P0
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058b

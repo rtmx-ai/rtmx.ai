@@ -146,6 +146,23 @@ test.describe('dashboard auth gate (SITE-101)', () => {
     await expect(page.getByRole('link', { name: 'Account' })).toBeVisible();
   });
 
+  test('dashboard chrome has no SITE-/REQ- ID leak (SITE-160, MONO-058b)', async ({ page }) => {
+    await stubAuthOrgsRooms(page, []);
+    await stubOverviewBacklog(page);
+    await page.routeWebSocket(/\/sync\//, (ws) => {
+      ws.connectToServer();
+    });
+    await seedSession(page);
+    await page.goto('/dashboard');
+    const subtitle = page.getByTestId('dashboard-subtitle');
+    await expect(subtitle).toBeVisible();
+    await expect(subtitle).toContainText(/Org-scoped Sync rooms/i);
+    await expect(subtitle).not.toContainText(/SITE-\d+/);
+    await expect(subtitle).not.toContainText(/REQ-[A-Z]+-\d+/);
+    const chrome = await page.getByTestId('dashboard-shell').locator('h1, .license-subtitle').allTextContents();
+    expect(chrome.join(' ')).not.toMatch(/SITE-\d+/);
+  });
+
   test('401 from auth/me clears session and redirects (SITE-101c)', async ({ page }) => {
     await page.route('**/auth/me', async (route) => {
       await route.fulfill({ status: 401, body: 'unauthorized' });

@@ -43,7 +43,13 @@ test.describe('Sync explainer (SITE-117)', () => {
     await expect(root).not.toContainText(/\$9/);
     await expect(page.getByTestId('sync-cta-checkout')).toBeVisible();
     await expect(page.getByTestId('sync-cta-checkout')).toHaveText(/14-day free trial/i);
-    await expect(page.getByTestId('sync-trial-note')).toContainText(/14 days/i);
+    const trialNote = page.getByTestId('sync-trial-note');
+    await expect(trialNote).toContainText(/Start Sync trial/i);
+    await expect(trialNote).toContainText(/install the free client/i);
+    const noteText = await trialNote.innerText();
+    expect(noteText.toLowerCase().indexOf('trial')).toBeLessThan(
+      noteText.toLowerCase().indexOf('install'),
+    );
     await expect(page.getByTestId('sync-cta-cli')).toHaveAttribute('href', '/docs/installation');
 
     const install = page.getByTestId('sync-install');
@@ -98,6 +104,11 @@ test.describe('Sync explainer (SITE-117)', () => {
     const funnel = page.getByTestId('hero-funnel-note');
     await expect(funnel).toContainText(/Start Sync trial/i);
     await expect(funnel).toContainText(/install the free client/i);
+    // SITE-159 / MONO-058a: trial → install → sign in (not install-first)
+    const funnelText = await funnel.innerText();
+    expect(funnelText.toLowerCase().indexOf('trial')).toBeLessThan(
+      funnelText.toLowerCase().indexOf('install'),
+    );
     await expect(page.getByTestId('hero-cta-thesis')).toHaveAttribute('href', '/sync');
 
     // UCP names Sync as product

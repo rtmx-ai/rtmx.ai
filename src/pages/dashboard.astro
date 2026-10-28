@@ -8,10 +8,10 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
   <div class="license-page rtmx-splash" data-testid="dashboard-shell">
     <section class="license-header">
       <h1>Dashboard</h1>
-      <p class="license-subtitle">
-        Org-scoped rooms on
+      <p class="license-subtitle" data-testid="dashboard-subtitle">
+        Org-scoped Sync rooms on
         <code class="server-fixed">{defaultServer}</code>
-        with a live sync connection (SITE-103 / SITE-104).
+        — live presence for your team and agents.
       </p>
     </section>
 
