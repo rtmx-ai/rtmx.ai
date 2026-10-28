@@ -1,6 +1,6 @@
 # REQ-SITE-180: Show HN / blog Sync-aware note
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: LOW
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058v

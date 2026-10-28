@@ -111,9 +111,9 @@ test.describe('Sync explainer (SITE-117)', () => {
     );
     await expect(page.getByTestId('hero-cta-thesis')).toHaveAttribute('href', '/sync');
 
-    // UCP names Sync as product
-    await expect(page.locator('.hero-ucp')).toContainText(/Sync/i);
-    await expect(page.locator('.hero-subtitle')).toContainText(/Sync is the live room|RTMX Sync/i);
+    // Single Sync lede (MONO-058o) — no stacked hero-ucp duplicate
+    await expect(page.getByTestId('hero-lede')).toContainText(/Sync is the live room|RTMX Sync/i);
+    await expect(page.locator('.hero-ucp')).toHaveCount(0);
 
     // Sync How-it-works elevated on homepage (before client demo)
     const homeDemo = page.getByTestId('home-sync-demo');

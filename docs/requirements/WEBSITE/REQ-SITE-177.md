@@ -1,6 +1,6 @@
 # REQ-SITE-177: Soften absolute Sigstore supply-chain claim
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: MEDIUM
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058s

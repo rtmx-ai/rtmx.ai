@@ -4,10 +4,10 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync.rtmx.ai';
 ---
 
-<StarlightPage frontmatter={{ title: 'Sign in', template: 'splash', hero: { tagline: '' } }}>
+<StarlightPage frontmatter={{ title: 'Sign in to RTMX Sync', template: 'splash', hero: { tagline: '' } }}>
   <div class="license-page rtmx-splash">
     <section class="license-header">
-      <h1>Sign in to RTMX</h1>
+      <h1 data-testid="login-heading">Sign in to RTMX Sync</h1>
       <p class="license-subtitle">
         Sign in with a configured identity provider to continue to hosted Team
         Checkout. The managed sync host is

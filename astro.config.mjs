@@ -112,8 +112,9 @@ export default defineConfig({
 					tag: 'script',
 					content: `document.documentElement.setAttribute("data-theme","dark");
 						try { localStorage.setItem('starlight-theme', 'dark'); } catch (e) {}
-						if (!document.title.includes('Intent for AI')) {
-							document.title = document.title.replace(/RTMX/, 'RTMX | Intent for AI');
+						// MONO-058w: align tab titles with Sync thesis.
+						if (!document.title.includes('Sync')) {
+							document.title = document.title.replace(/\bRTMX\b/, 'RTMX Sync');
 						}`,
 				},
 				{

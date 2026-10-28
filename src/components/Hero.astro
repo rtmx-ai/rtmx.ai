@@ -8,14 +8,10 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
 <!-- Hero Title at Very Top -->
 <div class="hero-header">
   <h1 class="hero-title">The Intent Layer for Agentic Engineering</h1>
-  <p class="hero-subtitle">
+  <p class="hero-subtitle" data-testid="hero-lede">
     RTMX Sync is the live room where humans and agents claim work, converge on
     requirements, and ship — without a ticket board in the middle. The open-source
     <code>rtmx</code> CLI is how you enter that room.
-  </p>
-  <p class="hero-ucp">
-    Multiplayer Sync for humans and agents. Queryable, verifiable, dependency-aware
-    requirements — live in the room, backed by the free open-source client.
   </p>
   <div class="hero-buttons">
     <a href="/checkout" class="hero-button primary" data-testid="hero-cta-sync">
@@ -529,17 +525,6 @@ import SyncCollabDemo from './SyncCollabDemo.astro';
     font-size: 1.25rem;
     color: var(--rtmx-text-muted);
     margin-bottom: 1rem;
-    max-width: 850px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
-  }
-
-  .hero-ucp {
-    font-size: 1rem;
-    color: var(--rtmx-emerald);
-    font-weight: 600;
-    margin-bottom: 2rem;
     max-width: 850px;
     margin-left: auto;
     margin-right: auto;

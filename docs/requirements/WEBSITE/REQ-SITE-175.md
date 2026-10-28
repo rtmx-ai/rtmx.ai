@@ -1,6 +1,6 @@
 # REQ-SITE-175: Login title names RTMX Sync
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: MEDIUM
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058q

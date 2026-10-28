@@ -1,6 +1,6 @@
 # REQ-SITE-174: Plain language for Sync page close CTA
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: MEDIUM
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058p

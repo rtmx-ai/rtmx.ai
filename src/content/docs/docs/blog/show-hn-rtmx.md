@@ -1,6 +1,6 @@
 ---
 title: "Show HN: RTMX -- What I Built to Stop AI Agents from Building the Wrong Thing"
-description: "RTMX is a CLI that manages requirements traceability as CSV in git. It gives AI agents a verifiable, queryable model of what to build -- and proof that they built it."
+description: "RTMX is a CLI that manages requirements as CSV in git, with optional RTMX Sync multiplayer rooms for humans and agents. Verifiable intent — and proof you shipped it."
 date: 2026-10-15
 sidebar:
   order: 2
@@ -16,11 +16,13 @@ Not wrong in a "the code has bugs" way -- wrong in a "this isn't what I asked fo
 
 I wrote about this problem in [Back to Basics](/blog/back-to-basics). The short version: the fix isn't better prompts. It's giving agents a verifiable requirements model that lives where the code lives.
 
-RTMX is that model.
+RTMX is that model. The open-source **rtmx** CLI keeps the RTM in git; optional
+hosted **RTMX Sync** adds a live multiplayer room when humans and agents need to
+converge together.
 
 ## What RTMX Does
 
-RTMX is a CLI tool that manages a requirements traceability matrix (RTM) as a CSV file in your git repository. Every requirement has an ID, a specification, linked tests, and dependencies. Status is derived from test results -- not manually updated.
+RTMX is a CLI tool that manages a requirements traceability matrix (RTM) as a CSV file in your git repository. Every requirement has an ID, a specification, linked tests, and dependencies. Status is derived from test results -- not manually updated. Join a Sync room when you want multiplayer claims and presence on top of that same matrix.
 
 Here's what a typical session looks like.
 
