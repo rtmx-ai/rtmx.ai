@@ -40,7 +40,7 @@ description: Complete command reference for RTMX CLI
 |---------|-------------|
 | `rtmx from-tests` | Scan tests for requirement markers |
 | `rtmx bootstrap` | Generate RTM from tests, GitHub, or Jira |
-| `rtmx sync` | Synchronize with GitHub Issues or Jira |
+| `rtmx sync` | Join a Sync room, or sync tracker adapters (GitHub/Jira/…) |
 | `rtmx install` | Install prompts into AI agent configs |
 | `rtmx makefile` | Generate Makefile targets |
 | `rtmx mcp-server` | Start MCP server for AI agent integration |
@@ -108,13 +108,18 @@ rtmx deps --critical-path           # Show critical path
 
 ### rtmx sync
 
-Synchronize with external services:
+Join a **RTMX Sync** room (managed, self-managed, or air-gapped) after
+`rtmx login`, or synchronize with optional tracker adapters:
 
 ```bash
-rtmx sync github          # Sync to GitHub Issues
-rtmx sync jira            # Sync to Jira
-rtmx sync --dry-run       # Preview changes without applying
+rtmx sync                 # Join the configured Sync room
+rtmx sync github          # Adapter: GitHub Issues
+rtmx sync jira            # Adapter: Jira
+rtmx sync --dry-run       # Preview adapter changes without applying
 ```
+
+Hosted Sync rooms are the multiplayer product surface; adapters remain optional
+bridges for teams that still import from GitHub, Jira, or other trackers.
 
 ### rtmx serve
 

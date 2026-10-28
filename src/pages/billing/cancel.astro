@@ -6,15 +6,15 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
   <div class="license-page rtmx-splash">
     <section class="license-header">
       <h1>Checkout canceled</h1>
-      <p class="license-subtitle">
+      <p class="license-subtitle" data-testid="billing-cancel-copy">
         Nothing was charged. No hosted tenant was created. Your organization
-        stays unlicensed until a Checkout Session completes.
+        stays unlicensed until Checkout completes — Team includes a 14-day free trial.
       </p>
     </section>
     <section class="license-form-section not-content">
       <p>
-        <a href="/checkout">Try hosted Team Checkout again</a>
-        or <a href="/license">download a self-managed license</a>.
+        <a href="/checkout" data-testid="cancel-checkout-cta">Start 14-day free trial</a>
+        or <a href="/checkout?tab=self-hosted">download a self-managed license</a>.
       </p>
     </section>
   </div>

@@ -1,6 +1,6 @@
 # REQ-SITE-183: Empty states and cancel mention 14-day trial
 
-## Status: NOT_STARTED
+## Status: COMPLETE
 ## Priority: HIGH
 ## Phase: 27
 ## External ID: rtmx-ai/REQ-MONO-058y

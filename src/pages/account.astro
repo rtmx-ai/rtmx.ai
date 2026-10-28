@@ -55,8 +55,8 @@ const defaultServer = import.meta.env.PUBLIC_RTMX_SYNC_HTTP_URL || 'https://sync
               Select an active org for subsequent collaboration (multi-org accounts are first-class).
             </p>
             <ul class="org-list" id="org-list" data-testid="org-membership-list"></ul>
-            <p class="field-help" id="org-empty" hidden>No organizations yet. Join a public org below, prove with GitHub, or create one on Checkout.</p>
-            <a class="secondary-button-link" href="/checkout">Go to Checkout</a>
+            <p class="field-help" id="org-empty" hidden>No organizations yet. Join a public org below, prove with GitHub, or start a 14-day Team trial on Checkout.</p>
+            <a class="secondary-button-link" href="/checkout" data-testid="account-checkout-cta">Start 14-day free trial</a>
           </section>
 
           <section class="account-subsection" aria-labelledby="org-join-heading" data-testid="adoption-recommendations">
