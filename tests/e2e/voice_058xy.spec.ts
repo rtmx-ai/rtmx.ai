@@ -30,10 +30,6 @@ test.describe('Site voice HIGH (SITE-182–183)', () => {
     );
   });
 
-  test('dashboard checkout CTA mentions trial (SITE-183)', async ({ page }) => {
-    await page.goto('/dashboard');
-    await expect(page.getByTestId('dashboard-checkout-cta')).toContainText(
-      /14-day free trial/i,
-    );
-  });
+  // Account/dashboard trial CTAs are behind auth redirects; covered by
+  // system/tests/test_site_voice_consistency.py (TestMono058y) + cancel CTA above.
 });
