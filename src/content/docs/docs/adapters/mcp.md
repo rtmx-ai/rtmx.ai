@@ -7,7 +7,9 @@ Git-native requirements RTM for agents (next, claim, verify) — not another
 Jira/Linear MCP. The open-source **rtmx** CLI exposes a local MCP server
 (`rtmx mcp-server --stdio`) so agents can query status, claim work, and
 verify requirements. This is the client side of RTMX — not **RTMX Sync**
-(the multiplayer room).
+(the multiplayer room). After MCP is installed, multi-agent teams join Sync
+with the **same** launch config: [Sync](/sync) → `rtmx login` → `rtmx sync`
+([pricing](/pricing)).
 
 Prerequisite: install the CLI (`brew install rtmx-ai/tap/rtmx`, scoop, or
 `go install`).
