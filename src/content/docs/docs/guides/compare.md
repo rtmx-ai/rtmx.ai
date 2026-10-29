@@ -1,7 +1,24 @@
 ---
 title: "RTMX vs Other Tools"
-description: "How RTMX compares to Jira, Linear, GitHub Projects, and other requirements management tools"
+description: "Git-native requirements RTM for agents (next, claim, verify) — not another Jira/Linear MCP. Compare RTMX to issue-tracker MCPs and PM tools."
 ---
+
+## RTMX vs issue-tracker MCPs (agents)
+
+Git-native requirements RTM for agents (next, claim, verify) — not another
+Jira/Linear MCP.
+
+| Approach | What you get | Gap |
+|----------|--------------|-----|
+| **Jira / Linear MCP** | Agents read/write tickets in a SaaS board | No durable git-native RTM; status is board state, not verify gates |
+| **AGENTS.md only** | Free-form agent instructions | No claim/verify loop, no dependency graph, no test linkage |
+| **RTMX MCP** | Local CSV-in-git RTM + `next` / `claim` / `verify` | Not a sprint planner — pair with Jira/Linear if you need that |
+
+**Install CTA:** [MCP Server](/docs/adapters/mcp) ·
+[Add in Cursor](https://cursor.com/link/mcp?name=rtmx&config=eyJjb21tYW5kIjoicnRteCIsImFyZ3MiOlsibWNwLXNlcnZlciIsIi0tc3RkaW8iXX0%3D&utm_source=rtmx_docs&utm_medium=docs&utm_campaign=agent_discovery&utm_content=compare_deeplink) ·
+[cursor.directory/plugins/rtmx](https://cursor.directory/plugins/rtmx?utm_source=rtmx_docs&utm_medium=docs&utm_campaign=agent_discovery&utm_content=compare_directory)
+
+We do **not** claim to replace Jira/Linear as general project management.
 
 ## RTMX vs Jira
 

@@ -214,6 +214,7 @@ export default defineConfig({
 					label: 'Guides',
 					items: [
 						{ label: 'CLI Reference', slug: 'docs/guides/cli-reference' },
+						{ label: 'Compare tools & MCPs', slug: 'docs/guides/compare' },
 						{ label: 'Test Markers', slug: 'docs/guides/markers' },
 						{ label: 'Dependencies', slug: 'docs/guides/dependencies' },
 						{ label: 'Schema', slug: 'docs/guides/schema' },
