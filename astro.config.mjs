@@ -93,6 +93,20 @@ export default defineConfig({
 					tag: 'script',
 					content: 'document.documentElement.setAttribute("data-theme","dark");',
 				},
+				// REQ-MONO-063a: privacy-safe analytics when PUBLIC_PLAUSIBLE_DOMAIN is set
+				// (cookieless Plausible; no default CLI phone-home). See rtmx/docs/DISCOVERY_FUNNEL.md.
+				...(process.env.PUBLIC_PLAUSIBLE_DOMAIN
+					? [
+							{
+								tag: 'script',
+								attrs: {
+									defer: true,
+									'data-domain': process.env.PUBLIC_PLAUSIBLE_DOMAIN,
+									src: 'https://plausible.io/js/script.js',
+								},
+							},
+						]
+					: []),
 				{
 					tag: 'script',
 					attrs: {

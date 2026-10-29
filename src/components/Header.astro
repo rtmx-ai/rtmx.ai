@@ -12,7 +12,9 @@ import SessionChrome from './SessionChrome.astro';
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
 
-const githubHref = 'https://github.com/rtmx-ai/rtmx';
+// REQ-MONO-063a: UTM on site→GitHub CTA (see rtmx/docs/DISCOVERY_FUNNEL.md)
+const githubHref =
+	'https://github.com/rtmx-ai/rtmx?utm_source=rtmx_site&utm_medium=referral&utm_campaign=agent_discovery&utm_content=github_fab';
 ---
 
 <div class="header">

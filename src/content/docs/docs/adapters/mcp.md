@@ -27,8 +27,8 @@ Or: `/plugin marketplace add rtmx-ai/rtmx` then `/plugin install rtmx@rtmx`.
 
 One-click MCP install (opens Cursor):
 
-[Add RTMX MCP in Cursor](https://cursor.com/link/mcp?name=rtmx&config=eyJjb21tYW5kIjoicnRteCIsImFyZ3MiOlsibWNwLXNlcnZlciIsIi0tc3RkaW8iXX0%3D) ·
-[cursor.directory/plugins/rtmx](https://cursor.directory/plugins/rtmx)
+[Add RTMX MCP in Cursor](https://cursor.com/link/mcp?name=rtmx&config=eyJjb21tYW5kIjoicnRteCIsImFyZ3MiOlsibWNwLXNlcnZlciIsIi0tc3RkaW8iXX0%3D&utm_source=rtmx_docs&utm_medium=docs&utm_campaign=agent_discovery&utm_content=cursor_deeplink) ·
+[cursor.directory/plugins/rtmx](https://cursor.directory/plugins/rtmx?utm_source=rtmx_docs&utm_medium=docs&utm_campaign=agent_discovery&utm_content=cursor_directory)
 
 Local plugin dogfood: symlink `plugins/cursor-rtmx` into `~/.cursor/plugins/local/rtmx`
 (see the [rtmx Cursor plugin README](https://github.com/rtmx-ai/rtmx/tree/main/plugins/cursor-rtmx)).

@@ -32,7 +32,10 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
           WebSocket metadata (timestamps, organization/room identifiers, error codes), login and
           key events needed for security and abuse prevention.</li>
         <li><strong>Website.</strong> Standard server logs, optional newsletter email if you
-          subscribe, and Google reCAPTCHA (automated challenge–response) tokens on form submits.</li>
+          subscribe, and Google reCAPTCHA (automated challenge–response) tokens on form submits.
+          When enabled, privacy-safe first-party analytics (Plausible or a self-hosted
+          equivalent — cookieless pageviews, no advertising profile) may run on rtmx.ai.
+          The open-source CLI does not phone home by default.</li>
         <li><strong>Sync content.</strong> Requirements and collaboration data you place in
           managed Sync rooms. Treat that data as confidential to your organization.</li>
       </ul>
