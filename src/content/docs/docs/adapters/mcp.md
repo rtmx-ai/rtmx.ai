@@ -1,11 +1,13 @@
 ---
 title: MCP Server
-description: Add the open-source rtmx CLI to Claude, Cursor, Codex, and other agents via Model Context Protocol
+description: Git-native requirements RTM for agents (next, claim, verify) — not another Jira/Linear MCP
 ---
 
-The open-source **rtmx** CLI exposes a local MCP server (`rtmx mcp-server --stdio`)
-so agents can query status, claim work, and verify requirements. This is the
-client side of RTMX — not **RTMX Sync** (the multiplayer room).
+Git-native requirements RTM for agents (next, claim, verify) — not another
+Jira/Linear MCP. The open-source **rtmx** CLI exposes a local MCP server
+(`rtmx mcp-server --stdio`) so agents can query status, claim work, and
+verify requirements. This is the client side of RTMX — not **RTMX Sync**
+(the multiplayer room).
 
 Prerequisite: install the CLI (`brew install rtmx-ai/tap/rtmx`, scoop, or
 `go install`).
