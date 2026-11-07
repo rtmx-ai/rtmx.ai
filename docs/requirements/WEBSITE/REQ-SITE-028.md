@@ -16,7 +16,7 @@ versioned alongside the source.
 4. requirement-lifecycle.mmd -- requirement state machine (stateDiagram)
 
 ### vhs terminal recordings (docs/tapes/*.tape)
-1. workflow.tape -- 30-second workflow GIF (status, next, verify, status)
+1. workflow.tape -- workflow GIF (status → verify → status → next)
 2. agent-loop.tape -- AI agent using rtmx next to pick and complete a requirement
 
 ### Terminal screenshots (regenerated from real 219-requirement database)
