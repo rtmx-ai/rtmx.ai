@@ -20,23 +20,28 @@ test.describe('Blog navigation and index (SITE-027)', () => {
     await expect(list).toBeVisible();
 
     const items = page.getByTestId('blog-post-item');
-    await expect(items).toHaveCount(2);
+    await expect(items).toHaveCount(3);
 
     const titles = await page.getByTestId('blog-post-link').allTextContents();
-    expect(titles[0]).toMatch(/Show HN/);
-    expect(titles[1]).toMatch(/Back to Basics|Cleaning Up/i);
+    expect(titles[0]).toMatch(/2\.0\.0|verification moat|attestation/i);
+    expect(titles[1]).toMatch(/Show HN/);
+    expect(titles[2]).toMatch(/Back to Basics|Cleaning Up/i);
 
     const dates = page.getByTestId('blog-post-date');
-    await expect(dates).toHaveCount(2);
+    await expect(dates).toHaveCount(3);
     await expect(dates.nth(0)).toContainText(/2026/);
     await expect(dates.nth(1)).toContainText(/2026/);
+    await expect(dates.nth(2)).toContainText(/2026/);
 
-    // Newest first: Oct Show HN before May Back to Basics.
+    // Newest first: Nov 2.0.0, then Oct Show HN, then older Back to Basics.
     const newest = await dates.nth(0).getAttribute('datetime');
-    const older = await dates.nth(1).getAttribute('datetime');
+    const middle = await dates.nth(1).getAttribute('datetime');
+    const older = await dates.nth(2).getAttribute('datetime');
     expect(newest).toBeTruthy();
+    expect(middle).toBeTruthy();
     expect(older).toBeTruthy();
-    expect(newest! >= older!).toBeTruthy();
+    expect(newest! >= middle!).toBeTruthy();
+    expect(middle! >= older!).toBeTruthy();
   });
 
   test('sidebar Blog section is present', async ({ page }) => {
@@ -57,7 +62,7 @@ test.describe('Show HN blog post (SITE-026)', () => {
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Show HN|RTMX/);
     await expect(
-      page.locator('a[href="https://github.com/rtmx-ai/rtmx"]').first(),
+      page.locator('main a[href="https://github.com/rtmx-ai/rtmx"]').first(),
     ).toBeVisible();
 
     // Mermaid fences are present in the rendered page (client plugin renders them).

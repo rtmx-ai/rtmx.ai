@@ -45,12 +45,13 @@ The `verify` command:
 
 | Test Result | Status Transition |
 |-------------|-------------------|
-| All pass | → COMPLETE |
+| All pass + verifying attestation | → COMPLETE (rtmx 2.0.0+) |
 | Some pass, none fail | → PARTIAL |
 | Any fail | COMPLETE → PARTIAL (regression) |
+| Results file alone (`--results`) | never → COMPLETE |
 | No tests | Status unchanged |
 
-**Why this matters**: Status reflects what the code actually does, not what someone hopes it does.
+**Why this matters**: Status reflects what the code actually does, not what someone hopes it does. From **rtmx 2.0.0**, agents also cannot impersonate the verifier — COMPLETE needs a signed attestation.
 
 ---
 

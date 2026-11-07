@@ -25,7 +25,7 @@ stateDiagram-v2
 | `MISSING` | Implementation not present |
 | `WIP` | Actively being worked on |
 | `PARTIAL` | Partially implemented |
-| `COMPLETE` | Fully implemented and tested |
+| `COMPLETE` | Fully implemented, tested, and attested (rtmx 2.0.0+) |
 | `BLOCKED` | Cannot progress due to dependencies |
 
 ## Status Transitions
@@ -37,17 +37,28 @@ stateDiagram-v2
 | `NOT_STARTED` | `MISSING` | Work begins |
 | `MISSING` | `WIP` | Implementation starts |
 | `WIP` | `PARTIAL` | Some acceptance criteria met |
-| `WIP` | `COMPLETE` | All criteria met, tests pass |
-| `PARTIAL` | `COMPLETE` | Remaining criteria met |
+| `WIP` | `COMPLETE` | All criteria met, tests pass, verifying attestation |
+| `PARTIAL` | `COMPLETE` | Remaining criteria met + verifying attestation |
 | `ANY` | `BLOCKED` | Dependency not met |
 | `BLOCKED` | `WIP` | Blocker resolved |
 
-### Status Update
+### COMPLETE requires attestation (rtmx 2.0.0)
+
+From **rtmx 2.0.0**, `COMPLETE` is not a free-form CSV edit or a results-file
+claim. A verifying attestation signature must cover the requirement, commit
+SHA, command, and output hash. `rtmx verify --results` alone cannot set
+COMPLETE, and `rtmx status` counts COMPLETE only when the signature verifies.
 
 ```bash
-# Via CLI
-rtmx update REQ-AUTH-001 --status COMPLETE
+# Verifier path (local broker / CI) produces the attestation
+rtmx verify
+
+# Status reflects attested COMPLETE only
+rtmx status
 ```
+
+See [rtmx 2.0.0 — verification moat](/docs/blog/rtmx-2-0-0/) and the
+[GitHub release](https://github.com/rtmx-ai/rtmx/releases/tag/v2.0.0).
 
 ## Dependency Management
 

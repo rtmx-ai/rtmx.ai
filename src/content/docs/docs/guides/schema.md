@@ -34,7 +34,7 @@ The RTM database is a CSV file with standardized columns for requirements tracea
 
 | Status | Description |
 |--------|-------------|
-| `COMPLETE` | Requirement fully implemented and tested |
+| `COMPLETE` | Fully implemented, tested, and attested (rtmx 2.0.0+) |
 | `PARTIAL` | Requirement partially implemented |
 | `MISSING` | Requirement not yet implemented |
 | `NOT_STARTED` | Requirement not yet started |

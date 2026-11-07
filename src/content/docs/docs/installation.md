@@ -5,26 +5,37 @@ description: Install RTMX and set up your project
 
 ## Install RTMX
 
+Current release: **[v2.0.0](https://github.com/rtmx-ai/rtmx/releases/tag/v2.0.0)**
+([changelog](https://github.com/rtmx-ai/rtmx/blob/main/CHANGELOG.md)).
+
 ### macOS / Linux (Homebrew)
 
 ```bash
 brew install rtmx-ai/tap/rtmx
 ```
 
-### Debian / Ubuntu
+### Windows (Scoop)
 
 ```bash
-apt install rtmx
+scoop bucket add rtmx https://github.com/rtmx-ai/scoop-bucket
+scoop install rtmx
+```
+
+### Install script (Linux / macOS)
+
+```bash
+curl -fsSL https://rtmx.ai/install.sh | sh
 ```
 
 ### Direct Binary
 
-Download the latest binary for your platform from [GitHub Releases](https://github.com/rtmx-ai/rtmx/releases).
+Download the latest binary for your platform from
+[GitHub Releases](https://github.com/rtmx-ai/rtmx/releases).
 
 ### Verify Installation
 
 ```bash
-rtmx --version
+rtmx version
 ```
 
 ## Development Installation
@@ -38,35 +49,12 @@ make build     # Build from source
 make test      # Run tests
 ```
 
-## Python Distribution
+## Python package (retired)
 
-RTMX is also available as a Python package with additional integrations:
-
-```bash
-pip install rtmx
-```
-
-### Optional Python Dependencies
+The PyPI `rtmx` package reached end-of-life on 2026-09-25. Uninstall it and use
+the Go binary above:
 
 ```bash
-# GitHub integration
-pip install rtmx[github]
-
-# Jira integration
-pip install rtmx[jira]
-
-# Web UI dashboard (rtmx serve)
-pip install rtmx[web]
-
-# Terminal UI (rtmx tui)
-pip install rtmx[tui]
-
-# Rich formatting for status output
-pip install rtmx[rich]
-
-# MCP server for AI agent integration
-pip install rtmx[mcp]
-
-# All optional dependencies
-pip install rtmx[all]
+pip uninstall rtmx
+brew install rtmx-ai/tap/rtmx   # or Scoop / install.sh / GitHub release
 ```
