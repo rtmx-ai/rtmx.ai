@@ -10,7 +10,7 @@ Website shall include product demo video on landing page
 
 ## Acceptance Criteria
 - [x] Video element or embed renders on landing page
-- [x] Walkthrough matches title: `status`, `next`, `verify`, Cursor MCP setup
+- [x] Walkthrough matches title: `status`, `verify`, `next`, Cursor MCP setup
 - [x] Recordings produced in Docker (generic `/workspace`, `/home/demo` paths)
 
 ## Test Cases

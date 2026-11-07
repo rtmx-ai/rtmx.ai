@@ -5,17 +5,23 @@ description: Install RTMX and set up your project
 
 ## Install RTMX
 
-Current release: **[v2.0.0+](https://github.com/rtmx-ai/rtmx/releases/latest)**
+Current release: **[v2.0.1+](https://github.com/rtmx-ai/rtmx/releases/latest)**
 ([changelog](https://github.com/rtmx-ai/rtmx/blob/main/CHANGELOG.md)).
 
 Every package includes the CLI **and** the verification broker binary.
+Package install/upgrade hooks enable the broker when possible. If it is still
+missing, the first `rtmx verify` elevates once. Steady-state verify does not
+prompt for administrator credentials.
 
 ### macOS / Linux (Homebrew)
 
 ```bash
 brew install rtmx-ai/tap/rtmx
-sudo rtmx broker install --prefix="$(brew --prefix rtmx)"
+rtmx broker status
 ```
+
+Homebrew `post_install` runs `rtmx broker install --prefix=…` (Admin may be
+requested once). Manual/fleet: `rtmx broker install --prefix="$(brew --prefix rtmx)"`.
 
 ### Windows (Scoop)
 
@@ -24,13 +30,14 @@ scoop bucket add rtmx https://github.com/rtmx-ai/scoop-bucket
 scoop install rtmx
 ```
 
-Then enable the broker with an elevated shell (`rtmx broker install`).
+Enable the broker from an elevated shell if hooks did not (`rtmx broker install`),
+or let the first `rtmx verify` request elevation once.
 
 ### Install script (Linux / macOS)
 
 ```bash
 curl -fsSL https://rtmx.ai/install.sh | sh
-sudo rtmx broker install
+rtmx broker install   # elevates if needed; or wait for first verify
 ```
 
 ### Direct Binary
@@ -40,7 +47,7 @@ Download the latest archive for your platform from
 `verify`). Then:
 
 ```bash
-sudo rtmx broker install
+rtmx broker install   # elevates if needed
 ```
 
 ### Verify Installation
@@ -49,9 +56,6 @@ sudo rtmx broker install
 rtmx version
 rtmx broker status
 ```
-
-`rtmx verify` connects to the already-running broker and never prompts for
-administrator credentials.
 
 ## Development Installation
 
